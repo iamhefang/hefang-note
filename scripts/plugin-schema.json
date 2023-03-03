@@ -1,0 +1,115 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "required": [
+    "id",
+    "name",
+    "author",
+    "version"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "使用crypto.crypto.randomUUID()生成的插件ID，是插件的唯一标识，每个插件都不一样",
+      "pattern": "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}"
+    },
+    "name": {
+      "type": "string",
+      "description": "插件名称",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "version": {
+      "type": "string",
+      "description": "插件版本号",
+      "pattern": "\\d+(\\.\\d+){2}(-[a-z]{1,10})?"
+    },
+    "author": {
+      "type": "string",
+      "description": "插件作者"
+    },
+    "license": {
+      "type": "string",
+      "description": "许可协议"
+    },
+    "homepage": {
+      "type": "string",
+      "description": "插件主页"
+    },
+    "repository": {
+      "type": "string",
+      "description": "插件开源地址"
+    },
+    "dependencies": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "[a-f]{8}(-[a-f]{4}){3}-[a-f]{12}"
+      },
+      "description": "依赖的其他插件ID"
+    },
+    "supports": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "Linux",
+              "Darwin",
+              "Windows_NT"
+            ]
+          },
+          "description": "插件支持的平台"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "\\d+(\\.\\d+){2}(-[a-z]{1,10})?",
+          "description": "插件支持的笔记软件版本号"
+        }
+      }
+    },
+    "hooks": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "onInstall",
+          "onUninstall",
+          "onEnable",
+          "onDisable",
+          "onLoad",
+          "onUpdate",
+          "onThemeChange"
+        ]
+      }
+    },
+    "components": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "Editor"
+        ]
+      }
+    },
+    "abilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "themes"
+        ]
+      }
+    }
+  }
+}

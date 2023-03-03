@@ -1,0 +1,7 @@
+dist
+src-tauri
+**/*.json
+**/*.d.ts
+src/proto/im_message.ts
+!/.eslintrc.cjs
+!/.prettierrc.cjs

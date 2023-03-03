@@ -1,0 +1,36 @@
+.root {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  & * {
+    cursor: default;
+  }
+
+  li {
+    border-radius: 4px;
+    overflow: hidden;
+  }
+}
+
+.item {
+  padding: 3px;
+  border-radius: 4px;
+  user-select: none;
+
+  .newDir {
+    display: none;
+  }
+
+  &:hover,
+  &[data-active="true"] {
+    .newDir {
+      display: inline-block;
+    }
+
+  }
+
+  &[data-active="true"] {
+    background-color: red
+  }
+}

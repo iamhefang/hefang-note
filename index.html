@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+
+<head>
+  <script>
+    document.documentElement.style.backgroundColor = localStorage.getItem("bgColor")
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>何方笔记</title>
+  <style>
+    :root {
+      font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 400;
+
+      color: #0f0f0f;
+      background-color: #f6f6f6;
+
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-text-size-adjust: 100%;
+      --top-bar-height: 30px;
+      --top-bar-z-index: 1001;
+    }
+
+    html,
+    body,
+    .ant-app,
+    #root {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    #root *:not(input, textarea, [contenteditable]) {
+      user-select: none;
+    }
+
+
+    .ant-app {
+      display: flex;
+    }
+
+    .ant-spin {
+      position: absolute;
+      display: none;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      color: rgba(0, 0, 0, 0.65);
+      color: #1890ff;
+      font-size: 14px;
+      font-variant: tabular-nums;
+      line-height: 1.5;
+      text-align: center;
+      list-style: none;
+      opacity: 0;
+      -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+      transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+      transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+      transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
+        -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+      -webkit-font-feature-settings: "tnum";
+      font-feature-settings: "tnum";
+    }
+
+    .ant-spin-spinning {
+      position: static;
+      display: inline-block;
+      opacity: 1;
+    }
+
+    .ant-spin-dot {
+      position: relative;
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
+    }
+
+    .ant-spin-dot-item {
+      position: absolute;
+      display: block;
+      width: 9px;
+      height: 9px;
+      background-color: #1890ff;
+      border-radius: 100%;
+      -webkit-transform: scale(0.75);
+      -ms-transform: scale(0.75);
+      transform: scale(0.75);
+      -webkit-transform-origin: 50% 50%;
+      -ms-transform-origin: 50% 50%;
+      transform-origin: 50% 50%;
+      opacity: 0.3;
+      -webkit-animation: antspinmove 1s infinite linear alternate;
+      animation: antSpinMove 1s infinite linear alternate;
+    }
+
+    .ant-spin-dot-item:nth-child(1) {
+      top: 0;
+      left: 0;
+    }
+
+    .ant-spin-dot-item:nth-child(2) {
+      top: 0;
+      right: 0;
+      -webkit-animation-delay: 0.4s;
+      animation-delay: 0.4s;
+    }
+
+    .ant-spin-dot-item:nth-child(3) {
+      right: 0;
+      bottom: 0;
+      -webkit-animation-delay: 0.8s;
+      animation-delay: 0.8s;
+    }
+
+    .ant-spin-dot-item:nth-child(4) {
+      bottom: 0;
+      left: 0;
+      -webkit-animation-delay: 1.2s;
+      animation-delay: 1.2s;
+    }
+
+    .ant-spin-dot-spin {
+      -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
+      -webkit-animation: antrotate 1.2s infinite linear;
+      animation: antRotate 1.2s infinite linear;
+    }
+
+    .ant-spin-lg .ant-spin-dot {
+      width: 32px;
+      height: 32px;
+      font-size: 32px;
+    }
+
+    .ant-spin-lg .ant-spin-dot i {
+      width: 14px;
+      height: 14px;
+    }
+
+    .loading-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+      transform: scale(2);
+    }
+
+    @media all and (-ms-high-contrast: none),
+    (-ms-high-contrast: active) {
+      .ant-spin-blur {
+        background: #fff;
+        opacity: 0.5;
+      }
+    }
+
+    @-webkit-keyframes antSpinMove {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes antSpinMove {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @-webkit-keyframes antRotate {
+      to {
+        -webkit-transform: rotate(405deg);
+        transform: rotate(405deg);
+      }
+    }
+
+    @keyframes antRotate {
+      to {
+        -webkit-transform: rotate(405deg);
+        transform: rotate(405deg);
+      }
+    }
+
+    .first-run-notice p {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <div class="ant-app">
+      <div class="loading-container">
+        <div class="ant-spin ant-spin-lg ant-spin-spinning" aria-live="polite" aria-busy="true"><span
+            class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i
+              class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span></div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>
