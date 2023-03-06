@@ -1,5 +1,5 @@
 import { CheckOutlined, MoreOutlined } from "@ant-design/icons"
-import { App, Button, Dropdown, Empty, Input, MenuProps, Modal, Skeleton, Space } from "antd"
+import { App, Button, Col, Dropdown, Empty, Input, MenuProps, Modal, Row, Skeleton, Space } from "antd"
 import _ from "lodash"
 import { useCallback, useMemo, useState } from "react"
 
@@ -86,14 +86,18 @@ export default function SiderBar() {
 
   return (
     <>
-      <Space style={{ marginBottom: 10 }}>
-        <Input.Search placeholder="搜索目录和标题" onSearch={setSearch} allowClear={true} />
-        <Dropdown trigger={["click"]} menu={{ items: menuItems }}>
-          <Button icon={<MoreOutlined />} />
-        </Dropdown>
-      </Space>
+      <Row style={{ margin: 10 }} gutter={10} wrap={false}>
+        <Col flex={1}>
+          <Input.Search placeholder="搜索目录和标题" onSearch={setSearch} allowClear={true} />
+        </Col>
+        <Col>
+          <Dropdown trigger={["click"]} menu={{ items: menuItems }}>
+            <Button icon={<MoreOutlined />} />
+          </Dropdown>
+        </Col>
+      </Row>
       <Skeleton loading={loading} active={true}>
-        <div style={{ overflowY: "auto", overflowX: "hidden", height: "calc(100vh - 120px)" }}>
+        <div style={{ overflowY: "auto", overflowX: "hidden", height: "calc(100vh - 110px)" }}>
           {_.isEmpty(items) ? <Empty description="还没有笔记" /> : <NoteTree search={search} />}
         </div>
       </Skeleton>

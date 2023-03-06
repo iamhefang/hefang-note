@@ -43,6 +43,7 @@ export interface IRecordDbStore<T> {
   getAll(): Promise<T[]>;
   getAllIds(): Promise<string[]>
   delete(...ids: string[]): Promise<void>;
+  getBy(ranges: IDBKeyRange): Promise<T[]>
 }
 
 function createKeyValueDbStore<T extends Record<string, unknown>>(storeName: string): IKeyValueDbStore<T> {
@@ -90,16 +91,26 @@ function createRecordsDbStore<T>(storeName: string): IRecordDbStore<T> {
       return (await db).getAllKeys(storeName) as Promise<string[]>
     },
     async set(...value) {
-      const _db = (await db)
-      for (const item of value) {
-        await _db.put(storeName, item)
-      }
+      const _db = await db
+
+      const tx = _db.transaction(storeName, "readwrite")
+      await Promise.all(value.map(async item => { await tx.store.put(item) }).concat(tx.done))
     },
     async delete(...ids: string[]) {
       const _db = await db
-      ids.forEach(id => {
-        void _db.delete(storeName, id)
-      })
+      const tx = _db.transaction(storeName, "readwrite")
+      await Promise.all(ids.map(async id => tx.store.delete(id)).concat(tx.done))
+    },
+    async getBy(range: IDBKeyRange) {
+      const _db = await db
+      let cursor = await _db.transaction(storeName, "readonly").objectStore(storeName).index("id").openCursor(range)
+      const values = []
+      while (cursor) {
+        values.push(cursor.value)
+        cursor = await cursor.continue()
+      }
+
+      return values
     },
   }
 }
@@ -109,6 +120,12 @@ export const contentStore = createRecordsDbStore<NoteItem>("content")
 export const pluginStore = createRecordsDbStore<Omit<IPluginInfo, "path">>("plugins")
 
 if (import.meta.env.DEV) {
+
+  // @ts-ignore
+  window.contentPager = async ({ pageIndex = 1, pageSize = 100, lastId = "" }: { pageIndex: number, pageSize: number, lastId: string }) => {
+    const req = await (await db).transaction("content", "readonly").objectStore("content").index("id").openCursor(IDBKeyRange.upperBound(lastId))
+  }
+
   // @ts-ignore
   window.settingsStore = settingsStore
   // @ts-ignore
