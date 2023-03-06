@@ -1,7 +1,7 @@
 import { Dropdown, MenuProps } from "antd"
 import React, { useCallback, useMemo } from "react"
 
-import { NoteItem } from "~/types"
+import { NoteIndentItem, NoteItem } from "~/types"
 
 export type MenuInfo = {
   key: NoteTreeMenuKeys
@@ -10,8 +10,8 @@ export type MenuInfo = {
   item: React.ReactInstance
   domEvent: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>
 }
-export type NoteTreeMenuOnClick = (info: MenuInfo, item: NoteItem) => void
-export type NoteTreeItemMenuProps = React.PropsWithChildren<{ onClick?: NoteTreeMenuOnClick; item: NoteItem; indent: number }>
+export type NoteTreeMenuOnClick = (info: MenuInfo, item: NoteIndentItem) => void
+export type NoteTreeItemMenuProps = React.PropsWithChildren<{ onClick?: NoteTreeMenuOnClick; item: NoteIndentItem; indent: number }>
 
 export const enum NoteTreeMenuKeys {
   delete = "delete",

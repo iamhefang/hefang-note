@@ -2,6 +2,8 @@ import type { ThemeConfig } from "antd"
 import type { CSSProperties, ReactNode } from "react"
 
 
+export type NoteIndentItem = NoteItem & { indent: number }
+
 export type NoteItem = {
   id: string
   title: string

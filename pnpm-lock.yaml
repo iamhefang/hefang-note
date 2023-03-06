@@ -27,6 +27,7 @@ specifiers:
   react: ^18.2.0
   react-dom: ^18.2.0
   react-redux: ^8.0.5
+  react-virtuoso: ^4.1.0
   redux: ^4.2.1
   sass: ^1.58.2
   typescript: ^4.6.4
@@ -48,6 +49,7 @@ dependencies:
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-redux: 8.0.5_ctrls2ti7t7iutxbwkm5ipogyy
+  react-virtuoso: 4.1.0_biqbaboplfbrettd7655fr4n2y
   redux: 4.2.1
 
 devDependencies:
@@ -3416,6 +3418,17 @@ packages:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /react-virtuoso/4.1.0_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-Vcq5WXn18PvPT55kdeGQ8BN3K95XyPe7hum8zG6Tx7g1CtUYVsQKN7fouMxBSy+XymEDB5ynGy8JWhuqyLLtPw==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16 || >=17 || >= 18'
+      react-dom: '>=16 || >=17 || >= 18'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
 
   /react/18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
