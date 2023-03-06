@@ -21,6 +21,7 @@ const need2save: (keyof Settings)[] = [
   "sort",
   "editor",
   "autoCheckUpdate",
+  "shortcut",
 ]
 
 function saveSettings(state: GlobalState | undefined, newState: GlobalState, payload: GlobalState) {
@@ -57,6 +58,7 @@ export const defaultState: Settings = {
     fontFamily: "inherit",
     fontSize: "inherit",
   },
+  shortcut: { lock: "" },
 }
 
 

@@ -1,4 +1,4 @@
-import { EditOutlined, HomeOutlined } from "@ant-design/icons"
+import { EditOutlined, HomeOutlined, KeyOutlined } from "@ant-design/icons"
 import { Form, Segmented } from "antd"
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
 
@@ -6,14 +6,16 @@ import useGlobalState from "~/hooks/useGlobalState"
 import useSettingsLoader from "~/hooks/useSettingsLoader"
 import type { Settings } from "~/types"
 import { settingsStore } from "~/utils/database"
+
 import EditorSettings from "./EditorSettings"
 import GeneralSettings from "./GeneralSettings"
+import ShortcutSettings from "./ShortcutSettings"
 
-type SettingTypes = "general" | "editor" | string | number
+type SettingTypes = "general" | "editor" | "shortcut" | string | number
 
 export default function SettingForm() {
   const [form] = Form.useForm()
-  const [{ loading, launching, showSettingModal, renaming, ...settings }, setState] = useGlobalState()
+  const [{ loading, launching, showSettingModal, renaming, ...settings }] = useGlobalState()
   const loadSettings = useSettingsLoader()
   const [active, setActive] = useState<SettingTypes>("general")
   const onValuesChange = useCallback(
@@ -24,11 +26,12 @@ export default function SettingForm() {
           lock: { ...settings.lock, ...changedValues.lock },
           sort: { ...settings.sort, ...changedValues.sort },
           editorStyle: { ...settings.editorStyle, ...changedValues.editorStyle },
+          shortcut: { ...settings.shortcut, ...changedValues.shortcut },
         })
         .then(loadSettings)
         .catch(console.error)
     },
-    [loadSettings, settings.editorStyle, settings.lock, settings.sort],
+    [loadSettings, settings.editorStyle, settings.lock, settings.shortcut, settings.sort],
   )
 
   useEffect(() => {
@@ -36,7 +39,7 @@ export default function SettingForm() {
   }, [form, settings])
 
   const formItems: Record<SettingTypes, ReactNode> = useMemo(() => {
-    return { general: <GeneralSettings />, editor: <EditorSettings /> }
+    return { general: <GeneralSettings />, editor: <EditorSettings />, shortcut: <ShortcutSettings /> }
   }, [])
 
   return (
@@ -47,6 +50,7 @@ export default function SettingForm() {
         options={[
           { label: "通用", value: "general", icon: <HomeOutlined /> },
           { label: "编辑器", value: "editor", icon: <EditOutlined /> },
+          { label: "快捷键", value: "shortcut", icon: <KeyOutlined /> },
         ]}
       />
       {formItems[active]}
