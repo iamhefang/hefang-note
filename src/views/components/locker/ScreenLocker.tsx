@@ -1,10 +1,10 @@
 import { LockOutlined, UnlockOutlined } from "@ant-design/icons"
 import { appWindow } from "@tauri-apps/api/window"
 import { App, Button, Form, Input, Modal, theme } from "antd"
-// eslint-disable-next-line import/no-internal-modules
+import _ from "lodash"
 import { useCallback, useEffect } from "react"
-import { isInTauri } from "~/consts"
 
+import { isInTauri } from "~/consts"
 import useGlobalState from "~/hooks/useGlobalState"
 
 import ss from "./ScreenLocker.module.scss"
@@ -13,6 +13,7 @@ export default function ScreenLocker() {
   const [
     {
       lock: { locked, password, immediately },
+      shortcut,
     },
     setState,
   ] = useGlobalState()
@@ -74,6 +75,26 @@ export default function ScreenLocker() {
 
     return () => void unlistener.then((unlisten) => unlisten())
   }, [locked, onLockClick])
+
+  useEffect(() => {
+    if (shortcut?.lock) {
+      const keys = shortcut.lock.split("+")
+      const metaKey = keys.includes("Meta")
+      const shiftKey = keys.includes("Shift")
+      const ctrlKey = keys.includes("Ctrl")
+      const altKey = keys.includes("Alt")
+      const onWindowKeyPress = (e: KeyboardEvent) => {
+        if (e.metaKey === metaKey && e.shiftKey === shiftKey && e.ctrlKey === ctrlKey && e.altKey === altKey && e.key.toUpperCase() === _.last(keys)) {
+          onLockClick()
+        }
+      }
+      window.addEventListener("keypress", onWindowKeyPress)
+
+      return () => {
+        window.removeEventListener("keypress", onWindowKeyPress)
+      }
+    }
+  }, [onLockClick, shortcut.lock])
 
   return (
     <>

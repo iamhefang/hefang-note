@@ -1,6 +1,6 @@
 import { Form, List, Select, Space, Switch } from "antd"
-import { ReactNode, useEffect, useMemo } from "react"
-import useGlobalState from "~/hooks/useGlobalState"
+import { ReactNode, useMemo } from "react"
+
 import usePlugins from "~/hooks/usePlugins"
 
 const fontSizeItems = ["12px", "14px", "16px", "18px", "20px", "22px"]
@@ -10,16 +10,12 @@ const fontFamilyMaps = {
 }
 
 export default function EditorSettings() {
-  const [form] = Form.useForm()
+  // const [form] = Form.useForm()
   const allPlugins = usePlugins()
-  const [{ loading, launching, showSettingModal, renaming, ...settings }, setState] = useGlobalState()
+  // const [{ loading, launching, showSettingModal, renaming, ...settings }, setState] = useGlobalState()
   const plugins = useMemo(() => {
     return allPlugins.filter((item) => item.components?.includes("Editor"))
   }, [allPlugins])
-
-  useEffect(() => {
-    form.setFieldsValue({ ...settings })
-  }, [form, settings])
 
   const formItems: Record<string, ReactNode> = useMemo(
     () => ({
