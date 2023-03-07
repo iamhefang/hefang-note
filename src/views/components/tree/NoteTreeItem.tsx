@@ -1,8 +1,7 @@
 import { CaretDownOutlined, CaretRightOutlined, FileTextOutlined, FolderOpenOutlined, FolderOutlined } from "@ant-design/icons"
 import { App, Col, Input, Row, theme } from "antd"
-import modal from "antd/es/modal"
 import _ from "lodash"
-import { useCallback, useMemo } from "react"
+import React, { useCallback, useMemo } from "react"
 
 import { nameMaxLength } from "~/config"
 import useContentLoader from "~/hooks/useContentLoader"
@@ -18,14 +17,12 @@ import ss from "./NoteTree.module.scss"
 
 export type NoteTreeItemProps = {
   item: NoteIndentItem
-  // renaming: string
-  // setRenaming: (value: string) => void
-  indent?: number
+  onRightClick?: () => void
 }
-export default function NoteTreeItem({ item, indent = 0 }: NoteTreeItemProps) {
+export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) {
   const [{ current, renaming, expandItems }, setState] = useGlobalState()
   const { token } = theme.useToken()
-  const { message } = App.useApp()
+  const { message, modal } = App.useApp()
   const itemArray = useItemArray()
   const loadContent = useContentLoader()
   const showModal = useNewModal()
@@ -104,7 +101,7 @@ export default function NoteTreeItem({ item, indent = 0 }: NoteTreeItemProps) {
           console.warn("未生效的菜单")
       }
     },
-    [item.id, item.isLeaf, item.parentId, item.title, itemArray, loadContent, setState, showModal],
+    [item.id, item.isLeaf, item.parentId, item.title, itemArray, loadContent, modal, setState, showModal],
   )
 
   const expandIcon = useMemo(() => {
@@ -115,43 +112,45 @@ export default function NoteTreeItem({ item, indent = 0 }: NoteTreeItemProps) {
     return expandItems[item.id] ? <CaretDownOutlined /> : <CaretRightOutlined />
   }, [expandItems, item.id, item.isLeaf])
 
-  const width = useMemo(() => `${24 + indent * 16}px`, [indent])
+  const width = useMemo(() => `${24 + item.indent * 16}px`, [item.indent])
 
   return (
-    <NoteTreeItemMenu onClick={onMenuClick} item={item} indent={indent}>
-      <Row
-        wrap={false}
-        gutter={10}
-        className={ss.item}
-        onClick={onItemClick}
-        data-active={current === item.id}
-        style={{
-          background: current === item.id ? token.colorPrimaryBg : "none",
-          color: current === item.id ? token.colorPrimaryTextActive : undefined,
-          marginInline: 10,
-        }}
-      >
-        <Col style={{ width, textAlign: "right" }}>{expandIcon}</Col>
-        <Col>{item.isLeaf ? <FileTextOutlined /> : expandItems[item.id] ? <FolderOpenOutlined /> : <FolderOutlined />}</Col>
-        <Col flex={1}>
-          {renaming === item.id ? (
-            <Input
-              key={`rename-input-${item.id}`}
-              autoFocus
-              size="small"
-              placeholder={item.title}
-              defaultValue={item.title}
-              onKeyDown={onRenameKeyDown}
-              onBlur={onRenamingBlur}
-              maxLength={nameMaxLength}
-            />
-          ) : (
-            <div title={item.title} style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {item.title}
-            </div>
-          )}
-        </Col>
-      </Row>
-    </NoteTreeItemMenu>
+    <Row
+      wrap={false}
+      gutter={10}
+      className={ss.item}
+      onClick={onItemClick}
+      onContextMenu={onRightClick}
+      data-active={current === item.id}
+      style={{
+        background: current === item.id ? token.colorPrimaryBg : "none",
+        color: current === item.id ? token.colorPrimaryTextActive : undefined,
+        marginInline: 10,
+        borderColor: token.colorPrimary,
+      }}
+    >
+      <Col style={{ width, textAlign: "right", flexShrink: 0 }}>{expandIcon}</Col>
+      <Col>{item.isLeaf ? <FileTextOutlined /> : expandItems[item.id] ? <FolderOpenOutlined /> : <FolderOutlined />}</Col>
+      <Col flex={1}>
+        {renaming === item.id ? (
+          <Input
+            key={`rename-input-${item.id}`}
+            autoFocus
+            size="small"
+            placeholder={item.title}
+            defaultValue={item.title}
+            onKeyDown={onRenameKeyDown}
+            onBlur={onRenamingBlur}
+            maxLength={nameMaxLength}
+          />
+        ) : (
+          <div title={item.title} style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {item.title}
+          </div>
+        )}
+      </Col>
+    </Row>
   )
 }
+
+export const MemodNoteTreeItem = React.memo(NoteTreeItem)

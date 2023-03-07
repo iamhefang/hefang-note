@@ -1,5 +1,5 @@
 import { Space } from "antd"
-import React, { Suspense } from "react"
+import React, { Suspense, useMemo } from "react"
 
 import useGlobalState from "~/hooks/useGlobalState"
 import usePlatform from "~/hooks/usePlatform"
@@ -8,6 +8,8 @@ import SiderBarToggle from "~/views/components/topbar/items/SiderBarToggle"
 import ShowInPlatform from "~/views/components/utils/ShowInPlatform"
 
 import ss from "./TopBarLeft.module.scss"
+
+const LazyClientDownload = React.lazy(async () => import("~/views/components/topbar/items/ClientDownload"))
 
 export default function TopBarLeft() {
   const osType = usePlatform()
@@ -23,15 +25,11 @@ export default function TopBarLeft() {
       <ShowInPlatform platforms={["Linux", "Windows_NT"]}>{() => <AppLogo />}</ShowInPlatform>
       {!showSettingModal && !locked && <SiderBarToggle />}
       <ShowInPlatform platforms={["Browser"]}>
-        {() => {
-          const LazyComponent = React.lazy(async () => import("~/views/components/topbar/items/ClientDownload"))
-
-          return (
-            <Suspense>
-              <LazyComponent />
-            </Suspense>
-          )
-        }}
+        {() => (
+          <Suspense>
+            <LazyClientDownload />
+          </Suspense>
+        )}
       </ShowInPlatform>
     </Space>
   )

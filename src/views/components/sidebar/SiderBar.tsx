@@ -12,7 +12,7 @@ import { settingsStore } from "~/utils/database"
 import { sortItems } from "~/utils/sort"
 import { iconPlacehodler } from "~/views/components/icons/IconPlaceholder"
 import { MenuInfo, NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
-import NoteTree from "~/views/components/tree/NoteTree"
+import NoteTree, { MemoedNoteTree } from "~/views/components/tree/NoteTree"
 
 export default function SiderBar() {
   const [{ items, loading, sort }] = useGlobalState()
@@ -96,9 +96,9 @@ export default function SiderBar() {
           </Dropdown>
         </Col>
       </Row>
-      <Skeleton loading={loading} active={true}>
+      <Skeleton loading={loading} active={true} style={{ padding: 20 }}>
         <div style={{ overflowY: "auto", overflowX: "hidden", height: "calc(100vh - 110px)" }}>
-          {_.isEmpty(items) ? <Empty description="还没有笔记" /> : <NoteTree search={search} />}
+          <NoteTree search={search} />
         </div>
       </Skeleton>
     </>
