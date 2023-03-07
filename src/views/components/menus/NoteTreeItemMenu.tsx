@@ -1,7 +1,7 @@
 import { Dropdown, MenuProps } from "antd"
 import React, { useCallback, useMemo } from "react"
 
-import { NoteItem } from "~/types"
+import { NoteIndentItem, NoteItem } from "~/types"
 
 export type MenuInfo = {
   key: NoteTreeMenuKeys
@@ -10,8 +10,8 @@ export type MenuInfo = {
   item: React.ReactInstance
   domEvent: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>
 }
-export type NoteTreeMenuOnClick = (info: MenuInfo, item: NoteItem) => void
-export type NoteTreeItemMenuProps = React.PropsWithChildren<{ onClick?: NoteTreeMenuOnClick; item: NoteItem; indent: number }>
+export type NoteTreeMenuOnClick = (info: MenuInfo, item: NoteIndentItem) => void
+export type NoteTreeItemMenuProps = React.PropsWithChildren<{ onClick?: NoteTreeMenuOnClick; item: NoteIndentItem | undefined }>
 
 export const enum NoteTreeMenuKeys {
   delete = "delete",
@@ -20,9 +20,12 @@ export const enum NoteTreeMenuKeys {
   newDir = "newDir",
 }
 
-export default function NoteTreeItemMenu({ children, onClick, item, indent }: NoteTreeItemMenuProps) {
-  const onMenuClick = useCallback((info: MenuInfo) => onClick?.(info, item), [item, onClick])
+export default function NoteTreeItemMenu({ children, onClick, item }: NoteTreeItemMenuProps) {
+  const onMenuClick = useCallback((info: MenuInfo) => item && onClick?.(info, item), [item, onClick])
   const items: MenuProps["items"] = useMemo(() => {
+    if (!item) {
+      return []
+    }
     if (item.isLeaf) {
       return [
         { key: NoteTreeMenuKeys.rename, label: "重命名" },
@@ -31,13 +34,13 @@ export default function NoteTreeItemMenu({ children, onClick, item, indent }: No
     }
 
     return [
-      indent >= 2 ? null : { key: NoteTreeMenuKeys.newDir, label: "新建目录" },
+      item.indent >= 2 ? null : { key: NoteTreeMenuKeys.newDir, label: "新建目录" },
       { key: NoteTreeMenuKeys.newNote, label: "新建笔记" },
       { type: "divider" },
       { key: NoteTreeMenuKeys.rename, label: "重命名" },
       { key: NoteTreeMenuKeys.delete, label: "删除" },
     ] as MenuProps["items"]
-  }, [indent, item.isLeaf])
+  }, [item])
 
   return (
     <Dropdown trigger={["contextMenu"]} menu={{ items, onClick: onMenuClick as never }}>

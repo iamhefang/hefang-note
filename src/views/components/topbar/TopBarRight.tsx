@@ -10,12 +10,20 @@ import ss from "./TopBarRight.module.scss"
 
 const LazyScreenLocker = React.lazy(async () => import("~/views/components/locker/ScreenLocker"))
 const LazyThemeSelector = React.lazy(async () => import("~/views/components/topbar/items/ThemeSelector"))
+const LazyGithub = React.lazy(async () => import("~/views/components/topbar/items/Github"))
 
 export default function TopBarRight() {
   const osType = usePlatform()
 
   return (
     <Space className={ss.root} style={{ right: osType === "Darwin" ? 8 : 0 }}>
+      <ShowInPlatform platforms={["Browser"]}>
+        {() => (
+          <Suspense>
+            <LazyGithub />
+          </Suspense>
+        )}
+      </ShowInPlatform>
       <Suspense>
         <LazyThemeSelector />
       </Suspense>

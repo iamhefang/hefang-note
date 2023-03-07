@@ -18,7 +18,8 @@ kbd {
   border-radius: 4px;
 }
 
-[data-tauri-drag-region] {
+[data-tauri-drag-region],
+:not(input, textarea, [contenteditable="true"], a, svg) {
   cursor: default !important;
 }
 
@@ -47,7 +48,6 @@ kbd {
 }
 
 .ant-layout-sider {
-  padding: 10px;
   transition: none !important;
   height: 100%;
 

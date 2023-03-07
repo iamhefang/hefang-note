@@ -17,11 +17,11 @@ const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 void navigator.locks.request("hefang-note", { ifAvailable: true }, async (lock) => {
   if (lock) {
     root.render(
-      <React.StrictMode>
-        <Provider store={store}>
-          <Application />
-        </Provider>
-      </React.StrictMode>,
+      // <React.StrictMode>
+      <Provider store={store}>
+        <Application />
+      </Provider>,
+      // </React.StrictMode>,
     )
 
     if (localStorage.getItem("firstRun") !== pkg.version) {

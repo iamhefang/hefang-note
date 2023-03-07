@@ -1,5 +1,5 @@
 import { CheckOutlined, MoreOutlined } from "@ant-design/icons"
-import { App, Button, Dropdown, Empty, Input, MenuProps, Modal, Skeleton, Space } from "antd"
+import { App, Button, Col, Dropdown, Empty, Input, MenuProps, Modal, Row, Skeleton, Space } from "antd"
 import _ from "lodash"
 import { useCallback, useMemo, useState } from "react"
 
@@ -12,7 +12,7 @@ import { settingsStore } from "~/utils/database"
 import { sortItems } from "~/utils/sort"
 import { iconPlacehodler } from "~/views/components/icons/IconPlaceholder"
 import { MenuInfo, NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
-import NoteTree from "~/views/components/tree/NoteTree"
+import NoteTree, { MemoedNoteTree } from "~/views/components/tree/NoteTree"
 
 export default function SiderBar() {
   const [{ items, loading, sort }] = useGlobalState()
@@ -86,15 +86,19 @@ export default function SiderBar() {
 
   return (
     <>
-      <Space style={{ marginBottom: 10 }}>
-        <Input.Search placeholder="搜索目录和标题" onSearch={setSearch} allowClear={true} />
-        <Dropdown trigger={["click"]} menu={{ items: menuItems }}>
-          <Button icon={<MoreOutlined />} />
-        </Dropdown>
-      </Space>
-      <Skeleton loading={loading} active={true}>
-        <div style={{ overflowY: "auto", overflowX: "hidden", height: "calc(100vh - 120px)" }}>
-          {_.isEmpty(items) ? <Empty description="还没有笔记" /> : <NoteTree search={search} />}
+      <Row style={{ margin: 10 }} gutter={10} wrap={false}>
+        <Col flex={1}>
+          <Input.Search placeholder="搜索目录和标题" onSearch={setSearch} allowClear={true} />
+        </Col>
+        <Col>
+          <Dropdown trigger={["click"]} menu={{ items: menuItems }}>
+            <Button icon={<MoreOutlined />} />
+          </Dropdown>
+        </Col>
+      </Row>
+      <Skeleton loading={loading} active={true} style={{ padding: 20 }}>
+        <div style={{ overflowY: "auto", overflowX: "hidden", height: "calc(100vh - 110px)" }}>
+          <NoteTree search={search} />
         </div>
       </Skeleton>
     </>
