@@ -1,3 +1,4 @@
+import _ from "lodash"
 import { useCallback, useMemo } from "react"
 
 import { NoteIndentItem } from "~/types"
@@ -6,9 +7,9 @@ import useGlobalState from "./useGlobalState"
 import useItemArray from "./useItemArray"
 
 export default function useItemsTree(search?: string): NoteIndentItem[] {
-  const [{ expandItems, items }] = useGlobalState()
+  const [{ expandItems }] = useGlobalState()
 
-  const itemArray = useItemArray(true)
+  const itemArray = useItemArray({ needSort: true, search })
 
   const findChildren = useCallback(
     (parentId: string | undefined, indent: number): NoteIndentItem[] =>
@@ -27,13 +28,5 @@ export default function useItemsTree(search?: string): NoteIndentItem[] {
     [expandItems, itemArray],
   )
 
-  return useMemo(() => {
-    const _items = findChildren(undefined, 0)
-    const s = search?.trim()?.toLowerCase()
-    if (!s) {
-      return _items
-    }
-
-    return _items
-  }, [findChildren, search])
+  return useMemo(() => findChildren(undefined, 0), [findChildren])
 }

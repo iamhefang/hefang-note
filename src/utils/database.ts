@@ -58,9 +58,8 @@ function createKeyValueDbStore<T extends Record<string, unknown>>(storeName: str
       await (await db).put(storeName, value, name as string)
     },
     async setObject(values: Partial<T>): Promise<void> {
-      for (const [key, value] of Object.entries(values)) {
-        await (await db).put(storeName, value, key)
-      }
+      const tx = (await db).transaction(storeName, "readwrite")
+      await Promise.all(Object.entries(values).map(async ([key, value]) => tx.store.put(value, key)).concat(tx.done))
     },
     async getObject(fallback?: T): Promise<T> {
       const _db = (await db)

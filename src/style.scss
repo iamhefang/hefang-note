@@ -18,7 +18,8 @@ kbd {
   border-radius: 4px;
 }
 
-[data-tauri-drag-region] {
+[data-tauri-drag-region],
+:not(input, textarea, [contenteditable="true"], a, svg) {
   cursor: default !important;
 }
 
