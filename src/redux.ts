@@ -58,7 +58,7 @@ export const defaultState: Settings = {
     fontFamily: "inherit",
     fontSize: "inherit",
   },
-  shortcut: { lock: "" },
+  shortcut: { lock: "Ctrl+L" },
 }
 
 

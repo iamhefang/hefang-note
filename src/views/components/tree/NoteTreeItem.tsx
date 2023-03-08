@@ -3,7 +3,7 @@ import { App, Col, Input, Row, theme } from "antd"
 import _ from "lodash"
 import React, { useCallback, useMemo } from "react"
 
-import { nameMaxLength } from "~/config"
+import { NAME_MAX_LENGTH } from "~/config"
 import useContentLoader from "~/hooks/useContentLoader"
 import useGlobalState from "~/hooks/useGlobalState"
 import useItemArray from "~/hooks/useItemArray"
@@ -141,7 +141,7 @@ export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) 
             defaultValue={item.title}
             onKeyDown={onRenameKeyDown}
             onBlur={onRenamingBlur}
-            maxLength={nameMaxLength}
+            maxLength={NAME_MAX_LENGTH}
           />
         ) : (
           <div title={item.title} style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>

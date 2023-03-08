@@ -3,17 +3,18 @@ import dayjs from "dayjs"
 import _ from "lodash"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
-import { contentSaveDelay } from "~/config"
+import { CONTENT_SAVE_DELAY } from "~/config"
 import useContentLoader from "~/hooks/useContentLoader"
 import useGlobalState from "~/hooks/useGlobalState"
 import { IEditor, usePluginMap } from "~/hooks/usePlugins"
 import type { NoteItem } from "~/types"
 import { contentStore } from "~/utils/database"
+import { findNoteParents } from "~/utils/notes"
 
 import DefaultEditor from "./DefaultEditor"
 
 export default function Editor() {
-  const [state, setState] = useGlobalState()
+  const [state] = useGlobalState()
   const { items, current, editor, showTimeAboveEditor, editorStyle } = state
   const loadContent = useContentLoader()
   const {
@@ -35,18 +36,18 @@ export default function Editor() {
       }
       refLastSaveTimer.current && clearTimeout(refLastSaveTimer.current)
       refLastSaveTimer.current = window.setTimeout(() => {
-        let newItem: NoteItem = { ...item, content, modifyTime: Date.now() }
-        const newItems = [newItem]
-        while (newItem?.parentId) {
-          newItem = items[newItem.parentId]
-          newItem && newItems.push(newItem)
-        }
-        console.info("保存笔记", Date.now(), item)
-        void contentStore.set(newItem).then(() => {
+        const modifyTime = Date.now()
+        const newItem: NoteItem = { ...item, content, modifyTime }
+        const newItems = findNoteParents(items, item.id)
+          .map((me) => ({ ...me, modifyTime }))
+          .concat(newItem)
+        console.info("保存笔记", Date.now(), newItems)
+        void contentStore.set(...newItems).then(() => {
           setChanging(false)
+          setItem(newItem)
           loadContent()
         })
-      }, contentSaveDelay)
+      }, CONTENT_SAVE_DELAY)
     },
     [item, items, loadContent],
   )
