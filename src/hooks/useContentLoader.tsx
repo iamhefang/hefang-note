@@ -8,6 +8,7 @@ export default function useContentLoader() {
   const [{}, setState] = useGlobalState()
 
   return useCallback(() => {
+    console.info("正在加载笔记")
     contentStore
       .getAll()
       .then((items) =>

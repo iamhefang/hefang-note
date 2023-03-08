@@ -1,7 +1,7 @@
 import { App, Form, Input, message, ModalFuncProps } from "antd"
 import React, { useCallback, useRef } from "react"
 
-import { nameMaxLength } from "~/config"
+import { NAME_MAX_LENGTH } from "~/config"
 import { contentStore } from "~/utils/database"
 import { MenuInfo, NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
 
@@ -65,7 +65,7 @@ export default function useNewModal() {
         content: (
           <Form form={form}>
             <Form.Item name="title" rules={[{ required: true, message: `请输入${type}名` }]}>
-              <Input placeholder={`请输入${type}名`} maxLength={nameMaxLength} autoFocus onKeyDown={createOnKeyDown(info, parentId)} />
+              <Input placeholder={`请输入${type}名`} maxLength={NAME_MAX_LENGTH} autoFocus onKeyDown={createOnKeyDown(info, parentId)} />
             </Form.Item>
           </Form>
         ),
