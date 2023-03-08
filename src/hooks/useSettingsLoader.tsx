@@ -8,9 +8,6 @@ export default function useSettingsLoader() {
   const [{}, setState] = useGlobalState()
 
   return useCallback(() => {
-    settingsStore
-      .getObject()
-      .then((settings) => setState(settings))
-      .catch(console.error)
+    settingsStore.getObject().then(setState).catch(console.error)
   }, [setState])
 }
