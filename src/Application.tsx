@@ -3,29 +3,37 @@ import zhCN from "antd/locale/zh_CN"
 import React, { Suspense, useEffect } from "react"
 
 import useContentLoader from "~/hooks/useContentLoader"
-import useGlobalState from "~/hooks/useGlobalState"
 import usePlugins from "~/hooks/usePlugins"
 import useSettingsLoader from "~/hooks/useSettingsLoader"
 import { useThemeConfig } from "~/hooks/useThemeConfig"
 import View from "~/views"
 import Loading from "~/views/components/loading/Loading"
 import ShowInPlatform from "~/views/components/utils/ShowInPlatform"
+
+import { useSettings, useStates } from "./hooks/useSelectors"
+import { useAppDispatch } from "./redux"
+import { stateSlice } from "./redux/stateSlice"
+
 const LazySettings = React.lazy(async () => import("~/views/settings"))
+
 export default function Application() {
-  const [state, setState] = useGlobalState()
-  const { theme, launching } = state
+  const { theme } = useSettings()
+  const { launching } = useStates()
   const plugins = usePlugins()
   const { token } = antdTheme.useToken()
   const loadContents = useContentLoader()
   const loadSettings = useSettingsLoader()
+  const dispatch = useAppDispatch()
   useEffect(() => {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-      setState({})
+      // setState({})
     })
-    loadSettings()
-    loadContents()
-    setState({ launching: false })
-  }, [loadContents, loadSettings, setState])
+    void (async () => {
+      await loadSettings()
+      await loadContents()
+      dispatch(stateSlice.actions.ready({}))
+    })()
+  }, [dispatch, loadContents, loadSettings])
   useEffect(() => {
     for (const plugin of plugins) {
       console.info("call plugin hooks: onThemeChange", plugin, theme, token)

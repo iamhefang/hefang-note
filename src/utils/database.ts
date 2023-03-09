@@ -8,25 +8,37 @@ import { NoteItem, Settings } from "~/types"
 import pkg from "^/package.json"
 
 const db = openDB(pkg.name, versionCode, {
-  upgrade(database, oldVersion, newVersion, transaction, event) {
-    if (oldVersion === 0 && newVersion === 1) {
+  async upgrade(database, oldVersion, newVersion, transaction, event) {
+    let storeContent
+    if (oldVersion === 0) {
+
+      console.info("正在创建初始数据库")
+
       const example: NoteItem = {
         id: crypto.randomUUID(),
         title: "示例笔记",
         isLeaf: true,
         createTime: Date.now(),
         modifyTime: Date.now(),
-        content: [
-          `感谢你使用${pkg.productName}`,
-          `${pkg.productName}的所有内容都保存在本地，不通过网络传输，开发者和您的网络运营商都无法获取您的数据。`,
-          "在您不清空浏览器数据的情况下数据将一直存在。",
-          `${pkg.productName}到后期会开源，如果您想要立即参与${pkg.productName}的开发，可联系我的邮箱 he@hefang.link`,
-        ].join("\n\n"),
+        content: `感谢使用${pkg.productName}`,
       }
       void database.createObjectStore("settings").add(example.id, "current")
-      void database.createObjectStore("content", { keyPath: "id" }).add(example)
+      storeContent = database.createObjectStore("content", { keyPath: "id" })
+      void storeContent.add(example)
       database.createObjectStore("plugins", { keyPath: "id" })
     }
+    if ((newVersion || 0) >= 10) {
+      console.info(`正在把数据库从${oldVersion}升级到${newVersion}`)
+      const storeNote = database.createObjectStore("notes", { keyPath: "id" })
+      const storeContents = database.createObjectStore("contents")
+      const allContent: NoteItem[] = await storeContent?.getAll() || []
+      for (const { content, ...item } of allContent) {
+        await storeNote.put(item)
+        await storeContents.put(content, item.id)
+      }
+      database.deleteObjectStore("content")
+    }
+    await transaction.done
   },
 })
 
@@ -117,7 +129,8 @@ function createRecordsDbStore<T>(storeName: string): IRecordDbStore<T> {
 }
 
 export const settingsStore = createKeyValueDbStore<Settings>("settings")
-export const contentStore = createRecordsDbStore<NoteItem>("content")
+export const notesStore = createRecordsDbStore<NoteItem>("notes")
+export const contentStore = createKeyValueDbStore<{ [id: string]: string }>("contents")
 export const pluginStore = createRecordsDbStore<Omit<IPluginInfo, "path">>("plugins")
 
 if (import.meta.env.DEV) {
@@ -130,7 +143,7 @@ if (import.meta.env.DEV) {
   // @ts-ignore
   window.settingsStore = settingsStore
   // @ts-ignore
-  window.contentStore = contentStore
+  window.contentStore = notesStore
   // @ts-ignore
   window.pluginStore = pluginStore
   // @ts-ignore
@@ -163,25 +176,27 @@ if (import.meta.env.DEV) {
     for (let i = 0; i < count; i++) {
       const id = crypto.randomUUID()
       const isLeaf = Math.random() > .5
-      await contentStore.set({
+      await notesStore.set({
         id,
         title: `笔记标题${i}`,
         isLeaf,
         createTime: Date.now(),
         modifyTime: Date.now(),
-        content: isLeaf ? `这是内容${i}-`.repeat(count) : undefined,
       })
+
+      isLeaf && await contentStore.set(id, `这是内容${i} `.repeat(100))
       if (!isLeaf) {
         for (let j = 0; j < count; j++) {
-          await contentStore.set({
-            id: crypto.randomUUID(),
+          const childId = crypto.randomUUID()
+          await notesStore.set({
+            id: childId,
             title: `笔记标题${i}-${j}`,
             parentId: id,
             isLeaf: true,
             createTime: Date.now(),
             modifyTime: Date.now(),
-            content: `这是内容${i}-${j}-`.repeat(count),
           })
+          await contentStore.set(childId, `这是内容${i}-${j} `.repeat(100))
         }
       }
     }

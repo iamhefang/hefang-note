@@ -2,37 +2,37 @@ import { SettingOutlined } from "@ant-design/icons"
 import { appWindow } from "@tauri-apps/api/window"
 import { Modal, Space, Tabs } from "antd"
 import { useCallback, useEffect } from "react"
-import { isInTauri } from "~/consts"
 
-import useGlobalState from "~/hooks/useGlobalState"
+import { isInTauri } from "~/consts"
+import { useSettings, useStates } from "~/hooks/useSelectors"
+import { useAppDispatch } from "~/redux"
+import { toggleSettingsModal } from "~/redux/stateSlice"
 import { PluginManager } from "~/views/components/plugins"
 import SettingForm from "~/views/components/settings/SettingForm"
 
 export default function SettingsModal() {
-  const [
-    {
-      showSettingModal,
-      lock: { locked },
-    },
-    setState,
-  ] = useGlobalState()
+  const {
+    lock: { locked },
+  } = useSettings()
+  const { showSettingsModal } = useStates()
+  const dispatch = useAppDispatch()
   const onCancel = useCallback(() => {
-    setState({ showSettingModal: false })
-  }, [setState])
+    dispatch(toggleSettingsModal())
+  }, [dispatch])
   useEffect(() => {
     if (!isInTauri) {
       return
     }
     const unlisten = appWindow.listen("toggleSettingsModal", (event) => {
       if (!locked) {
-        setState({ showSettingModal: !showSettingModal })
+        dispatch(toggleSettingsModal())
       }
     })
 
     return () => {
       unlisten.then((callback) => callback()).catch(console.error)
     }
-  }, [locked, setState, showSettingModal])
+  }, [dispatch, locked, showSettingsModal])
 
   return (
     <Modal
@@ -44,7 +44,7 @@ export default function SettingsModal() {
       }
       footer={null}
       maskClosable={false}
-      open={showSettingModal && !locked}
+      open={showSettingsModal && !locked}
       onCancel={onCancel}
       width="90%"
       style={{

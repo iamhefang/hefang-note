@@ -9,7 +9,7 @@ import { useCallback } from "react"
 import { isInTauri } from "~/consts"
 import schema from "~/data/note-data-schema.json"
 import { NoteItem } from "~/types"
-import { contentStore } from "~/utils/database"
+import { notesStore } from "~/utils/database"
 
 import pkg from "^/package.json"
 
@@ -108,7 +108,7 @@ export default function useImporter() {
   return useCallback(async () => {
     const json: NoteData = isInTauri ? await importWithTauri() : await importWithHtml(modal)
     const importIds = json.contents.map((item) => item.id)
-    const currentIds = await contentStore.getAllIds()
+    const currentIds = await notesStore.getAllIds()
     const ids = new Set([...currentIds, ...importIds])
     const total = currentIds.length + importIds.length
     if (ids.size !== total) {

@@ -3,15 +3,13 @@ import { useMemo } from "react"
 
 import { NoteItem } from "~/types"
 
-import useGlobalState from "./useGlobalState"
+import { useNotes, useSettings } from "./useSelectors"
 
 export default function useItemChildrens(parentId?: string, search?: string): NoteItem[] {
-  const [
-    {
-      items,
-      sort: { field, type },
-    },
-  ] = useGlobalState()
+  const { items } = useNotes()
+  const {
+    sort: { field, type },
+  } = useSettings()
 
   return useMemo(() => {
     const s = search?.toLowerCase().trim()

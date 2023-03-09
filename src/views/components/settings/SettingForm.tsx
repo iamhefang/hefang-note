@@ -3,6 +3,7 @@ import { Form, Segmented } from "antd"
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
 
 import useGlobalState from "~/hooks/useGlobalState"
+import { useSettings } from "~/hooks/useSelectors"
 import useSettingsLoader from "~/hooks/useSettingsLoader"
 import type { Settings } from "~/types"
 import { settingsStore } from "~/utils/database"
@@ -15,7 +16,7 @@ type SettingTypes = "general" | "editor" | "shortcut" | string | number
 
 export default function SettingForm() {
   const [form] = Form.useForm()
-  const [{ loading, launching, showSettingModal, renaming, ...settings }] = useGlobalState()
+  const settings = useSettings()
   const loadSettings = useSettingsLoader()
   const [active, setActive] = useState<SettingTypes>("general")
   const onValuesChange = useCallback(

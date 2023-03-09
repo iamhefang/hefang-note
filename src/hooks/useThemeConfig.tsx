@@ -1,10 +1,11 @@
 import { useMemo } from "react"
 
 import useGlobalState from "./useGlobalState"
+import { useSettings } from "./useSelectors"
 import useThemes from "./useThemes"
 
 export function useThemeConfig() {
-  const [{ theme }] = useGlobalState()
+  const { theme } = useSettings()
   const themes = useThemes()
 
   return useMemo(() => {

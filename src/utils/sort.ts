@@ -7,21 +7,23 @@ export const sortItems: (Sort<keyof Omit<NoteItem, "id" | "parentId" | "isLeaf">
   { field: "modifyTime", type: "asc", label: "编辑时间" },
   { field: "title", type: "asc", label: "标题" },
 ]
+const sortCache: Record<string, (a: NoteItem, b: NoteItem) => number> = {}
 
 export function treeSorter({ field, type }: NoteSort) {
-  console.info("treeSorter", field, type)
+  const cacheKey = `${field}-${type}`
+  if (cacheKey in sortCache) { return sortCache[cacheKey] }
 
-  return (a: NoteItem, b: NoteItem) => {
-    let item1: number
-    let item2: number
+  return sortCache[cacheKey] = (a: NoteItem, b: NoteItem) => {
     if (_.isNumber(a[field]) && _.isNumber(b[field])) {
-      item1 = a[field] as number
-      item2 = b[field] as number
-    } else {
-      item1 = String(a[field]).charCodeAt(0)
-      item2 = String(a[field]).charCodeAt(0)
+      const item1 = a[field] as number
+      const item2 = b[field] as number
+
+      return type === "asc" ? item1 - item2 : item2 - item1
     }
 
-    return type === "asc" ? item1 - item2 : item2 - item1
+    const item1 = String(a[field])
+    const item2 = String(a[field])
+
+    return type === "asc" ? item1.localeCompare(item2) : item2.localeCompare(item1)
   }
 }

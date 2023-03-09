@@ -5,18 +5,18 @@ import _ from "lodash"
 import { useCallback, useEffect } from "react"
 
 import { isInTauri } from "~/consts"
-import useGlobalState from "~/hooks/useGlobalState"
+import { useSettings } from "~/hooks/useSelectors"
+import { useAppDispatch } from "~/redux"
+import { lockScreen } from "~/redux/settingSlice"
 
 import ss from "./ScreenLocker.module.scss"
 
 export default function ScreenLocker() {
-  const [
-    {
-      lock: { locked, password, immediately },
-      shortcut,
-    },
-    setState,
-  ] = useGlobalState()
+  const {
+    lock: { locked, password, immediately },
+    shortcut,
+  } = useSettings()
+  const dispatch = useAppDispatch()
   const { modal, message } = App.useApp()
   const {
     token: { colorBgContainer },
@@ -27,7 +27,7 @@ export default function ScreenLocker() {
 
   const onLockClick = useCallback(() => {
     if (immediately && password) {
-      setState({ lock: { locked: true, password, immediately } })
+      dispatch(lockScreen(true))
 
       return
     }
@@ -46,12 +46,12 @@ export default function ScreenLocker() {
       okText: "锁定",
       onOk(closeModal: () => void) {
         void lockForm.validateFields().then((values) => {
-          setState({ lock: { locked: true, password: values.password, immediately } })
+          dispatch(lockScreen({ locked: true, password: values.password }))
           closeModal()
         })
       },
     })
-  }, [lockForm, password, modal, setState, immediately])
+  }, [immediately, password, lockForm, modal, dispatch])
 
   const onUnlockClick = useCallback(
     ({ password: pwd }: { password: string }) => {
@@ -61,10 +61,10 @@ export default function ScreenLocker() {
         void message.error("密码错误")
       } else {
         unlockForm.resetFields()
-        setState({ lock: { locked: false, password, immediately } })
+        lockScreen({ locked: false })
       }
     },
-    [password, message, unlockForm, setState, immediately],
+    [password, message, unlockForm],
   )
 
   useEffect(() => {

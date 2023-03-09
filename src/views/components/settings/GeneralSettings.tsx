@@ -1,16 +1,13 @@
 import { Form, Input, List, Select, Space, Switch } from "antd"
 import { ReactNode, useEffect, useMemo } from "react"
-import useGlobalState from "~/hooks/useGlobalState"
 import usePlugins from "~/hooks/usePlugins"
+import { useSettings } from "~/hooks/useSelectors"
 import { sortItems } from "~/utils/sort"
 
 export default function GeneralSettings() {
   const [form] = Form.useForm()
   const allPlugins = usePlugins()
-  const [{ loading, launching, showSettingModal, renaming, ...settings }, setState] = useGlobalState()
-  const plugins = useMemo(() => {
-    return allPlugins.filter((item) => item.components?.includes("Editor"))
-  }, [allPlugins])
+  const settings = useSettings()
 
   useEffect(() => {
     form.setFieldsValue({ ...settings })

@@ -4,28 +4,33 @@ import { findNoteParents } from "~/utils/notes"
 import { treeSorter } from "~/utils/sort"
 
 import useGlobalState from "./useGlobalState"
+import { useNotes, useSettings } from "./useSelectors"
 
 export type UseItemArrayOptions = { needSort?: boolean; search?: string }
 
 export default function useItemArray({ needSort = false, search }: UseItemArrayOptions = {}) {
-  const [{ items, sort }] = useGlobalState()
+  const {
+    sort: { field, type },
+  } = useSettings()
+
+  const { entities } = useNotes()
 
   const searched = useMemo(() => {
     const s = search?.trim().toLowerCase()
-    const itemArray = Object.values(items)
+    const itemArray = Object.values(entities)
     if (!s) {
       return itemArray
     }
 
     const matches = itemArray
       .filter((item) => item.title.includes(s))
-      .map((item) => findNoteParents(items, item.id))
+      .map((item) => findNoteParents(entities, item.id))
       .flat(2)
 
     return Array.from(new Set(matches))
-  }, [items, search])
+  }, [entities, search])
 
-  const sorter = useMemo(() => treeSorter(sort), [sort])
+  const sorter = useMemo(() => treeSorter({ field, type }), [field, type])
 
   const sorted = useMemo(() => (needSort ? searched.sort(sorter) : searched), [needSort, searched, sorter])
 

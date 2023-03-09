@@ -2,18 +2,19 @@ import { register, unregister } from "@tauri-apps/api/globalShortcut"
 import { App, Button, Descriptions, Dropdown, Modal } from "antd"
 import { useCallback, useEffect } from "react"
 
-import useGlobalState from "~/hooks/useGlobalState"
 import usePlatform from "~/hooks/usePlatform"
+import { useAppDispatch } from "~/redux"
+import { toggleSettingsModal } from "~/redux/stateSlice"
 import CommonMenuItem from "~/views/components/menus/CommonMenuItem"
 import logo from "~/views/icons/icon.png"
 
 import pkg from "^/package.json"
 
 export default function AppLogo() {
-  const [{ showSettingModal }, setState] = useGlobalState()
+  const dispatch = useAppDispatch()
   const toggleSettings = useCallback(() => {
-    setState({ showSettingModal: !showSettingModal })
-  }, [showSettingModal, setState])
+    dispatch(toggleSettingsModal(null))
+  }, [dispatch])
   const osType = usePlatform()
   const { modal } = App.useApp()
   const showAboutModal = useCallback(() => {

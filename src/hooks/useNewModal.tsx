@@ -2,7 +2,9 @@ import { App, Form, Input, message, ModalFuncProps } from "antd"
 import React, { useCallback, useRef } from "react"
 
 import { NAME_MAX_LENGTH } from "~/config"
-import { contentStore } from "~/utils/database"
+import { useAppDispatch } from "~/redux"
+import { setCurrent } from "~/redux/settingSlice"
+import { notesStore } from "~/utils/database"
 import { MenuInfo, NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
 
 import useContentLoader from "./useContentLoader"
@@ -14,16 +16,16 @@ export default function useNewModal() {
     destroy: () => void
     update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void
   }>()
-  const [{}, setState] = useGlobalState()
   const [form] = Form.useForm()
   const loadContent = useContentLoader()
+  const dispatch = useAppDispatch()
 
   const doSave = useCallback(
     (info: MenuInfo, parentId?: string) => {
       void form.validateFields().then((values) => {
         const id = crypto.randomUUID()
         const isLeaf = info.key === NoteTreeMenuKeys.newNote
-        contentStore
+        notesStore
           .set({
             id,
             title: values.title,
@@ -34,9 +36,9 @@ export default function useNewModal() {
             content: isLeaf ? "" : undefined,
           })
           .then(() => {
-            loadContent()
+            void loadContent()
             refModal.current?.destroy()
-            setTimeout(() => setState({ current: id }), 0)
+            setTimeout(() => dispatch(setCurrent(id)), 0)
           })
           .catch((e) => {
             console.error(e)
@@ -44,7 +46,7 @@ export default function useNewModal() {
           })
       })
     },
-    [form, loadContent, setState],
+    [dispatch, form, loadContent],
   )
 
   const createOnKeyDown = useCallback(

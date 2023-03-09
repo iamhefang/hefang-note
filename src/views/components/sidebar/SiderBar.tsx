@@ -1,29 +1,28 @@
 import { CheckOutlined, MoreOutlined } from "@ant-design/icons"
-import { App, Button, Col, Dropdown, Empty, Input, MenuProps, Modal, Row, Skeleton, Space } from "antd"
-import _ from "lodash"
+import { App, Button, Col, Dropdown, Input, MenuProps, Row, Skeleton } from "antd"
 import { useCallback, useMemo, useState } from "react"
 
 import useContentLoader from "~/hooks/useContentLoader"
-import useGlobalState from "~/hooks/useGlobalState"
 import useNewModal from "~/hooks/useNewModal"
+import { useNotes, useSettings, useStates } from "~/hooks/useSelectors"
 import useSettingsLoader from "~/hooks/useSettingsLoader"
 import { NoteSort } from "~/types"
 import { settingsStore } from "~/utils/database"
 import { sortItems } from "~/utils/sort"
 import { iconPlacehodler } from "~/views/components/icons/IconPlaceholder"
-import { MenuInfo, NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
-import NoteTree, { MemoedNoteTree } from "~/views/components/tree/NoteTree"
-
+import { NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
+import NoteTree from "~/views/components/tree/NoteTree"
 export default function SiderBar() {
-  const [{ items, loading, sort }] = useGlobalState()
+  const { initializing: loading } = useNotes()
+  const { sort } = useSettings()
   const [search, setSearch] = useState<string>("")
   const loadSettings = useSettingsLoader()
-  const { message, modal } = App.useApp()
+  const { modal } = App.useApp()
   const loadContent = useContentLoader()
   const showModal = useNewModal()
   const createOnSortChange = useCallback(
     ({ field = sort.field, type = sort.type }: Partial<NoteSort>) => {
-      return (info: MenuInfo) => {
+      return () => {
         settingsStore.set("sort", { field, type }).then(loadSettings).catch(console.error)
       }
     },
@@ -75,7 +74,7 @@ export default function SiderBar() {
         onClick: async () =>
           import("~/utils/plugin").then((res) => {
             void res.hefang.contens.import().then((count) => {
-              loadContent()
+              void loadContent()
               modal.info({ title: `共导入${count}条数据` })
             })
           }),
@@ -88,10 +87,10 @@ export default function SiderBar() {
     <>
       <Row style={{ margin: 10 }} gutter={10} wrap={false}>
         <Col flex={1}>
-          <Input.Search placeholder="搜索目录和标题" onSearch={setSearch} allowClear={true} />
+          <Input.Search placeholder="搜索目录和标题" onSearch={setSearch} allowClear={true} disabled={loading} />
         </Col>
         <Col>
-          <Dropdown trigger={["click"]} menu={{ items: menuItems }}>
+          <Dropdown trigger={["click"]} menu={{ items: menuItems }} disabled={loading}>
             <Button icon={<MoreOutlined />} />
           </Dropdown>
         </Col>
