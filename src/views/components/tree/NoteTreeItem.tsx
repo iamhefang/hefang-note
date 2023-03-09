@@ -3,13 +3,11 @@ import { App, Col, Input, Row, theme } from "antd"
 import React, { useCallback, useMemo } from "react"
 
 import { NAME_MAX_LENGTH } from "~/config"
-import useContentLoader from "~/hooks/useContentLoader"
-import { useSettings, useStates } from "~/hooks/useSelectors"
+import { useNotes, useSettings } from "~/hooks/useSelectors"
 import { useAppDispatch } from "~/redux"
+import { stopRenaming } from "~/redux/noteSlice"
 import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
-import { stopRenaming } from "~/redux/stateSlice"
 import { NoteIndentItem } from "~/types"
-import { notesStore } from "~/utils/database"
 import { iconPlacehodler } from "~/views/components/icons/IconPlaceholder"
 
 import ss from "./NoteTree.module.scss"
@@ -20,15 +18,14 @@ export type NoteTreeItemProps = {
 }
 export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) {
   const { current, expandItems } = useSettings()
-  const { renaming } = useStates()
+  const { renamingId } = useNotes()
   const { token } = theme.useToken()
   const { message } = App.useApp()
-  const loadContent = useContentLoader()
   const dispatch = useAppDispatch()
 
   const onItemClick = useCallback(
     (e: React.MouseEvent<HTMLElement>) => {
-      if (renaming === item.id) {
+      if (renamingId === item.id) {
         return
       }
       if (!item.isLeaf) {
@@ -41,7 +38,7 @@ export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) 
         dispatch(setCurrent(item.id))
       }
     },
-    [current, dispatch, expandItems, item, renaming],
+    [current, dispatch, expandItems, item.id, item.isLeaf, renamingId],
   )
 
   const onRenamingBlur = useCallback(
@@ -50,14 +47,10 @@ export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) 
       if (!newName.trim()) {
         void message.warning("名称不为能空")
       } else {
-        notesStore
-          .set({ ...item, title: newName })
-          .then(loadContent)
-          .catch(console.error)
+        dispatch(stopRenaming({ id: item.id, newName }))
       }
-      dispatch(stopRenaming(null))
     },
-    [dispatch, item, loadContent, message],
+    [dispatch, item, message],
   )
 
   const onRenameKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -76,41 +69,42 @@ export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) 
 
   const width = useMemo(() => `${24 + item.indent * 16}px`, [item.indent])
 
+  const title = useMemo(
+    () =>
+      renamingId === item.id ? (
+        <Input
+          key={`rename-input-${item.id}`}
+          autoFocus
+          size="small"
+          placeholder={item.title}
+          defaultValue={item.title}
+          onKeyDown={onRenameKeyDown}
+          onBlur={onRenamingBlur}
+          maxLength={NAME_MAX_LENGTH}
+        />
+      ) : (
+        <div title={item.title} style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          {item.title}
+        </div>
+      ),
+    [item.id, item.title, onRenameKeyDown, onRenamingBlur, renamingId],
+  )
+
+  const style = useMemo(
+    () => ({
+      background: current === item.id ? token.colorPrimaryBg : "none",
+      color: current === item.id ? token.colorPrimaryTextActive : undefined,
+      marginInline: 10,
+      borderColor: token.colorPrimary,
+    }),
+    [current, item.id, token.colorPrimary, token.colorPrimaryBg, token.colorPrimaryTextActive],
+  )
+
   return (
-    <Row
-      wrap={false}
-      gutter={10}
-      className={ss.item}
-      onClick={onItemClick}
-      onContextMenu={onRightClick}
-      data-active={current === item.id}
-      style={{
-        background: current === item.id ? token.colorPrimaryBg : "none",
-        color: current === item.id ? token.colorPrimaryTextActive : undefined,
-        marginInline: 10,
-        borderColor: token.colorPrimary,
-      }}
-    >
+    <Row wrap={false} gutter={10} className={ss.item} onClick={onItemClick} onContextMenu={onRightClick} data-active={current === item.id} style={style}>
       <Col style={{ width, textAlign: "right", flexShrink: 0 }}>{expandIcon}</Col>
       <Col>{item.isLeaf ? <FileTextOutlined /> : expandItems[item.id] ? <FolderOpenOutlined /> : <FolderOutlined />}</Col>
-      <Col flex={1}>
-        {renaming === item.id ? (
-          <Input
-            key={`rename-input-${item.id}`}
-            autoFocus
-            size="small"
-            placeholder={item.title}
-            defaultValue={item.title}
-            onKeyDown={onRenameKeyDown}
-            onBlur={onRenamingBlur}
-            maxLength={NAME_MAX_LENGTH}
-          />
-        ) : (
-          <div title={item.title} style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {item.title}
-          </div>
-        )}
-      </Col>
+      <Col flex={1}>{title}</Col>
     </Row>
   )
 }

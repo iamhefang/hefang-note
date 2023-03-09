@@ -5,11 +5,14 @@ import { NoteItem } from "~/types"
 import { contentStore, notesStore } from "~/utils/database"
 import { findNoteParents } from "~/utils/notes"
 
+
+
 export type NoteState = {
     ids: string[]
     entities: { [id: string]: NoteItem }
     initializing: boolean
     status: "loading" | "idle" | "failed"
+    renamingId?: string
 }
 const sliceName = "notes"
 
@@ -41,6 +44,21 @@ export const noteSlice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
             void notesStore.set(...notes)
             void contentStore.set(item.id, content)
         },
+        startRenaming(state: NoteState, action) {
+            state.renamingId = action.payload
+        },
+        stopRenaming(state: NoteState, action: PayloadAction<{ id: string, newName: string }>) {
+            const { id, newName } = action.payload
+            state.renamingId = undefined
+            state.entities[id].title = newName
+            state.entities[id].modifyTime = Date.now()
+            void notesStore.set({ ...state.entities[id] })
+        },
+        newNote(state, action: PayloadAction<NoteItem>) {
+            state.ids.push(action.payload.id)
+            state.entities[action.payload.id] = action.payload
+            void notesStore.set(action.payload)
+        },
     },
     extraReducers(builder) {
         builder
@@ -59,4 +77,4 @@ export const noteSlice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
     },
 })
 
-export const { updateContent } = noteSlice.actions
+export const { updateContent, startRenaming, stopRenaming, newNote } = noteSlice.actions

@@ -8,8 +8,8 @@ import useItemsTree from "~/hooks/useItemsTree"
 import useNewModal from "~/hooks/useNewModal"
 import { useSettings } from "~/hooks/useSelectors"
 import { useAppDispatch } from "~/redux"
+import { startRenaming } from "~/redux/noteSlice"
 import { setItemsExpanded } from "~/redux/settingSlice"
-import { startRenaming } from "~/redux/stateSlice"
 import type { NoteIndentItem } from "~/types"
 import { notesStore } from "~/utils/database"
 import NoteTreeItemMenu, { MenuInfo, NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
@@ -63,7 +63,7 @@ export default function NoteTree({ search }: NoteTreeProps) {
       }
       switch (info.key) {
         case NoteTreeMenuKeys.rename:
-          startRenaming(rightClickItem.id)
+          dispatch(startRenaming(rightClickItem.id))
           break
         case NoteTreeMenuKeys.delete:
           const children = itemArray.filter((c) => c.parentId === rightClickItem.id)
@@ -93,7 +93,7 @@ export default function NoteTree({ search }: NoteTreeProps) {
           console.warn("未生效的菜单")
       }
     },
-    [rightClickItem, itemArray, modal, showModal, loadContent],
+    [rightClickItem, dispatch, itemArray, modal, showModal, loadContent],
   )
 
   return data.length ? (
