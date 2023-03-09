@@ -6,13 +6,14 @@ import useContentLoader from "~/hooks/useContentLoader"
 import usePlugins from "~/hooks/usePlugins"
 import useSettingsLoader from "~/hooks/useSettingsLoader"
 import { useThemeConfig } from "~/hooks/useThemeConfig"
+import { stateSlice } from "~/redux/stateSlice"
 import View from "~/views"
 import Loading from "~/views/components/loading/Loading"
 import ShowInPlatform from "~/views/components/utils/ShowInPlatform"
 
-import { useSettings, useStates } from "./hooks/useSelectors"
 import { useAppDispatch } from "./redux"
-import { stateSlice } from "./redux/stateSlice"
+
+import { useSettings, useStates } from "~hooks/useSelectors"
 
 const LazySettings = React.lazy(async () => import("~/views/settings"))
 
@@ -30,8 +31,8 @@ export default function Application() {
     })
     void (async () => {
       await loadSettings()
-      await loadContents()
       dispatch(stateSlice.actions.ready({}))
+      void loadContents()
     })()
   }, [dispatch, loadContents, loadSettings])
   useEffect(() => {

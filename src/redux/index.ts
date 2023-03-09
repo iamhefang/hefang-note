@@ -10,14 +10,10 @@ import { pluginSlice, PluginState } from "./pluginSlice"
 import { settingSlice } from "./settingSlice"
 import { States, stateSlice } from "./stateSlice"
 
-import pkg from "^/package.json"
-
-
 export const defaultState: Settings = {
   theme: "auto",
   items: {},
   plugins: [],
-  title: `${pkg.productName} v${pkg.version}`,
   lock: { locked: false, immediately: false },
   showSideBar: true,
   current: "",

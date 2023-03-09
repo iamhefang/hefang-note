@@ -4,14 +4,11 @@ import _ from "lodash"
 import { Settings } from "~/types"
 import { settingsStore } from "~/utils/database"
 
-import pkg from "^/package.json"
-
 
 export const defaultState: Settings = {
     theme: "auto",
     items: {},
     plugins: [],
-    title: `${pkg.productName} v${pkg.version}`,
     lock: { locked: false, immediately: false },
     showSideBar: true,
     current: "",

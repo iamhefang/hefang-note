@@ -1,14 +1,13 @@
-import { App, Form, Input, message, ModalFuncProps } from "antd"
+import { App, Form, Input, Modal, ModalFuncProps } from "antd"
 import React, { useCallback, useRef } from "react"
 
 import { NAME_MAX_LENGTH } from "~/config"
 import { useAppDispatch } from "~/redux"
-import { setCurrent } from "~/redux/settingSlice"
-import { notesStore } from "~/utils/database"
+import { newNote } from "~/redux/noteSlice"
+import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
 import { MenuInfo, NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
 
-import useContentLoader from "./useContentLoader"
-import useGlobalState from "./useGlobalState"
+import { useNotes } from "./useSelectors"
 
 export default function useNewModal() {
   const { modal } = App.useApp()
@@ -17,36 +16,34 @@ export default function useNewModal() {
     update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void
   }>()
   const [form] = Form.useForm()
-  const loadContent = useContentLoader()
+  const { entities } = useNotes()
   const dispatch = useAppDispatch()
 
   const doSave = useCallback(
-    (info: MenuInfo, parentId?: string) => {
+    (info: MenuInfo, parentId?: string, closeModal?: () => void) => {
       void form.validateFields().then((values) => {
         const id = crypto.randomUUID()
         const isLeaf = info.key === NoteTreeMenuKeys.newNote
-        notesStore
-          .set({
+        const createTime = Date.now()
+        dispatch(
+          newNote({
             id,
             title: values.title,
             parentId,
             isLeaf,
-            createTime: Date.now(),
-            modifyTime: Date.now(),
+            createTime,
+            modifyTime: createTime,
             content: isLeaf ? "" : undefined,
-          })
-          .then(() => {
-            void loadContent()
-            refModal.current?.destroy()
-            setTimeout(() => dispatch(setCurrent(id)), 0)
-          })
-          .catch((e) => {
-            console.error(e)
-            void message.error(`出现错误: ${JSON.stringify(e)}`)
-          })
+          }),
+        )
+        Modal.destroyAll()
+        setTimeout(() => {
+          dispatch(setCurrent(id))
+          parentId && dispatch(setItemsExpanded({ [parentId]: true }))
+        }, 0)
       })
     },
-    [dispatch, form, loadContent],
+    [dispatch, form],
   )
 
   const createOnKeyDown = useCallback(
@@ -72,7 +69,7 @@ export default function useNewModal() {
           </Form>
         ),
         okText: "新建",
-        onOk(closeModal) {
+        onOk() {
           doSave(info, parentId)
         },
       })

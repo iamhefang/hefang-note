@@ -42,7 +42,6 @@ export type Settings = {
    */
   current: string;
   items: Record<string, NoteItem>;
-  title: string;
   showSideBar: boolean;
   lock: {
     locked: boolean;

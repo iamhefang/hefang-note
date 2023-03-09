@@ -4,6 +4,7 @@ import { IPluginInfo } from "~/hooks/usePlugins"
 import { NoteItem, Settings } from "~/types"
 
 import pkg from "^/package.json"
+import _ from "lodash"
 
 const db = openDB(pkg.name, 10, {
   async upgrade(database, oldVersion, newVersion, transaction, event) {
@@ -61,9 +62,9 @@ function createKeyValueDbStore<T extends Record<string, unknown>>(storeName: str
   return {
     async get(name: keyof T, defaultValue?: T[keyof T]): Promise<T[keyof T]> {
       const _db = await db
-      const hasKey = (await _db.getAllKeys(storeName, name as string)).includes(name as string)
+      const value = await _db.get(storeName, name as string)
 
-      return (hasKey ? (await db).get(storeName, name as string) : defaultValue) as T[keyof T]
+      return _.isUndefined(value) ? defaultValue : value
     },
     async set(name: keyof T, value: T[keyof T]): Promise<void> {
       await (await db).put(storeName, value, name as string)

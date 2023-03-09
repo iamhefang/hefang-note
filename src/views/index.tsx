@@ -3,6 +3,7 @@ import { theme as antdTheme, Col, Layout, Row, Spin } from "antd"
 import { Resizable, ResizeCallback } from "re-resizable"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
+import { productName, versionName } from "~/consts"
 import { useNotes, useSettings } from "~/hooks/useSelectors"
 import Editor from "~/views/components/editor/Editor"
 import SiderBar from "~/views/components/sidebar/SiderBar"
@@ -13,10 +14,10 @@ import VersionView from "~/views/components/version/VersionView"
 const { Sider, Content, Header, Footer } = Layout
 export default function View() {
   const {
-    title,
     showSideBar,
     theme,
     lock: { locked },
+    current,
   } = useSettings()
   const { entities, status } = useNotes()
   const {
@@ -54,11 +55,20 @@ export default function View() {
     localStorage.setItem("bgColor", colorBgBase)
   }, [colorBgBase, theme])
 
+  const title = useMemo(() => {
+    if (locked) {
+      return "已锁定"
+    }
+    const item = entities[current]
+
+    return `${item?.isLeaf ? `${item.title} - ` : ""}${productName} v${versionName}`
+  }, [current, entities, locked])
+
   return (
     <Layout>
       <Header data-tauri-drag-region={true} style={{ backgroundColor: colorBgContainer }}>
         <TopBarLeft />
-        {locked ? "已锁定" : title}
+        {title}
         <TopBarRight />
       </Header>
       <Layout>

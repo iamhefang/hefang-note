@@ -57,7 +57,7 @@ export default function Editor() {
     if (!item?.isLeaf) {
       return
     }
-    contentStore.get(item.id).then(setValue).catch(console.error)
+    contentStore.get(item.id, "").then(setValue).catch(console.error)
   }, [item?.id, item?.isLeaf])
 
   if ((item && !item.isLeaf) || _.isEmpty(ids) || !item) {
