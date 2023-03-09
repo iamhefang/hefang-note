@@ -3,7 +3,6 @@ import { useMemo } from "react"
 import { findNoteParents } from "~/utils/notes"
 import { treeSorter } from "~/utils/sort"
 
-import useGlobalState from "./useGlobalState"
 import { useNotes, useSettings } from "./useSelectors"
 
 export type UseItemArrayOptions = { needSort?: boolean; search?: string }

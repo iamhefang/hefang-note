@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit"
 import _ from "lodash"
 import { useDispatch } from "react-redux"
 
-import { GlobalState, Settings } from "~/types"
+import { Settings } from "~/types"
 import { settingsStore } from "~/utils/database"
 
 import { noteSlice, NoteState } from "./noteSlice"
@@ -12,21 +12,6 @@ import { States, stateSlice } from "./stateSlice"
 
 import pkg from "^/package.json"
 
-const need2save: (keyof Settings)[] = [
-  "current",
-  "theme",
-  "lock",
-  "plugins",
-  "showSideBar",
-  "theme",
-  "plugins",
-  "title",
-  "expandItems",
-  "sort",
-  "editor",
-  "autoCheckUpdate",
-  "shortcut",
-]
 
 export const defaultState: Settings = {
   theme: "auto",
@@ -65,8 +50,13 @@ const store = configureStore({
   devTools: import.meta.env.DEV,
 })
 
-store.subscribe(() => {
+const saveSettings = _.debounce(() => {
+  console.info("正在保存配置")
   void settingsStore.setObject(store.getState().settings)
+}, 1000)
+
+store.subscribe(() => {
+  saveSettings()
 })
 
 export const useAppDispatch: () => typeof store.dispatch = useDispatch

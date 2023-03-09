@@ -2,13 +2,14 @@ import { register, unregister } from "@tauri-apps/api/globalShortcut"
 import { App, Button, Descriptions, Dropdown, Modal } from "antd"
 import { useCallback, useEffect } from "react"
 
+import { isInTauri } from "~/consts"
 import usePlatform from "~/hooks/usePlatform"
 import { useAppDispatch } from "~/redux"
 import { toggleSettingsModal } from "~/redux/stateSlice"
 import CommonMenuItem from "~/views/components/menus/CommonMenuItem"
-import logo from "~/views/icons/icon.png"
 
 import pkg from "^/package.json"
+import logo from "^/src-tauri/icons/icon.png"
 
 export default function AppLogo() {
   const dispatch = useAppDispatch()
@@ -24,12 +25,15 @@ export default function AppLogo() {
       content: (
         <Descriptions column={1} size="small">
           <Descriptions.Item label="版本号">v{pkg.version}</Descriptions.Item>
-          <Descriptions.Item label="操作系统">{osType}</Descriptions.Item>
+          <Descriptions.Item label="平台">{osType}</Descriptions.Item>
         </Descriptions>
       ),
     })
   }, [modal, osType])
   useEffect(() => {
+    if (!isInTauri) {
+      return
+    }
     void register("Ctrl+,", toggleSettings)
     void register("Ctrl+Q", window.close)
 
@@ -43,18 +47,28 @@ export default function AppLogo() {
     <>
       <Dropdown
         trigger={["click", "contextMenu"]}
+        placement="bottomLeft"
+        overlayStyle={{ zIndex: 10000 }}
         menu={{
-          items: [
-            {
-              key: "app-name",
-              label: `关于${pkg.productName}`,
-              onClick: showAboutModal,
-            },
-            //   { type: "divider" },
-            { key: "menu-settings", label: <CommonMenuItem title="设置" shortcut="Ctrl+," />, onClick: toggleSettings },
-            //   { type: "divider" },
-            { key: "menu-quit", label: <CommonMenuItem title="退出" shortcut="Ctrl+Q" />, onClick: window.close },
-          ],
+          items: ["Linux", "Windows"].includes(osType)
+            ? [
+                {
+                  key: "app-name",
+                  label: `关于${pkg.productName}`,
+                  onClick: showAboutModal,
+                },
+                { type: "divider" },
+                { key: "menu-settings", label: <CommonMenuItem title="设置" shortcut="Ctrl+," />, onClick: toggleSettings },
+                { type: "divider" },
+                { key: "menu-quit", label: <CommonMenuItem title="退出" shortcut="Ctrl+Q" />, onClick: window.close },
+              ]
+            : [
+                {
+                  key: "app-name",
+                  label: `关于${pkg.productName}`,
+                  onClick: showAboutModal,
+                },
+              ],
         }}
       >
         <Button

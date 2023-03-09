@@ -1,5 +1,9 @@
 import { NoteItem } from "~/types"
 
+import { contentStore, notesStore } from "./database"
+
+import pkg from "^/package.json"
+
 /**
  * 获取指定笔记或目录的全部上级目录
  * @param items 全部笔记
@@ -17,4 +21,19 @@ export function findNoteParents<T extends NoteItem = NoteItem>(items: Record<str
     }
 
     return parents
+}
+
+
+export async function buildExportJson(): Promise<string> {
+    const notes = await notesStore.getAll()
+    const contents = await contentStore.getObject()
+    const json = JSON.stringify({
+        name: pkg.productName,
+        version: pkg.version,
+        notes,
+        contents,
+        saveTime: Date.now(),
+    })
+
+    return json
 }

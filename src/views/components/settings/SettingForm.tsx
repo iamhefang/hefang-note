@@ -2,11 +2,10 @@ import { EditOutlined, HomeOutlined, KeyOutlined } from "@ant-design/icons"
 import { Form, Segmented } from "antd"
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
 
-import useGlobalState from "~/hooks/useGlobalState"
 import { useSettings } from "~/hooks/useSelectors"
-import useSettingsLoader from "~/hooks/useSettingsLoader"
+import { useAppDispatch } from "~/redux"
+import { setSettings } from "~/redux/settingSlice"
 import type { Settings } from "~/types"
-import { settingsStore } from "~/utils/database"
 
 import EditorSettings from "./EditorSettings"
 import GeneralSettings from "./GeneralSettings"
@@ -17,34 +16,23 @@ type SettingTypes = "general" | "editor" | "shortcut" | string | number
 export default function SettingForm() {
   const [form] = Form.useForm()
   const settings = useSettings()
-  const loadSettings = useSettingsLoader()
+  const dispatch = useAppDispatch()
   const [active, setActive] = useState<SettingTypes>("general")
   const onValuesChange = useCallback(
     (changedValues: Partial<Settings>, values: Settings) => {
-      settingsStore
-        .setObject({
-          ...changedValues,
-          lock: { ...settings.lock, ...changedValues.lock },
-          sort: { ...settings.sort, ...changedValues.sort },
-          editorStyle: { ...settings.editorStyle, ...changedValues.editorStyle },
-          shortcut: { ...settings.shortcut, ...changedValues.shortcut },
-        })
-        .then(loadSettings)
-        .catch(console.error)
+      setTimeout(() => {
+        dispatch(setSettings(changedValues))
+      }, 0)
     },
-    [loadSettings, settings.editorStyle, settings.lock, settings.shortcut, settings.sort],
+    [dispatch],
   )
-
-  useEffect(() => {
-    form.setFieldsValue({ ...settings })
-  }, [form, settings])
 
   const formItems: Record<SettingTypes, ReactNode> = useMemo(() => {
     return { general: <GeneralSettings />, editor: <EditorSettings />, shortcut: <ShortcutSettings /> }
   }, [])
 
   return (
-    <Form form={form} layout="inline" onValuesChange={onValuesChange} style={{ width: "100%" }}>
+    <Form form={form} layout="inline" onValuesChange={onValuesChange} style={{ width: "100%" }} initialValues={settings}>
       <Segmented
         value={active}
         onChange={setActive}
