@@ -38,7 +38,8 @@ export const noteSlice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
             for (const note of notes) {
                 state.entities[note.id] = note
             }
-            void Promise.all([notesStore.set(...notes), contentStore.set(item.id, content)])
+            void notesStore.set(...notes)
+            void contentStore.set(item.id, content)
         },
     },
     extraReducers(builder) {
@@ -49,7 +50,7 @@ export const noteSlice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
                 state.initializing = false
                 state.status = "idle"
             })
-            .addCase(loadNotes.pending, (state, action) => {
+            .addCase(loadNotes.pending, (state) => {
                 state.status = "loading"
             })
             .addCase(loadNotes.rejected, (state) => {

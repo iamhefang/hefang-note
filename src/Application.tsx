@@ -18,7 +18,7 @@ const LazySettings = React.lazy(async () => import("~/views/settings"))
 
 export default function Application() {
   const { theme } = useSettings()
-  const { launching } = useStates()
+  const { launching, exporting } = useStates()
   const plugins = usePlugins()
   const { token } = antdTheme.useToken()
   const loadContents = useContentLoader()

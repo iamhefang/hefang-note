@@ -4,10 +4,10 @@ import { useCallback, useMemo, useState } from "react"
 
 import useContentLoader from "~/hooks/useContentLoader"
 import useNewModal from "~/hooks/useNewModal"
-import { useNotes, useSettings, useStates } from "~/hooks/useSelectors"
-import useSettingsLoader from "~/hooks/useSettingsLoader"
+import { useNotes, useSettings } from "~/hooks/useSelectors"
+import { useAppDispatch } from "~/redux"
+import { setSort } from "~/redux/settingSlice"
 import { NoteSort } from "~/types"
-import { settingsStore } from "~/utils/database"
 import { sortItems } from "~/utils/sort"
 import { iconPlacehodler } from "~/views/components/icons/IconPlaceholder"
 import { NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
@@ -16,18 +16,11 @@ export default function SiderBar() {
   const { initializing: loading } = useNotes()
   const { sort } = useSettings()
   const [search, setSearch] = useState<string>("")
-  const loadSettings = useSettingsLoader()
   const { modal } = App.useApp()
   const loadContent = useContentLoader()
+  const dispatch = useAppDispatch()
   const showModal = useNewModal()
-  const createOnSortChange = useCallback(
-    ({ field = sort.field, type = sort.type }: Partial<NoteSort>) => {
-      return () => {
-        settingsStore.set("sort", { field, type }).then(loadSettings).catch(console.error)
-      }
-    },
-    [loadSettings, sort.field, sort.type],
-  )
+  const createOnSortChange = useCallback((newSort: Partial<NoteSort>) => () => dispatch(setSort(newSort)), [dispatch])
 
   const menuItems: MenuProps["items"] = useMemo(
     () => [
@@ -59,28 +52,28 @@ export default function SiderBar() {
           },
         ] as MenuProps["items"],
       },
-      { type: "divider" },
-      {
-        key: "export",
-        label: "导出全部笔记",
-        onClick: async () =>
-          import("~/utils/plugin").then((res) => {
-            void res.hefang.contens.export()
-          }),
-      },
-      {
-        key: "import",
-        label: "导入笔记",
-        onClick: async () =>
-          import("~/utils/plugin").then((res) => {
-            void res.hefang.contens.import().then((count) => {
-              void loadContent()
-              modal.info({ title: `共导入${count}条数据` })
-            })
-          }),
-      },
+      // { type: "divider" },
+      // {
+      //   key: "export",
+      //   label: "导出全部笔记",
+      //   onClick: async () =>
+      //     import("~/utils/plugin").then((res) => {
+      //       void res.hefang.contens.export()
+      //     }),
+      // },
+      // {
+      //   key: "import",
+      //   label: "导入笔记",
+      //   onClick: async () =>
+      //     import("~/utils/plugin").then((res) => {
+      //       void res.hefang.contens.import().then((count) => {
+      //         void loadContent()
+      //         modal.info({ title: `共导入${count}条数据` })
+      //       })
+      //     }),
+      // },
     ],
-    [createOnSortChange, loadContent, modal, showModal, sort.field, sort.type],
+    [createOnSortChange, showModal, sort.field, sort.type],
   )
 
   return (

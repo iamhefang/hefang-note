@@ -27,7 +27,7 @@ export default function ScreenLocker() {
 
   const onLockClick = useCallback(() => {
     if (immediately && password) {
-      dispatch(lockScreen(true))
+      dispatch(lockScreen({ locked: true }))
 
       return
     }
@@ -61,10 +61,10 @@ export default function ScreenLocker() {
         void message.error("密码错误")
       } else {
         unlockForm.resetFields()
-        lockScreen({ locked: false })
+        dispatch(lockScreen({ locked: false }))
       }
     },
-    [password, message, unlockForm],
+    [password, message, unlockForm, dispatch],
   )
 
   useEffect(() => {

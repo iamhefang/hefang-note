@@ -1,18 +1,12 @@
-import { Form, Input, List, Select, Space, Switch } from "antd"
-import { ReactNode, useEffect, useMemo } from "react"
-import usePlugins from "~/hooks/usePlugins"
+import { Form, FormInstance, Input, List, Select, Space, Switch } from "antd"
+import { ReactNode, useMemo, useState } from "react"
+
 import { useSettings } from "~/hooks/useSelectors"
 import { sortItems } from "~/utils/sort"
 
 export default function GeneralSettings() {
-  const [form] = Form.useForm()
-  const allPlugins = usePlugins()
-  const settings = useSettings()
-
-  useEffect(() => {
-    form.setFieldsValue({ ...settings })
-  }, [form, settings])
-
+  const { lock } = useSettings()
+  const [immediately, setImmediately] = useState(lock.immediately)
   const formItems: Record<string, ReactNode> = useMemo(
     () => ({
       排序方式: (
@@ -40,13 +34,13 @@ export default function GeneralSettings() {
       ),
       锁定时不再弹窗提示: (
         <Space>
-          {settings.lock.immediately && (
+          {immediately && (
             <Form.Item name={["lock", "password"]} label="解锁密码" dependencies={["lockImmediately"]}>
-              <Input.Password maxLength={6} placeholder="请输入解锁密码" style={{ width: 100 }} size="small" />
+              <Input.Password maxLength={6} placeholder="请输入解锁密码" style={{ width: 120 }} size="small" />
             </Form.Item>
           )}
           <Form.Item name={["lock", "immediately"]} valuePropName="checked" noStyle>
-            <Switch />
+            <Switch onChange={setImmediately} />
           </Form.Item>
         </Space>
       ),
@@ -56,7 +50,7 @@ export default function GeneralSettings() {
         </Form.Item>
       ),
     }),
-    [settings.lock.immediately],
+    [immediately],
   )
 
   return (

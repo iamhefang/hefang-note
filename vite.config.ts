@@ -3,7 +3,9 @@ import path from "path"
 import react from "@vitejs/plugin-react"
 import { internalIpV4 } from "internal-ip"
 import { defineConfig } from "vite"
+import { viteStaticCopy } from "vite-plugin-static-copy"
 import svgr from "vite-plugin-svgr"
+
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => {
@@ -14,6 +16,11 @@ export default defineConfig(async () => {
     plugins: [
       react(),
       svgr({ exportAsDefault: true, svgrOptions: { icon: true } }),
+      viteStaticCopy({
+        targets: [
+          { src: "src-tauri/icons/icon.ico", dest: "./", rename: "favicon.ico" },
+        ],
+      }),
     ],
     resolve: {
       alias: {
@@ -45,6 +52,7 @@ export default defineConfig(async () => {
       minify: !process.env.TAURI_DEBUG ? true : false,
       // produce sourcemaps for debug builds
       sourcemap: !!process.env.TAURI_DEBUG,
+      modulePreload: true,
     },
   }
 })

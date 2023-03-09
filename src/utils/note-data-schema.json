@@ -13,6 +13,9 @@
       "type": "string"
     },
     "contents": {
+      "type": "object"
+    },
+    "notes": {
       "type": "array",
       "items": {
         "type": "object",
@@ -40,9 +43,6 @@
           },
           "modifyTime": {
             "type": "number"
-          },
-          "content": {
-            "type": "string"
           }
         }
       }

@@ -5,8 +5,10 @@ export type States = {
     showSettingsModal: boolean
     launching: boolean
     renaming: string
+    exporting: boolean
 }
 const sliceName = "states"
+
 
 export const stateSlice = createSlice<States, SliceCaseReducers<States>>({
     name: sliceName,
@@ -14,6 +16,7 @@ export const stateSlice = createSlice<States, SliceCaseReducers<States>>({
         showSettingsModal: false,
         launching: true,
         renaming: "",
+        exporting: false,
     },
     reducers: {
         toggleSettingsModal(state: States) {

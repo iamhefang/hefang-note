@@ -7,6 +7,7 @@ import Application from "./Application"
 import store from "./redux"
 
 import pkg from "^/package.json"
+import "~/utils/worker"
 import "./style.scss"
 
 window.React = React

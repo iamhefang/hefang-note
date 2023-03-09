@@ -1,19 +1,15 @@
 import { openDB } from "idb"
-import _ from "lodash"
 
-import { versionCode } from "~/consts"
 import { IPluginInfo } from "~/hooks/usePlugins"
 import { NoteItem, Settings } from "~/types"
 
 import pkg from "^/package.json"
 
-const db = openDB(pkg.name, versionCode, {
+const db = openDB(pkg.name, 10, {
   async upgrade(database, oldVersion, newVersion, transaction, event) {
     let storeContent
     if (oldVersion === 0) {
-
       console.info("正在创建初始数据库")
-
       const example: NoteItem = {
         id: crypto.randomUUID(),
         title: "示例笔记",
@@ -29,9 +25,12 @@ const db = openDB(pkg.name, versionCode, {
     }
     if ((newVersion || 0) >= 10) {
       console.info(`正在把数据库从${oldVersion}升级到${newVersion}`)
+      if (!storeContent) {
+        storeContent = transaction.objectStore("content")
+      }
       const storeNote = database.createObjectStore("notes", { keyPath: "id" })
       const storeContents = database.createObjectStore("contents")
-      const allContent: NoteItem[] = await storeContent?.getAll() || []
+      const allContent: NoteItem[] = await (storeContent)?.getAll() || []
       for (const { content, ...item } of allContent) {
         await storeNote.put(item)
         await storeContents.put(content, item.id)
@@ -46,7 +45,7 @@ export interface IKeyValueDbStore<T extends Record<string, unknown>> {
   get(name: keyof T, defaultValue?: T[keyof T]): Promise<T[keyof T]>
   set(name: keyof T, value: T[keyof T]): Promise<void>
   setObject(values: Partial<T>): Promise<void>
-  getObject(fallback?: T): Promise<T>
+  getObject(): Promise<T>
 }
 
 export interface IRecordDbStore<T> {
@@ -75,9 +74,9 @@ function createKeyValueDbStore<T extends Record<string, unknown>>(storeName: str
         await tx.store.put(value, key)
       }).concat(tx.done))
     },
-    async getObject(fallback?: T): Promise<T> {
+    async getObject(): Promise<T> {
       const _db = (await db)
-      const keys = await _db.getAllKeys<string>(storeName)
+      const keys = await _db.getAllKeys(storeName)
       const values = await _db.getAll(storeName)
       //@ts-ignore
       const data: T = {}
@@ -87,7 +86,7 @@ function createKeyValueDbStore<T extends Record<string, unknown>>(storeName: str
         data[String(key)] = values[i]
       }
 
-      return _.merge(fallback || {}, data)
+      return data
     },
   }
 }
@@ -133,7 +132,7 @@ export const notesStore = createRecordsDbStore<NoteItem>("notes")
 export const contentStore = createKeyValueDbStore<{ [id: string]: string }>("contents")
 export const pluginStore = createRecordsDbStore<Omit<IPluginInfo, "path">>("plugins")
 
-if (import.meta.env.DEV) {
+if (import.meta.env.DEV && typeof window !== "undefined") {
 
   // @ts-ignore
   window.contentPager = async ({ pageIndex = 1, pageSize = 100, lastId = "" }: { pageIndex: number, pageSize: number, lastId: string }) => {

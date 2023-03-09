@@ -17,7 +17,7 @@ export default function SettingsModal() {
   const { showSettingsModal } = useStates()
   const dispatch = useAppDispatch()
   const onCancel = useCallback(() => {
-    dispatch(toggleSettingsModal())
+    dispatch(toggleSettingsModal(null))
   }, [dispatch])
   useEffect(() => {
     if (!isInTauri) {
@@ -25,7 +25,7 @@ export default function SettingsModal() {
     }
     const unlisten = appWindow.listen("toggleSettingsModal", (event) => {
       if (!locked) {
-        dispatch(toggleSettingsModal())
+        dispatch(toggleSettingsModal(null))
       }
     })
 
@@ -42,6 +42,7 @@ export default function SettingsModal() {
           <span>设置</span>
         </Space>
       }
+      destroyOnClose
       footer={null}
       maskClosable={false}
       open={showSettingsModal && !locked}

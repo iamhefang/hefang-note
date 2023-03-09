@@ -1,7 +1,22 @@
 import type { ThemeConfig } from "antd"
 import type { CSSProperties, ReactNode } from "react"
 
+export const enum WorkerEventKeys {
+  startExport = "startExport",
+  exportStart = "exportStart",
+  exportSuccess = "exportSuccess"
+}
 
+export type ExportType = {
+  type: "url" | "json"
+  path?: string
+  data: string
+}
+
+export interface IWorkerMessage<D = unknown> {
+  name: WorkerEventKeys
+  data: D
+}
 export type NoteIndentItem = NoteItem & { indent: number }
 
 export type NoteItem = {
@@ -11,6 +26,9 @@ export type NoteItem = {
   createTime: number
   modifyTime: number
   parentId?: string
+  /**
+   * @deprecated
+   */
   content?: string
 }
 

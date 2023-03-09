@@ -21,7 +21,7 @@ export default function TopBarLeft() {
 
   return (
     <Space className={ss.root} style={{ left: osType === "Darwin" ? 70 : 8 }}>
-      <ShowInPlatform platforms={["Linux", "Windows_NT"]}>{() => <AppLogo />}</ShowInPlatform>
+      <ShowInPlatform platforms={["Linux", "Windows_NT", "Browser"]}>{() => <AppLogo />}</ShowInPlatform>
       {!showSettingsModal && !locked && <SiderBarToggle />}
       <ShowInPlatform platforms={["Browser"]}>
         {() => (
