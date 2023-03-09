@@ -1,16 +1,17 @@
 import { Space } from "antd"
 import React, { Suspense } from "react"
 
-import usePlatform from "~/hooks/usePlatform"
-import AlwaysOnTop from "~/views/components/topbar/items/AlwaysOnTop"
-import WindowControls from "~/views/components/topbar/items/WindowControls"
-import ShowInPlatform from "~/views/components/utils/ShowInPlatform"
-
 import ss from "./TopBarRight.module.scss"
 
-const LazyScreenLocker = React.lazy(async () => import("~/views/components/locker/ScreenLocker"))
-const LazyThemeSelector = React.lazy(async () => import("~/views/components/topbar/items/ThemeSelector"))
-const LazyGithub = React.lazy(async () => import("~/views/components/topbar/items/Github"))
+import AlwaysOnTop from "$components/topbar/items/AlwaysOnTop"
+import WindowControls from "$components/topbar/items/WindowControls"
+import ShowInPlatform from "$components/utils/ShowInPlatform"
+import usePlatform from "$hooks/usePlatform"
+
+
+const LazyScreenLocker = React.lazy(async () => import("$components/locker/ScreenLocker"))
+const LazyThemeSelector = React.lazy(async () => import("$components/topbar/items/ThemeSelector"))
+const LazyGithub = React.lazy(async () => import("$components/topbar/items/Github"))
 
 export default function TopBarRight() {
   const osType = usePlatform()

@@ -1,13 +1,14 @@
 import { Form, List, Select, Space, Switch } from "antd"
 import { ReactNode, useMemo } from "react"
 
-import usePlugins from "~/hooks/usePlugins"
+import usePlugins from "$hooks/usePlugins"
 
 const fontSizeItems = ["12px", "14px", "16px", "18px", "20px", "22px"]
 const fontFamilyMaps = {
   serif: "衬线字体",
   "sans-serif": "无衬线字体",
 }
+const lineHeights = [1, 1.2, 1.5]
 
 export default function EditorSettings() {
   const allPlugins = usePlugins()
@@ -61,6 +62,17 @@ export default function EditorSettings() {
             </Select>
           </Form.Item>
         </Space>
+      ),
+      行高: (
+        <Form.Item name={["editorStyle", "lineHeight"]} noStyle>
+          <Select>
+            {lineHeights.map((value) => (
+              <Select.Option value={value} key={`line-height-${value}`}>
+                {value}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
       ),
     }),
     [plugins],

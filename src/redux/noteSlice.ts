@@ -44,6 +44,20 @@ export const noteSlice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
             void notesStore.set(...notes)
             void contentStore.set(item.id, content)
         },
+        deleteNote(state, action: PayloadAction<string>) {
+            const id = action.payload
+            const note = state.entities[id]
+            delete state.entities[id]
+            state.ids.splice(state.ids.indexOf(id), 1)
+            const children = Object.values(state.entities).filter(item => item.parentId === id)
+            for (const entity of Object.values(state.entities)) {
+                if (entity.parentId === id) {
+                    entity.parentId = note.parentId
+                }
+            }
+            void notesStore.delete(id)
+            note.isLeaf || void notesStore.set(...children.map((c) => ({ ...c, parentId: note.parentId })))
+        },
         startRenaming(state: NoteState, action) {
             state.renamingId = action.payload
         },
@@ -77,4 +91,4 @@ export const noteSlice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
     },
 })
 
-export const { updateContent, startRenaming, stopRenaming, newNote } = noteSlice.actions
+export const { updateContent, startRenaming, stopRenaming, newNote, deleteNote } = noteSlice.actions

@@ -5,9 +5,11 @@ import { NAME_MAX_LENGTH } from "~/config"
 import { useAppDispatch } from "~/redux"
 import { newNote } from "~/redux/noteSlice"
 import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
-import { MenuInfo, NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
 
 import { useNotes } from "./useSelectors"
+
+import { MenuInfo, NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
+
 
 export default function useNewModal() {
   const { modal } = App.useApp()

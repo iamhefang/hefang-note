@@ -3,11 +3,11 @@ import { App, Button, Descriptions, Dropdown, Modal } from "antd"
 import { useCallback, useEffect } from "react"
 
 import { isInTauri } from "~/consts"
-import usePlatform from "~/hooks/usePlatform"
 import { useAppDispatch } from "~/redux"
 import { toggleSettingsModal } from "~/redux/stateSlice"
-import CommonMenuItem from "~/views/components/menus/CommonMenuItem"
 
+import CommonMenuItem from "$components/menus/CommonMenuItem"
+import usePlatform from "$hooks/usePlatform"
 import pkg from "^/package.json"
 import logo from "^/src-tauri/icons/icon.png"
 

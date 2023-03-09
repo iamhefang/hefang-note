@@ -2,9 +2,10 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
 import { Button } from "antd"
 import { useCallback, useMemo } from "react"
 
-import { useSettings } from "~/hooks/useSelectors"
 import { useAppDispatch } from "~/redux"
 import { toggleSidebar } from "~/redux/settingSlice"
+
+import { useSettings } from "$hooks/useSelectors"
 
 export default function SiderBarToggle() {
   const { showSideBar } = useSettings()

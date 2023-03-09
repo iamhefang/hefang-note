@@ -5,11 +5,12 @@ import _ from "lodash"
 import { useCallback, useEffect } from "react"
 
 import { isInTauri } from "~/consts"
-import { useSettings } from "~/hooks/useSelectors"
 import { useAppDispatch } from "~/redux"
 import { lockScreen } from "~/redux/settingSlice"
 
 import ss from "./ScreenLocker.module.scss"
+
+import { useSettings } from "$hooks/useSelectors"
 
 export default function ScreenLocker() {
   const {

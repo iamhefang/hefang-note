@@ -3,14 +3,15 @@ import { App, Col, Input, Row, theme } from "antd"
 import React, { useCallback, useMemo } from "react"
 
 import { NAME_MAX_LENGTH } from "~/config"
-import { useNotes, useSettings } from "~/hooks/useSelectors"
 import { useAppDispatch } from "~/redux"
 import { stopRenaming } from "~/redux/noteSlice"
 import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
 import { NoteIndentItem } from "~/types"
-import { iconPlacehodler } from "~/views/components/icons/IconPlaceholder"
 
 import ss from "./NoteTree.module.scss"
+
+import { iconPlacehodler } from "$components/icons/IconPlaceholder"
+import { useNotes, useSettings } from "$hooks/useSelectors"
 
 export type NoteTreeItemProps = {
   item: NoteIndentItem

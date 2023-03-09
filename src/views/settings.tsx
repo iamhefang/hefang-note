@@ -4,11 +4,12 @@ import { Modal, Space, Tabs } from "antd"
 import { useCallback, useEffect } from "react"
 
 import { isInTauri } from "~/consts"
-import { useSettings, useStates } from "~/hooks/useSelectors"
 import { useAppDispatch } from "~/redux"
 import { toggleSettingsModal } from "~/redux/stateSlice"
-import { PluginManager } from "~/views/components/plugins"
-import SettingForm from "~/views/components/settings/SettingForm"
+
+import { PluginManager } from "$components/plugins"
+import SettingForm from "$components/settings/SettingForm"
+import { useSettings, useStates } from "$hooks/useSelectors"
 
 export default function SettingsModal() {
   const {

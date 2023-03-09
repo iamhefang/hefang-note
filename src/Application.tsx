@@ -2,31 +2,31 @@ import { App as Antd, theme as antdTheme, ConfigProvider } from "antd"
 import zhCN from "antd/locale/zh_CN"
 import React, { Suspense, useEffect } from "react"
 
-import useContentLoader from "~/hooks/useContentLoader"
-import usePlugins from "~/hooks/usePlugins"
-import useSettingsLoader from "~/hooks/useSettingsLoader"
-import { useThemeConfig } from "~/hooks/useThemeConfig"
 import { stateSlice } from "~/redux/stateSlice"
 import View from "~/views"
-import Loading from "~/views/components/loading/Loading"
-import ShowInPlatform from "~/views/components/utils/ShowInPlatform"
 
 import { useAppDispatch } from "./redux"
 
-import { useSettings, useStates } from "~hooks/useSelectors"
+import Loading from "$components/loading/Loading"
+import ShowInPlatform from "$components/utils/ShowInPlatform"
+import useContentLoader from "$hooks/useContentLoader"
+import usePlugins from "$hooks/usePlugins"
+import { useSettings, useStates } from "$hooks/useSelectors"
+import useSettingsLoader from "$hooks/useSettingsLoader"
+import { useThemeConfig } from "$hooks/useThemeConfig"
 
 const LazySettings = React.lazy(async () => import("~/views/settings"))
 
 export default function Application() {
   const { theme } = useSettings()
-  const { launching, exporting } = useStates()
+  const { launching } = useStates()
   const plugins = usePlugins()
   const { token } = antdTheme.useToken()
   const loadContents = useContentLoader()
   const loadSettings = useSettingsLoader()
   const dispatch = useAppDispatch()
   useEffect(() => {
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
       // setState({})
     })
     void (async () => {

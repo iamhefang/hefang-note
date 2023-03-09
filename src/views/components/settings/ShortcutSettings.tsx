@@ -1,7 +1,7 @@
 import { Form, List, Space } from "antd"
 import { ReactNode, useMemo } from "react"
 
-import ShortcutsView from "~/views/components/shortcusts/ShortcutsView"
+import ShortcutsView from "$components/shortcusts/ShortcutsView"
 
 export default function ShortcutSettings() {
   const formItems: Record<string, ReactNode> = useMemo(

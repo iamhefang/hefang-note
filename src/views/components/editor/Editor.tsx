@@ -4,21 +4,18 @@ import _ from "lodash"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { CONTENT_SAVE_DELAY } from "~/config"
-import useNoteLoader from "~/hooks/useContentLoader"
-import { IEditor, usePluginMap } from "~/hooks/usePlugins"
-import { useNotes, useSettings } from "~/hooks/useSelectors"
 import { useAppDispatch } from "~/redux"
 import { updateContent } from "~/redux/noteSlice"
-import type { NoteItem } from "~/types"
-import { contentStore, notesStore } from "~/utils/database"
-import { findNoteParents } from "~/utils/notes"
+import { contentStore } from "~/utils/database"
 
 import DefaultEditor from "./DefaultEditor"
+
+import { IEditor, usePluginMap } from "$hooks/usePlugins"
+import { useNotes, useSettings } from "$hooks/useSelectors"
 
 export default function Editor() {
   const { entities, ids } = useNotes()
   const { current, editorStyle, showTimeAboveEditor, editor } = useSettings()
-  const loadNotesContent = useNoteLoader()
   const {
     token: { colorBgLayout, colorText },
   } = antTheme.useToken()
@@ -34,7 +31,7 @@ export default function Editor() {
   const refSaveTimer = useRef(0)
   const saveContent = useCallback(
     (content: string) => {
-      if (!item?.isLeaf || item.content === content) {
+      if (!item?.isLeaf) {
         return
       }
       refSaveTimer.current && clearTimeout(refSaveTimer.current)
@@ -80,7 +77,7 @@ export default function Editor() {
         </div>
       )}
       <div className="editor" style={editorStyle}>
-        <EditorComponent value={value} onChange={onValueChange} placeholder="尽情记录吧!" onBlur={loadNotesContent} />
+        <EditorComponent value={value} onChange={onValueChange} placeholder="尽情记录吧!" />
       </div>
     </div>
   )
