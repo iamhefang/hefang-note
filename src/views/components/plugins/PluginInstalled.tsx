@@ -1,16 +1,15 @@
-import { App, Avatar, List, message, Space, Switch, Tag } from "antd"
-import { useCallback, useEffect, useMemo } from "react"
+import { Avatar, List, Space, Switch, Tag } from "antd"
+import { useCallback, useMemo } from "react"
 import useAntdConfirm from "~/hooks/useAntdConfirm"
 
-import useGlobalState from "~/hooks/useGlobalState"
 import usePlugins, { IPlugin } from "~/hooks/usePlugins"
-import { trySendNativeNotification } from "~/utils/notification"
+import { useSettings } from "~/hooks/useSelectors"
 
 import { PluginDescription } from "./PluginDescription"
 import { PluginProps } from "./types"
 
 export function PluginInstalled({ search }: PluginProps) {
-  const [{ editor, theme }, setState] = useGlobalState()
+  const { editor, theme } = useSettings()
   const allPlugins = usePlugins(true)
   const showConfirm = useAntdConfirm()
   const createOnPluginEnable = useCallback(
@@ -48,7 +47,7 @@ export function PluginInstalled({ search }: PluginProps) {
           })
       }
     },
-    [setState, allPlugins, editor, theme, showConfirm],
+    [allPlugins, editor, theme, showConfirm],
   )
   const renderItem = useCallback(
     (item: IPlugin) => (

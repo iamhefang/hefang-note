@@ -1,17 +1,16 @@
 import { CaretDownOutlined, CaretRightOutlined, FileTextOutlined, FolderOpenOutlined, FolderOutlined } from "@ant-design/icons"
 import { App, Col, Input, Row, theme } from "antd"
-import _ from "lodash"
 import React, { useCallback, useMemo } from "react"
 
 import { NAME_MAX_LENGTH } from "~/config"
 import useContentLoader from "~/hooks/useContentLoader"
-import useGlobalState from "~/hooks/useGlobalState"
-import useItemArray from "~/hooks/useItemArray"
-import useNewModal from "~/hooks/useNewModal"
-import { GlobalState, NoteIndentItem } from "~/types"
-import { contentStore } from "~/utils/database"
+import { useSettings, useStates } from "~/hooks/useSelectors"
+import { useAppDispatch } from "~/redux"
+import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
+import { stopRenaming } from "~/redux/stateSlice"
+import { NoteIndentItem } from "~/types"
+import { notesStore } from "~/utils/database"
 import { iconPlacehodler } from "~/views/components/icons/IconPlaceholder"
-import NoteTreeItemMenu, { MenuInfo, NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
 
 import ss from "./NoteTree.module.scss"
 
@@ -20,33 +19,29 @@ export type NoteTreeItemProps = {
   onRightClick?: () => void
 }
 export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) {
-  const [{ current, renaming, expandItems }, setState] = useGlobalState()
+  const { current, expandItems } = useSettings()
+  const { renaming } = useStates()
   const { token } = theme.useToken()
-  const { message, modal } = App.useApp()
-  const itemArray = useItemArray()
+  const { message } = App.useApp()
   const loadContent = useContentLoader()
-  const showModal = useNewModal()
+  const dispatch = useAppDispatch()
 
   const onItemClick = useCallback(
     (e: React.MouseEvent<HTMLElement>) => {
       if (renaming === item.id) {
         return
       }
-      const newState: Partial<GlobalState> = {}
       if (!item.isLeaf) {
-        newState.expandItems = { ...expandItems, [item.id]: !expandItems[item.id] }
+        dispatch(setItemsExpanded({ [item.id]: !expandItems[item.id] }))
         if (e.nativeEvent.composedPath().find((node: EventTarget) => (node as HTMLElement).classList?.contains("anticon"))) {
-          setState(newState)
-
           return
         }
       }
       if (current !== item.id) {
-        newState.current = item.id
+        dispatch(setCurrent(item.id))
       }
-      _.isEmpty(newState) || setState(newState)
     },
-    [current, expandItems, item.id, item.isLeaf, renaming, setState],
+    [current, dispatch, expandItems, item, renaming],
   )
 
   const onRenamingBlur = useCallback(
@@ -55,14 +50,14 @@ export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) 
       if (!newName.trim()) {
         void message.warning("名称不为能空")
       } else {
-        contentStore
+        notesStore
           .set({ ...item, title: newName })
           .then(loadContent)
           .catch(console.error)
       }
-      setState({ renaming: "" })
+      dispatch(stopRenaming(null))
     },
-    [item, loadContent, message, setState],
+    [dispatch, item, loadContent, message],
   )
 
   const onRenameKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -70,39 +65,6 @@ export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) 
       e.currentTarget.blur()
     }
   }, [])
-  const onMenuClick = useCallback(
-    (info: MenuInfo) => {
-      switch (info.key) {
-        case NoteTreeMenuKeys.rename:
-          setState({ renaming: item.id })
-          break
-        case NoteTreeMenuKeys.delete:
-          const children = itemArray.filter((c) => c.parentId === item.id)
-          modal.confirm({
-            title: `要删除"${item.title}"吗?`,
-            content: item.isLeaf || !children.length ? null : `${item.title}是一个非空目录，删除后，其下面的${children.length}条内容将移动到上级目录`,
-            onOk() {
-              Promise.all([
-                contentStore.delete(item.id),
-                item.isLeaf ? Promise.resolve() : contentStore.set(...children.map((c) => ({ ...c, parentId: item.parentId }))),
-              ])
-                .then(() => {
-                  void loadContent()
-                })
-                .catch(console.error)
-            },
-          })
-          break
-        case NoteTreeMenuKeys.newDir:
-        case NoteTreeMenuKeys.newNote:
-          showModal(info, item.id)
-          break
-        default:
-          console.warn("未生效的菜单")
-      }
-    },
-    [item.id, item.isLeaf, item.parentId, item.title, itemArray, loadContent, modal, setState, showModal],
-  )
 
   const expandIcon = useMemo(() => {
     if (item.isLeaf) {

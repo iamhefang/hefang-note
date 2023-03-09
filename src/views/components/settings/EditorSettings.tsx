@@ -10,9 +10,7 @@ const fontFamilyMaps = {
 }
 
 export default function EditorSettings() {
-  // const [form] = Form.useForm()
   const allPlugins = usePlugins()
-  // const [{ loading, launching, showSettingModal, renaming, ...settings }, setState] = useGlobalState()
   const plugins = useMemo(() => {
     return allPlugins.filter((item) => item.components?.includes("Editor"))
   }, [allPlugins])

@@ -6,7 +6,7 @@ import { Button, Col, Dropdown, message, Modal, Row } from "antd"
 import { isInTauri } from "~/consts"
 import { NoteItem } from "~/types"
 
-import { contentStore } from "./database"
+import { notesStore } from "./database"
 import schema from "./note-data-schema.json"
 
 import pkg from "^/package.json"
@@ -108,7 +108,7 @@ async function importWithHtml(): Promise<NoteData> {
 export const hefang = {
   contens: {
     export: async () => {
-      const all = await contentStore.getAll()
+      const all = await notesStore.getAll()
       const json = JSON.stringify({
         name: pkg.productName,
         version: pkg.version,
@@ -148,7 +148,7 @@ export const hefang = {
       return new Promise<number>(async (resolve, reject) => {
         const json: NoteData = isInTauri ? await importWithTauri() : await importWithHtml()
         const importIds = json.contents.map((item) => item.id)
-        const currentIds = await contentStore.getAllIds()
+        const currentIds = await notesStore.getAllIds()
         const ids = new Set([...currentIds, ...importIds])
         const total = currentIds.length + importIds.length
         if (ids.size !== total) {
@@ -169,14 +169,14 @@ export const hefang = {
                           key: "保留最新的",
                           label: "保留最新的",
                           onClick: async () => {
-                            const currentItems = await contentStore.getAll()
+                            const currentItems = await notesStore.getAll()
                             const currentItemMap: Record<string, NoteItem> = Object.fromEntries(currentItems.map((item) => [item.id, item]))
 
                             const data = json.contents.filter((item) => {
                               return item.modifyTime > (currentItemMap[item.id]?.modifyTime || 0)
                             })
 
-                            await contentStore.set(...data)
+                            await notesStore.set(...data)
                             Modal.destroyAll()
                             resolve(data.length)
                           },
@@ -186,7 +186,7 @@ export const hefang = {
                           label: "保留本地的",
                           onClick: async () => {
                             const data = json.contents.filter((item) => !currentIds.includes(item.id))
-                            await contentStore.set(...data)
+                            await notesStore.set(...data)
                             Modal.destroyAll()
                             resolve(data.length)
                           },
@@ -195,7 +195,7 @@ export const hefang = {
                           key: "保留置导入的",
                           label: "保留导入的",
                           onClick: async () => {
-                            await contentStore.set(...json.contents)
+                            await notesStore.set(...json.contents)
                             Modal.destroyAll()
                             resolve(importIds.length)
                           },
@@ -204,7 +204,7 @@ export const hefang = {
                           key: "全部保留",
                           label: "全部保留",
                           onClick: async () => {
-                            await contentStore.set(
+                            await notesStore.set(
                               ...json.contents.map((item) => {
                                 if (currentIds.includes(item.id)) {
                                   return { ...item, id: crypto.randomUUID() }
@@ -227,7 +227,7 @@ export const hefang = {
             ),
           })
         } else {
-          await contentStore.set(...json.contents)
+          await notesStore.set(...json.contents)
           Modal.destroyAll()
           resolve(importIds.length)
         }

@@ -2,15 +2,16 @@ import { SettingOutlined } from "@ant-design/icons"
 import { Button } from "antd"
 import { useCallback } from "react"
 
-import useGlobalState from "~/hooks/useGlobalState"
 import usePlatform from "~/hooks/usePlatform"
+import { useAppDispatch } from "~/redux"
+import { toggleSettingsModal } from "~/redux/stateSlice"
 
 export default function SettingsButton() {
   const osType = usePlatform()
-  const [{ showSettingModal }, setState] = useGlobalState()
+  const dispatch = useAppDispatch()
   const onClick = useCallback(() => {
-    setState({ showSettingModal: !showSettingModal })
-  }, [setState, showSettingModal])
+    dispatch(toggleSettingsModal(null))
+  }, [dispatch])
   if (osType === "Darwin") {
     return null
   }

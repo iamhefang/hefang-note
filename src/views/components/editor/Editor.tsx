@@ -1,55 +1,48 @@
-import { theme as antTheme, Divider, Empty } from "antd"
+import { Divider, Empty, theme as antTheme } from "antd"
 import dayjs from "dayjs"
 import _ from "lodash"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { CONTENT_SAVE_DELAY } from "~/config"
-import useContentLoader from "~/hooks/useContentLoader"
-import useGlobalState from "~/hooks/useGlobalState"
+import useNoteLoader from "~/hooks/useContentLoader"
 import { IEditor, usePluginMap } from "~/hooks/usePlugins"
+import { useNotes, useSettings } from "~/hooks/useSelectors"
+import { useAppDispatch } from "~/redux"
+import { updateContent } from "~/redux/noteSlice"
 import type { NoteItem } from "~/types"
-import { contentStore } from "~/utils/database"
+import { contentStore, notesStore } from "~/utils/database"
 import { findNoteParents } from "~/utils/notes"
 
 import DefaultEditor from "./DefaultEditor"
 
 export default function Editor() {
-  const [state] = useGlobalState()
-  const { items, current, editor, showTimeAboveEditor, editorStyle } = state
-  const loadContent = useContentLoader()
+  const { entities, ids } = useNotes()
+  const { current, editorStyle, showTimeAboveEditor, editor } = useSettings()
+  const loadNotesContent = useNoteLoader()
   const {
     token: { colorBgLayout, colorText },
   } = antTheme.useToken()
+  const dispatch = useAppDispatch()
   const [changing, setChanging] = useState(false)
   const [value, setValue] = useState("")
-  const [item, setItem] = useState<NoteItem>()
+  const item = useMemo(() => entities[current], [current, entities])
   const plugins = usePluginMap()
   const EditorComponent: IEditor = useMemo(() => {
     return editor && plugins[editor]?.Editor ? plugins[editor].Editor! : DefaultEditor
   }, [editor, plugins])
 
-  const refLastSaveTimer = useRef(0)
+  const refSaveTimer = useRef(0)
   const saveContent = useCallback(
     (content: string) => {
-      if (!item || !item.isLeaf || item.content === content) {
+      if (!item?.isLeaf || item.content === content) {
         return
       }
-      refLastSaveTimer.current && clearTimeout(refLastSaveTimer.current)
-      refLastSaveTimer.current = window.setTimeout(() => {
-        const modifyTime = Date.now()
-        const newItem: NoteItem = { ...item, content, modifyTime }
-        const newItems = findNoteParents(items, item.id)
-          .map((me) => ({ ...me, modifyTime }))
-          .concat(newItem)
-        console.info("保存笔记", Date.now(), newItems)
-        void contentStore.set(...newItems).then(() => {
-          setChanging(false)
-          setItem(newItem)
-          loadContent()
-        })
+      refSaveTimer.current && clearTimeout(refSaveTimer.current)
+      refSaveTimer.current = window.setTimeout(() => {
+        dispatch(updateContent({ id: item.id, content }))
       }, CONTENT_SAVE_DELAY)
     },
-    [item, items, loadContent],
+    [item, dispatch],
   )
   const onValueChange = useCallback(
     (newValue: string) => {
@@ -61,18 +54,13 @@ export default function Editor() {
   )
 
   useEffect(() => {
-    contentStore
-      .get(current)
-      .then((note) => {
-        if (note?.isLeaf) {
-          setValue(note.content || "")
-        }
-        setItem(note)
-      })
-      .catch(console.error)
-  }, [current])
+    if (!item?.isLeaf) {
+      return
+    }
+    contentStore.get(item.id).then(setValue).catch(console.error)
+  }, [item?.id, item?.isLeaf])
 
-  if ((item && !item.isLeaf) || _.isEmpty(items) || !item) {
+  if ((item && !item.isLeaf) || _.isEmpty(ids) || !item) {
     return <Empty description="尽情记录吧" />
   }
 
@@ -92,7 +80,7 @@ export default function Editor() {
         </div>
       )}
       <div className="editor" style={editorStyle}>
-        <EditorComponent value={value} onChange={onValueChange} placeholder="尽情记录吧!" onBlur={loadContent} />
+        <EditorComponent value={value} onChange={onValueChange} placeholder="尽情记录吧!" onBlur={loadNotesContent} />
       </div>
     </div>
   )

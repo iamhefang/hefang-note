@@ -1,14 +1,12 @@
-import _ from "lodash"
 import { useCallback, useMemo } from "react"
 
 import { NoteIndentItem } from "~/types"
-import { treeSorter } from "~/utils/sort"
 
-import useGlobalState from "./useGlobalState"
 import useItemArray from "./useItemArray"
+import { useSettings } from "./useSelectors"
 
 export default function useItemsTree(search?: string): NoteIndentItem[] {
-  const [{ expandItems }] = useGlobalState()
+  const { expandItems } = useSettings()
 
   const itemArray = useItemArray({ needSort: true, search })
   const findChildren = useCallback(
