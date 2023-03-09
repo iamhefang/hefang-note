@@ -1,12 +1,13 @@
 import { Avatar, List, Space, Switch, Tag } from "antd"
 import { useCallback, useMemo } from "react"
-import useAntdConfirm from "~/hooks/useAntdConfirm"
-
-import usePlugins, { IPlugin } from "~/hooks/usePlugins"
-import { useSettings } from "~/hooks/useSelectors"
 
 import { PluginDescription } from "./PluginDescription"
 import { PluginProps } from "./types"
+
+import useAntdConfirm from "$hooks/useAntdConfirm"
+import usePlugins, { IPlugin } from "$hooks/usePlugins"
+import { useSettings } from "$hooks/useSelectors"
+
 
 export function PluginInstalled({ search }: PluginProps) {
   const { editor, theme } = useSettings()

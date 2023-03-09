@@ -3,8 +3,8 @@ import { App, Space, Spin } from "antd"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { versionCode } from "~/consts"
-import { useSettings } from "~/hooks/useSelectors"
 
+import { useSettings } from "$hooks/useSelectors"
 import pkg from "^/package.json"
 
 const enum UpdateStatus {

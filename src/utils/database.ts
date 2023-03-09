@@ -1,10 +1,11 @@
 import { openDB } from "idb"
+import _ from "lodash"
 
-import { IPluginInfo } from "~/hooks/usePlugins"
 import { NoteItem, Settings } from "~/types"
 
+import { IPluginInfo } from "$hooks/usePlugins"
 import pkg from "^/package.json"
-import _ from "lodash"
+
 
 const db = openDB(pkg.name, 10, {
   async upgrade(database, oldVersion, newVersion, transaction, event) {

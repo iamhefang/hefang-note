@@ -18,8 +18,8 @@
     "paths": {
       "~/*": ["./src/*"],
       "^/*": ["./*"],
-      "~hooks": ["./src/hooks"],
-      "~components": ["./src/views/components"]
+      "$hooks/*": ["./src/hooks/*"],
+      "$components/*": ["./src/views/components/*"]
     }
   },
   "include": ["src"],

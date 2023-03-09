@@ -26,8 +26,8 @@ export default defineConfig(async () => {
       alias: {
         "~": path.resolve(__dirname, "src"),
         "^": __dirname,
-        "~hooks": path.resolve(__dirname, "src/hooks"),
-        "~components": path.resolve(__dirname, "src/views/components"),
+        "$hooks": path.resolve(__dirname, "src/hooks"),
+        "$components": path.resolve(__dirname, "src/views/components"),
       },
     },
     // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`

@@ -4,12 +4,13 @@ import { Resizable, ResizeCallback } from "re-resizable"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { productName, versionName } from "~/consts"
-import { useNotes, useSettings } from "~/hooks/useSelectors"
-import Editor from "~/views/components/editor/Editor"
-import SiderBar from "~/views/components/sidebar/SiderBar"
-import TopBarLeft from "~/views/components/topbar/TopBarLeft"
-import TopBarRight from "~/views/components/topbar/TopBarRight"
-import VersionView from "~/views/components/version/VersionView"
+
+import Editor from "$components/editor/Editor"
+import SiderBar from "$components/sidebar/SiderBar"
+import TopBarLeft from "$components/topbar/TopBarLeft"
+import TopBarRight from "$components/topbar/TopBarRight"
+import VersionView from "$components/version/VersionView"
+import { useNotes, useSettings } from "$hooks/useSelectors"
 
 const { Sider, Content, Header, Footer } = Layout
 export default function View() {

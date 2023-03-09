@@ -2,11 +2,12 @@ import { Avatar, Button, Empty, List, Space, Tag } from "antd"
 import VirtualList from "rc-virtual-list"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
-import { IPluginInfo } from "~/hooks/usePlugins"
 import { pluginStore } from "~/utils/database"
 
 import { PluginDescription } from "./PluginDescription"
 import { PluginProps } from "./types"
+
+import { IPluginInfo } from "$hooks/usePlugins"
 
 export function PluginStore({ search }: PluginProps) {
   const [plugins, setPlugins] = useState<IPluginInfo[]>()

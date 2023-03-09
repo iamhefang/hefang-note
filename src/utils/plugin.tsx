@@ -9,9 +9,9 @@ import { NoteItem, WorkerEventKeys } from "~/types"
 import { contentStore, notesStore } from "./database"
 import schema from "./note-data-schema.json"
 import { buildExportJson } from "./notes"
+import { emit2worker } from "./worker"
 
 import pkg from "^/package.json"
-import { emit2worker } from "./worker"
 export const enum ExportType {
   keepAll = "keepAll",
   keepLocal = "keepLocal",

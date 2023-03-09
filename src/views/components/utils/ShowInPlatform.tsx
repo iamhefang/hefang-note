@@ -1,6 +1,6 @@
 import { ReactElement, useMemo } from "react"
 
-import usePlatform, { PlatformType } from "~/hooks/usePlatform"
+import usePlatform, { PlatformType } from "$hooks/usePlatform"
 
 export type ShowInPlatformProps = {
   platforms: PlatformType[]

@@ -2,19 +2,18 @@ import { App, Empty } from "antd"
 import React, { useCallback, useEffect, useState } from "react"
 import { Virtuoso } from "react-virtuoso"
 
-import useContentLoader from "~/hooks/useContentLoader"
-import useItemArray from "~/hooks/useItemArray"
-import useItemsTree from "~/hooks/useItemsTree"
-import useNewModal from "~/hooks/useNewModal"
-import { useSettings } from "~/hooks/useSelectors"
 import { useAppDispatch } from "~/redux"
-import { startRenaming } from "~/redux/noteSlice"
+import { deleteNote, startRenaming } from "~/redux/noteSlice"
 import { setItemsExpanded } from "~/redux/settingSlice"
 import type { NoteIndentItem } from "~/types"
-import { notesStore } from "~/utils/database"
-import NoteTreeItemMenu, { MenuInfo, NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
 
 import { MemodNoteTreeItem } from "./NoteTreeItem"
+
+import NoteTreeItemMenu, { MenuInfo, NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
+import useItemArray from "$hooks/useItemArray"
+import useItemsTree from "$hooks/useItemsTree"
+import useNewModal from "$hooks/useNewModal"
+import { useSettings } from "$hooks/useSelectors"
 
 export type NoteTreeProps = {
   search: string
@@ -25,7 +24,6 @@ export default function NoteTree({ search }: NoteTreeProps) {
   const data = useItemsTree(search)
   const itemArray = useItemArray()
   const [rightClickItem, setRightClickItem] = useState<NoteIndentItem>()
-  const loadContent = useContentLoader()
   const dispatch = useAppDispatch()
   const showModal = useNewModal()
   const { modal } = App.useApp()
@@ -74,14 +72,7 @@ export default function NoteTree({ search }: NoteTreeProps) {
                 ? null
                 : `${rightClickItem.title}是一个非空目录，删除后，其下面的${children.length}条内容将移动到上级目录`,
             onOk() {
-              Promise.all([
-                notesStore.delete(rightClickItem.id),
-                rightClickItem.isLeaf ? Promise.resolve() : notesStore.set(...children.map((c) => ({ ...c, parentId: rightClickItem.parentId }))),
-              ])
-                .then(() => {
-                  void loadContent()
-                })
-                .catch(console.error)
+              dispatch(deleteNote(rightClickItem.id))
             },
           })
           break
@@ -93,7 +84,7 @@ export default function NoteTree({ search }: NoteTreeProps) {
           console.warn("未生效的菜单")
       }
     },
-    [rightClickItem, dispatch, itemArray, modal, showModal, loadContent],
+    [rightClickItem, dispatch, itemArray, modal, showModal],
   )
 
   return data.length ? (

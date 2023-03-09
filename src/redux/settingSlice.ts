@@ -20,6 +20,7 @@ export const defaultState: Settings = {
     editorStyle: {
         fontFamily: "inherit",
         fontSize: "inherit",
+        lineHeight: 1.2,
     },
     shortcut: { lock: "Ctrl+L" },
 }

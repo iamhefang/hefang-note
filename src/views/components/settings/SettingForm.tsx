@@ -2,7 +2,6 @@ import { EditOutlined, HomeOutlined, KeyOutlined } from "@ant-design/icons"
 import { Form, Segmented } from "antd"
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
 
-import { useSettings } from "~/hooks/useSelectors"
 import { useAppDispatch } from "~/redux"
 import { setSettings } from "~/redux/settingSlice"
 import type { Settings } from "~/types"
@@ -10,6 +9,8 @@ import type { Settings } from "~/types"
 import EditorSettings from "./EditorSettings"
 import GeneralSettings from "./GeneralSettings"
 import ShortcutSettings from "./ShortcutSettings"
+
+import { useSettings } from "$hooks/useSelectors"
 
 type SettingTypes = "general" | "editor" | "shortcut" | string | number
 

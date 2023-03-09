@@ -1,10 +1,11 @@
 import { Button, Dropdown, Tooltip } from "antd"
 import { useMemo } from "react"
 
-import { useSettings } from "~/hooks/useSelectors"
-import useThemes from "~/hooks/useThemes"
 import { useAppDispatch } from "~/redux"
 import { changeTheme } from "~/redux/settingSlice"
+
+import { useSettings } from "$hooks/useSelectors"
+import useThemes from "$hooks/useThemes"
 
 export default function ThemeSelector() {
   const { theme } = useSettings()

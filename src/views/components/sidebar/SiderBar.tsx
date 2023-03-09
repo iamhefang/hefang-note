@@ -1,23 +1,21 @@
 import { CheckOutlined, MoreOutlined } from "@ant-design/icons"
-import { App, Button, Col, Dropdown, Input, MenuProps, Row, Skeleton } from "antd"
+import { Button, Col, Dropdown, Input, MenuProps, Row, Skeleton } from "antd"
 import { useCallback, useMemo, useState } from "react"
 
-import useContentLoader from "~/hooks/useContentLoader"
-import useNewModal from "~/hooks/useNewModal"
-import { useNotes, useSettings } from "~/hooks/useSelectors"
 import { useAppDispatch } from "~/redux"
 import { setSort } from "~/redux/settingSlice"
 import { NoteSort } from "~/types"
 import { sortItems } from "~/utils/sort"
-import { iconPlacehodler } from "~/views/components/icons/IconPlaceholder"
-import { NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
-import NoteTree from "~/views/components/tree/NoteTree"
+
+import { iconPlacehodler } from "$components/icons/IconPlaceholder"
+import { NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
+import NoteTree from "$components/tree/NoteTree"
+import useNewModal from "$hooks/useNewModal"
+import { useNotes, useSettings } from "$hooks/useSelectors"
 export default function SiderBar() {
   const { initializing: loading } = useNotes()
   const { sort } = useSettings()
   const [search, setSearch] = useState<string>("")
-  const { modal } = App.useApp()
-  const loadContent = useContentLoader()
   const dispatch = useAppDispatch()
   const showModal = useNewModal()
   const createOnSortChange = useCallback((newSort: Partial<NoteSort>) => () => dispatch(setSort(newSort)), [dispatch])

@@ -1,8 +1,9 @@
 import { Form, FormInstance, Input, List, Select, Space, Switch } from "antd"
 import { ReactNode, useMemo, useState } from "react"
 
-import { useSettings } from "~/hooks/useSelectors"
 import { sortItems } from "~/utils/sort"
+
+import { useSettings } from "$hooks/useSelectors"
 
 export default function GeneralSettings() {
   const { lock } = useSettings()

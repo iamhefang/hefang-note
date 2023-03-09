@@ -2,9 +2,10 @@ import { SettingOutlined } from "@ant-design/icons"
 import { Button } from "antd"
 import { useCallback } from "react"
 
-import usePlatform from "~/hooks/usePlatform"
 import { useAppDispatch } from "~/redux"
 import { toggleSettingsModal } from "~/redux/stateSlice"
+
+import usePlatform from "$hooks/usePlatform"
 
 export default function SettingsButton() {
   const osType = usePlatform()
