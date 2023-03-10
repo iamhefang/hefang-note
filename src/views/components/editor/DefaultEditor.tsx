@@ -17,6 +17,7 @@ export default function DefaultEditor({ placeholder, value, onChange, onBlur, on
         outline: "none",
         border: "none",
         fontSize: "inherit",
+        fontFamily: "inherit",
         lineHeight: "inherit",
         resize: "none",
         padding: 15,
