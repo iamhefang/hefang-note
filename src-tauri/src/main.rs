@@ -8,8 +8,8 @@ pub mod utils;
 
 use commands::fs::is_directory;
 use tauri::{
-    App, AppHandle, CustomMenuItem, GlobalWindowEvent, Manager, Menu, SystemTray, SystemTrayEvent,
-    SystemTrayMenu, SystemTrayMenuItem, WindowMenuEvent,
+    App, AppHandle, CustomMenuItem, GlobalShortcutManager, GlobalWindowEvent, Manager, Menu,
+    SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, WindowMenuEvent,
 };
 use utils::consts::{
     EVENT_TOGGLE_LOCK, EVENT_TOGGLE_SETTINGS, MENU_ID_QUIT, MENU_ID_TOGGLE_LOCK,
@@ -119,7 +119,7 @@ fn on_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
             let id_str = id.as_str();
             let window = app.get_window("main").unwrap();
             match id_str {
-                "quit" => app.exit(0),
+                MENU_ID_QUIT => app.exit(0),
                 MENU_ID_TOGGLE_VISIBLE => {
                     if window.is_visible().unwrap() {
                         window.minimize().unwrap();
@@ -152,7 +152,9 @@ fn on_window_event(event: GlobalWindowEvent) {
             api.prevent_close();
             event.window().minimize().unwrap();
         }
-        _ => {}
+        _others => {
+            println!("未监听的窗口事件: {:?}", _others)
+        }
     }
 }
 
