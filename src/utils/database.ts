@@ -7,8 +7,8 @@ import { IPluginInfo } from "$hooks/usePlugins"
 import pkg from "^/package.json"
 
 
-const db = openDB(pkg.name, 10, {
-  async upgrade(database, oldVersion, newVersion, transaction, event) {
+export const database = openDB(pkg.name, 10, {
+  async upgrade(db, oldVersion, newVersion, transaction, event) {
     let storeContent
     if (oldVersion === 0) {
       console.info("正在创建初始数据库")
@@ -20,24 +20,24 @@ const db = openDB(pkg.name, 10, {
         modifyTime: Date.now(),
         content: `感谢使用${pkg.productName}`,
       }
-      void database.createObjectStore("settings").add(example.id, "current")
-      storeContent = database.createObjectStore("content", { keyPath: "id" })
+      void db.createObjectStore("settings").add(example.id, "current")
+      storeContent = db.createObjectStore("content", { keyPath: "id" })
       void storeContent.add(example)
-      database.createObjectStore("plugins", { keyPath: "id" })
+      db.createObjectStore("plugins", { keyPath: "id" })
     }
     if ((newVersion || 0) >= 10) {
       console.info(`正在把数据库从${oldVersion}升级到${newVersion}`)
       if (!storeContent) {
         storeContent = transaction.objectStore("content")
       }
-      const storeNote = database.createObjectStore("notes", { keyPath: "id" })
-      const storeContents = database.createObjectStore("contents")
+      const storeNote = db.createObjectStore("notes", { keyPath: "id" })
+      const storeContents = db.createObjectStore("contents")
       const allContent: NoteItem[] = await (storeContent)?.getAll() || []
       for (const { content, ...item } of allContent) {
         await storeNote.put(item)
         await storeContents.put(content, item.id)
       }
-      database.deleteObjectStore("content")
+      db.deleteObjectStore("content")
     }
     await transaction.done
   },
@@ -62,22 +62,22 @@ export interface IRecordDbStore<T> {
 function createKeyValueDbStore<T extends Record<string, unknown>>(storeName: string): IKeyValueDbStore<T> {
   return {
     async get(name: keyof T, defaultValue?: T[keyof T]): Promise<T[keyof T]> {
-      const _db = await db
+      const _db = await database
       const value = await _db.get(storeName, name as string)
 
       return _.isUndefined(value) ? defaultValue : value
     },
     async set(name: keyof T, value: T[keyof T]): Promise<void> {
-      await (await db).put(storeName, value, name as string)
+      await (await database).put(storeName, value, name as string)
     },
     async setObject(values: Partial<T>): Promise<void> {
-      const tx = (await db).transaction(storeName, "readwrite")
+      const tx = (await database).transaction(storeName, "readwrite")
       await Promise.all(Object.entries(values).map(async ([key, value]) => {
         await tx.store.put(value, key)
       }).concat(tx.done))
     },
     async getObject(): Promise<T> {
-      const _db = (await db)
+      const _db = (await database)
       const keys = await _db.getAllKeys(storeName)
       const values = await _db.getAll(storeName)
       //@ts-ignore
@@ -96,27 +96,27 @@ function createKeyValueDbStore<T extends Record<string, unknown>>(storeName: str
 function createRecordsDbStore<T>(storeName: string): IRecordDbStore<T> {
   return {
     async get(key) {
-      return (await db).get(storeName, key) as Promise<T>
+      return (await database).get(storeName, key) as Promise<T>
     },
     async getAll() {
-      return (await db).getAll(storeName) as unknown as Promise<T[]>
+      return (await database).getAll(storeName) as unknown as Promise<T[]>
     },
     async getAllIds() {
-      return (await db).getAllKeys(storeName) as Promise<string[]>
+      return (await database).getAllKeys(storeName) as Promise<string[]>
     },
     async set(...value) {
-      const _db = await db
+      const _db = await database
 
       const tx = _db.transaction(storeName, "readwrite")
       await Promise.all(value.map(async item => { await tx.store.put(item) }).concat(tx.done))
     },
     async delete(...ids: string[]) {
-      const _db = await db
+      const _db = await database
       const tx = _db.transaction(storeName, "readwrite")
       await Promise.all(ids.map(async id => tx.store.delete(id)).concat(tx.done))
     },
     async getBy(range: IDBKeyRange) {
-      const _db = await db
+      const _db = await database
       let cursor = await _db.transaction(storeName, "readonly").objectStore(storeName).index("id").openCursor(range)
       const values = []
       while (cursor) {
@@ -138,7 +138,7 @@ if (import.meta.env.DEV && typeof window !== "undefined") {
 
   // @ts-ignore
   window.contentPager = async ({ pageIndex = 1, pageSize = 100, lastId = "" }: { pageIndex: number, pageSize: number, lastId: string }) => {
-    const req = await (await db).transaction("content", "readonly").objectStore("content").index("id").openCursor(IDBKeyRange.upperBound(lastId))
+    const req = await (await database).transaction("content", "readonly").objectStore("content").index("id").openCursor(IDBKeyRange.upperBound(lastId))
   }
 
   // @ts-ignore
@@ -151,7 +151,7 @@ if (import.meta.env.DEV && typeof window !== "undefined") {
   window.initPluginsMockData = async function (count: number = 10) {
     const c = Math.abs(count)
     if (count < 0) {
-      void (await db).clear("plugins")
+      void (await database).clear("plugins")
     }
     for (let i = 0; i < c; i++) {
       void pluginStore.set({

@@ -65,7 +65,7 @@ export default function EditorSettings() {
       ),
       行高: (
         <Form.Item name={["editorStyle", "lineHeight"]} noStyle>
-          <Select>
+          <Select style={{ minWidth: 60 }}>
             {lineHeights.map((value) => (
               <Select.Option value={value} key={`line-height-${value}`}>
                 {value}

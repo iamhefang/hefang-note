@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice, PayloadAction, SliceCaseReducers } from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice, PayloadAction, Slice, SliceCaseReducers } from "@reduxjs/toolkit"
 import _ from "lodash"
 
 import { NoteItem } from "~/types"
-import { contentStore, notesStore } from "~/utils/database"
+import { contentStore, database, notesStore } from "~/utils/database"
 import { findNoteParents } from "~/utils/notes"
 
 
@@ -16,18 +16,42 @@ export type NoteState = {
 }
 const sliceName = "notes"
 
-export const loadNotes = createAsyncThunk(`${sliceName}/loadNotes`, async () => {
+export const loadAllNotes = createAsyncThunk(`${sliceName}/loadNotes`, async () => {
     const items = await notesStore.getAll()
 
     return Object.fromEntries(items.map(item => [item.id, item]))
 })
 
-export const noteSlice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
+let slice: Slice<NoteState, SliceCaseReducers<NoteState>> | null = null
+
+const bufferSize = 3000
+
+export const loadNotesProgressively = createAsyncThunk(`${sliceName}/loadNotesProgressively`, async (_never, api) => {
+    if (!slice) { return }
+    const tx = (await database).transaction("notes", "readonly")
+    let cursor = await tx.objectStore("notes").openCursor()
+    const buffer: NoteItem[] = new Array(bufferSize)
+    let index = 0
+    while (cursor) {
+        buffer[index++] = cursor.value
+        if (index === bufferSize) {
+            api.dispatch(slice.actions.setNotes(buffer))
+            index = 0
+        }
+        cursor = await cursor.continue()
+    }
+    if (index !== bufferSize) {
+        api.dispatch(slice.actions.setNotes(buffer.slice(0, index)))
+    }
+    await tx.done
+})
+
+slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
     name: "notes",
     initialState: {
         entities: {},
         ids: [],
-        initializing: true,
+        initializing: false,
         status: "loading",
     },
     reducers: {
@@ -73,22 +97,28 @@ export const noteSlice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
             state.entities[action.payload.id] = action.payload
             void notesStore.set(action.payload)
         },
+        setNotes(state, action: PayloadAction<NoteItem[]>) {
+            for (const item of action.payload) {
+                state.entities[item.id] = item
+                state.ids.push(item.id)
+            }
+        },
     },
     extraReducers(builder) {
         builder
-            .addCase(loadNotes.fulfilled, (state, action) => {
-                state.entities = action.payload
-                state.ids = Object.keys(action.payload)
-                state.initializing = false
+            .addCase(loadNotesProgressively.fulfilled, (state) => {
                 state.status = "idle"
             })
-            .addCase(loadNotes.pending, (state) => {
+            .addCase(loadNotesProgressively.pending, (state) => {
                 state.status = "loading"
             })
-            .addCase(loadNotes.rejected, (state) => {
+            .addCase(loadNotesProgressively.rejected, (state) => {
                 state.status = "failed"
             })
     },
 })
 
-export const { updateContent, startRenaming, stopRenaming, newNote, deleteNote } = noteSlice.actions
+export const noteSlice: Slice<NoteState, SliceCaseReducers<NoteState>> = slice
+
+export const { updateContent, startRenaming, stopRenaming, newNote, deleteNote } = slice.actions
+

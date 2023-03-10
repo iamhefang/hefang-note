@@ -13,7 +13,7 @@ import NoteTree from "$components/tree/NoteTree"
 import useNewModal from "$hooks/useNewModal"
 import { useNotes, useSettings } from "$hooks/useSelectors"
 export default function SiderBar() {
-  const { initializing: loading } = useNotes()
+  const { initializing } = useNotes()
   const { sort } = useSettings()
   const [search, setSearch] = useState<string>("")
   const dispatch = useAppDispatch()
@@ -78,15 +78,15 @@ export default function SiderBar() {
     <>
       <Row style={{ margin: 10 }} gutter={10} wrap={false}>
         <Col flex={1}>
-          <Input.Search placeholder="搜索目录和标题" onSearch={setSearch} allowClear={true} disabled={loading} />
+          <Input.Search placeholder="搜索目录和标题" onSearch={setSearch} allowClear={true} disabled={initializing} />
         </Col>
         <Col>
-          <Dropdown trigger={["click"]} menu={{ items: menuItems }} disabled={loading}>
+          <Dropdown trigger={["click"]} menu={{ items: menuItems }} disabled={initializing}>
             <Button icon={<MoreOutlined />} />
           </Dropdown>
         </Col>
       </Row>
-      <Skeleton loading={loading} active={true} style={{ padding: 20 }}>
+      <Skeleton loading={initializing} active={true} style={{ padding: 20 }}>
         <div style={{ overflowY: "auto", overflowX: "hidden", height: "calc(100vh - 110px)" }}>
           <NoteTree search={search} />
         </div>
