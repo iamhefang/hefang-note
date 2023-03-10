@@ -48,7 +48,7 @@ void navigator.locks.request("hefang-note", { ifAvailable: true }, async (lock) 
       })
     }
   } else {
-    root.render(<Empty description={`${pkg.productName}已在其他标签页打开`} />)
+    root.render(<Empty description={`${pkg.productName}已在其他窗口打开`} />)
   }
 
   return new Promise(() => {})

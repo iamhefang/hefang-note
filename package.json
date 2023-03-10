@@ -14,7 +14,8 @@
     "tauri:build": "tauri build",
     "turbo:build": "turbo build",
     "turbo:dev": "turbo dev",
-    "eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx ."
+    "eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx .",
+    "create-dmg": "sh ./scripts/build-dmg.sh"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
