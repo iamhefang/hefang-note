@@ -23,7 +23,7 @@ export default function useItemArray({ needSort = false, search }: UseItemArrayO
 
     const matches = itemArray
       .filter((item) => item.title.includes(s))
-      .map((item) => findNoteParents(entities, item.id))
+      .map((item) => findNoteParents(entities, item.id).concat(item))
       .flat(2)
 
     return Array.from(new Set(matches))

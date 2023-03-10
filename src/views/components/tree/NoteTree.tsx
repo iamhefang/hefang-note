@@ -89,7 +89,16 @@ export default function NoteTree({ search }: NoteTreeProps) {
 
   return data.length ? (
     <NoteTreeItemMenu item={rightClickItem} onClick={onMenuClick}>
-      <Virtuoso data={data} totalCount={data.length} itemContent={itemContentRenderer} fixedItemHeight={30} increaseViewportBy={300} />
+      <Virtuoso
+        data={data}
+        totalCount={data.length}
+        itemContent={itemContentRenderer}
+        fixedItemHeight={30}
+        increaseViewportBy={300}
+        onContextMenu={() => {
+          console.log(rightClickItem)
+        }}
+      />
     </NoteTreeItemMenu>
   ) : (
     <Empty description="没有笔记" />

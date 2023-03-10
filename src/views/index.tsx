@@ -49,7 +49,11 @@ export default function View() {
       return null
     }
 
-    return <Spin size="small" />
+    return (
+      <span title="数据量大，正在加载，请稍候">
+        <Spin size="small" />
+      </span>
+    )
   }, [status])
 
   useEffect(() => {
