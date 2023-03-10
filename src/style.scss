@@ -21,6 +21,7 @@ kbd {
 [data-tauri-drag-region],
 :not(input, textarea, [contenteditable="true"], a, svg) {
   cursor: default !important;
+  user-select: none;
 }
 
 .ant-empty {
@@ -43,7 +44,6 @@ kbd {
   line-height: var(--top-bar-height) !important;
   padding: 0 !important;
   text-align: center;
-  // z-index: var(--top-bar-z-index);
   z-index: 10000;
 }
 

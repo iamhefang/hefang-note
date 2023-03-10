@@ -5,3 +5,4 @@ src-tauri
 src/proto/im_message.ts
 !/.eslintrc.cjs
 !/.prettierrc.cjs
+scripts/
