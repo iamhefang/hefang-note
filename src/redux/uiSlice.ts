@@ -1,15 +1,11 @@
 import { createSlice, SliceCaseReducers } from "@reduxjs/toolkit"
 
+import { UIState } from "~/types"
 
-export type States = {
-    showSettingsModal: boolean
-    launching: boolean
-    exporting: boolean
-}
 const sliceName = "states"
 
 
-export const stateSlice = createSlice<States, SliceCaseReducers<States>>({
+export const uiSlice = createSlice<UIState, SliceCaseReducers<UIState>>({
     name: sliceName,
     initialState: {
         showSettingsModal: false,
@@ -17,7 +13,7 @@ export const stateSlice = createSlice<States, SliceCaseReducers<States>>({
         exporting: false,
     },
     reducers: {
-        toggleSettingsModal(state: States) {
+        toggleSettingsModal(state: UIState) {
             state.showSettingsModal = !state.showSettingsModal
         },
         ready(state) {
@@ -26,4 +22,4 @@ export const stateSlice = createSlice<States, SliceCaseReducers<States>>({
     },
 })
 
-export const { toggleSettingsModal, startRenaming, stopRenaming, ready } = stateSlice.actions
+export const { toggleSettingsModal, startRenaming, stopRenaming, ready } = uiSlice.actions

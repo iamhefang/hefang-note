@@ -8,7 +8,7 @@ pub mod utils;
 
 use commands::fs::is_directory;
 use tauri::{
-    App, AppHandle, CustomMenuItem, GlobalShortcutManager, GlobalWindowEvent, Manager, Menu,
+    App, AppHandle, CustomMenuItem, GlobalWindowEvent, Manager, Menu,
     SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, WindowMenuEvent,
 };
 use utils::consts::{

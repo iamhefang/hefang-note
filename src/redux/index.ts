@@ -8,7 +8,7 @@ import { settingsStore } from "~/utils/database"
 import { noteSlice, NoteState } from "./noteSlice"
 import { pluginSlice, PluginState } from "./pluginSlice"
 import { settingSlice } from "./settingSlice"
-import { States, stateSlice } from "./stateSlice"
+import { States, uiSlice } from "./uiSlice"
 
 export const defaultState: Settings = {
   theme: "auto",
@@ -29,18 +29,12 @@ export const defaultState: Settings = {
   shortcut: { lock: "Ctrl+L" },
 }
 
-export type StoreState = {
-  settings: Settings
-  notes: NoteState
-  states: States
-  plugins: PluginState
-}
 
 const store = configureStore({
   reducer: {
     settings: settingSlice.reducer,
     notes: noteSlice.reducer,
-    states: stateSlice.reducer,
+    states: uiSlice.reducer,
     plugins: pluginSlice.reducer,
   },
   devTools: import.meta.env.DEV,

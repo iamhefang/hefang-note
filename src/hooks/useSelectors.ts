@@ -1,17 +1,13 @@
 import { useSelector } from "react-redux"
 
-import { StoreState } from "~/redux"
-import { NoteState } from "~/redux/noteSlice"
-import { PluginState } from "~/redux/pluginSlice"
-import { States } from "~/redux/stateSlice"
-import { Settings } from "~/types"
+import { NoteState, PluginState, Settings, StoreState, UIState } from "~/types"
 
 export function useSettings() {
     return useSelector<StoreState, Settings>(s => s.settings)
 }
 
 export function useStates() {
-    return useSelector<StoreState, States>(s => s.states)
+    return useSelector<StoreState, UIState>(s => s.states)
 }
 
 export function usePluginState() {

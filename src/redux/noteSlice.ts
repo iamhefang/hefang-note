@@ -1,19 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction, Slice, SliceCaseReducers } from "@reduxjs/toolkit"
 import _ from "lodash"
 
-import { NoteItem } from "~/types"
+import { NoteItem, NoteState, StoreState } from "~/types"
 import { contentStore, database, notesStore } from "~/utils/database"
 import { findNoteParents } from "~/utils/notes"
 
 
 
-export type NoteState = {
-    ids: string[]
-    entities: { [id: string]: NoteItem }
-    initializing: boolean
-    status: "loading" | "idle" | "failed"
-    renamingId?: string
-}
 const sliceName = "notes"
 
 export const loadAllNotes = createAsyncThunk(`${sliceName}/loadNotes`, async () => {
@@ -32,7 +25,8 @@ export const loadNotesProgressively = createAsyncThunk(`${sliceName}/loadNotesPr
     let cursor = await tx.objectStore("notes").openCursor()
     const buffer: NoteItem[] = new Array(bufferSize)
     let index = 0
-    while (cursor) {
+    const state: StoreState = api.getState() as StoreState
+    while (cursor && state.states.cleaning) {
         buffer[index++] = cursor.value
         if (index === bufferSize) {
             api.dispatch(slice.actions.setNotes(buffer))

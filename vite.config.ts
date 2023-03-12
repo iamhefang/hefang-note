@@ -1,8 +1,10 @@
 import path from "path"
 
+
 import react from "@vitejs/plugin-react"
 import { internalIpV4 } from "internal-ip"
 import { defineConfig } from "vite"
+import { externalizeDeps } from "vite-plugin-externalize-deps"
 import { viteStaticCopy } from "vite-plugin-static-copy"
 import svgr from "vite-plugin-svgr"
 
@@ -28,6 +30,7 @@ export default defineConfig(async () => {
         "^": __dirname,
         "$hooks": path.resolve(__dirname, "src/hooks"),
         "$components": path.resolve(__dirname, "src/views/components"),
+        "$utils": path.resolve(__dirname, "src/utils"),
       },
     },
     // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
@@ -55,6 +58,19 @@ export default defineConfig(async () => {
       // produce sourcemaps for debug builds
       sourcemap: !!process.env.TAURI_DEBUG,
       modulePreload: true,
+      rollupOptions: {
+        external: ["antd", "react", "react-dom", "lodash"],
+        output: {
+          globals: {
+            "react": "React",
+            "react-dom": "ReactDOM",
+            "react-dom/client": "ReactDOMClient",
+            "lodash": "_",
+            "antd": "antd",
+            "@ant-design/icons": "icons",
+          },
+        },
+      },
     },
   }
 })

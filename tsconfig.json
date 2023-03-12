@@ -19,6 +19,7 @@
       "~/*": ["./src/*"],
       "^/*": ["./*"],
       "$hooks/*": ["./src/hooks/*"],
+      "$utils/*": ["./src/utils/*"],
       "$components/*": ["./src/views/components/*"]
     }
   },

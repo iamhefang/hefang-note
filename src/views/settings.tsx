@@ -5,7 +5,7 @@ import { useCallback, useEffect } from "react"
 
 import { isInTauri } from "~/consts"
 import { useAppDispatch } from "~/redux"
-import { toggleSettingsModal } from "~/redux/stateSlice"
+import { toggleSettingsModal } from "~/redux/uiSlice"
 
 import { PluginManager } from "$components/plugins"
 import SettingForm from "$components/settings/SettingForm"

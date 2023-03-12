@@ -3,7 +3,7 @@ import { Button } from "antd"
 import { useCallback } from "react"
 
 import { useAppDispatch } from "~/redux"
-import { toggleSettingsModal } from "~/redux/stateSlice"
+import { toggleSettingsModal } from "~/redux/uiSlice"
 
 import usePlatform from "$hooks/usePlatform"
 

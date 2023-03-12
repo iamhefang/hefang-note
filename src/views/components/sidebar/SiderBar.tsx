@@ -12,6 +12,7 @@ import { NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
 import NoteTree from "$components/tree/NoteTree"
 import useNewModal from "$hooks/useNewModal"
 import { useNotes, useSettings } from "$hooks/useSelectors"
+
 export default function SiderBar() {
   const { initializing } = useNotes()
   const { sort } = useSettings()

@@ -4,7 +4,7 @@ import { useCallback, useEffect } from "react"
 
 import { isInTauri } from "~/consts"
 import { useAppDispatch } from "~/redux"
-import { toggleSettingsModal } from "~/redux/stateSlice"
+import { toggleSettingsModal } from "~/redux/uiSlice"
 
 import CommonMenuItem from "$components/menus/CommonMenuItem"
 import usePlatform from "$hooks/usePlatform"
@@ -34,13 +34,13 @@ export default function AppLogo() {
     if (!isInTauri) {
       return
     }
-    void register("Ctrl+,", toggleSettings)
-    void register("Ctrl+Q", window.close)
+    // void register("Ctrl+,", toggleSettings)
+    // void register("Ctrl+Q", window.close)
 
-    return () => {
-      void unregister("Ctrl+,")
-      void unregister("Ctrl+Q")
-    }
+    // return () => {
+    //   void unregister("Ctrl+,")
+    //   void unregister("Ctrl+Q")
+    // }
   }, [toggleSettings])
 
   return (

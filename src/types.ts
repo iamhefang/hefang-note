@@ -63,6 +63,29 @@ export type Settings = {
 
 export type NoteSort = Sort<keyof Omit<NoteItem, "id" | "parentId" | "isLeaf">>
 
+
+export type UIState = {
+  showSettingsModal: boolean
+  launching: boolean
+  exporting: boolean
+}
+export type StoreState = {
+  settings: Settings
+  notes: NoteState
+  states: UIState
+  plugins: PluginState
+}
+
+export type NoteState = {
+  ids: string[]
+  entities: { [id: string]: NoteItem }
+  initializing: boolean
+  status: "loading" | "idle" | "failed"
+  renamingId?: string
+}
+export type PluginState = {
+  entities: string[]
+}
 export type GlobalState = Settings & {
   loading: boolean;
   showSettingModal: boolean;
