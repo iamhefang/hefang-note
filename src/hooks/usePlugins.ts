@@ -1,11 +1,10 @@
 import { BaseDirectory, createDir, exists, readDir, readTextFile } from "@tauri-apps/api/fs"
 import { join } from "@tauri-apps/api/path"
 import { GlobalToken, ThemeConfig } from "antd"
-import { ClassicComponentClass, ComponentClass, FC, ReactNode, useEffect, useMemo, useRef, useState } from "react"
+import { ComponentClass, FC, ReactNode, useEffect, useMemo, useRef, useState } from "react"
 
-import { GlobalState, ThemeDefine, Themes, ThemeType } from "~/types"
+import { GlobalState, ThemeDefine, ThemeType } from "~/types"
 
-import useGlobalState from "./useGlobalState"
 import { PlatformType } from "./usePlatform"
 import { usePluginState } from "./useSelectors"
 

@@ -1,6 +1,5 @@
 import { useMemo } from "react"
 
-import useGlobalState from "./useGlobalState"
 import { useSettings } from "./useSelectors"
 import useThemes from "./useThemes"
 

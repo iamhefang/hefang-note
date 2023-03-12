@@ -1,23 +1,18 @@
-import { register } from "@tauri-apps/api/globalShortcut"
-import { appWindow } from "@tauri-apps/api/window"
 import { Empty, message, Modal } from "antd"
-import React from "react"
-import ReactDOM from "react-dom/client"
+import ReactDOMClient from "react-dom/client"
 import { Provider } from "react-redux"
 
 import Application from "./Application"
-import { isInTauri } from "./consts"
 import store from "./redux"
 
 import pkg from "^/package.json"
+import "$utils/debug"
 
 import "~/utils/worker"
 import "./style.scss"
 
-window.React = React
-
 message.config({ top: 40 })
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
+const root = ReactDOMClient.createRoot(document.getElementById("root") as HTMLElement)
 
 void navigator.locks.request("hefang-note", { ifAvailable: true }, async (lock) => {
   if (lock) {
@@ -26,12 +21,6 @@ void navigator.locks.request("hefang-note", { ifAvailable: true }, async (lock) 
         <Application />
       </Provider>,
     )
-
-    if (isInTauri) {
-      void register("CmdOrControl+W", () => {
-        void appWindow.minimize()
-      })
-    }
 
     if (localStorage.getItem("firstRun") !== pkg.version) {
       Modal.info({

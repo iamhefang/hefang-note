@@ -1,15 +1,13 @@
 import { Space } from "antd"
-import React, { Suspense, useMemo } from "react"
+import React, { Suspense } from "react"
 
 import ss from "./TopBarLeft.module.scss"
 
 import AppLogo from "$components/icons/AppLogo"
 import SiderBarToggle from "$components/topbar/items/SiderBarToggle"
 import ShowInPlatform from "$components/utils/ShowInPlatform"
-import useGlobalState from "$hooks/useGlobalState"
 import usePlatform from "$hooks/usePlatform"
 import { useSettings, useStates } from "$hooks/useSelectors"
-
 
 const LazyClientDownload = React.lazy(async () => import("$components/topbar/items/ClientDownload"))
 

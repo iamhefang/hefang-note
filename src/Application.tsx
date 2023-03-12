@@ -2,7 +2,7 @@ import { App as Antd, theme as antdTheme, ConfigProvider } from "antd"
 import zhCN from "antd/locale/zh_CN"
 import React, { Suspense, useEffect } from "react"
 
-import { stateSlice } from "~/redux/stateSlice"
+import { uiSlice } from "~/redux/uiSlice"
 import View from "~/views"
 
 import { useAppDispatch } from "./redux"
@@ -31,7 +31,7 @@ export default function Application() {
     })
     void (async () => {
       await loadSettings()
-      dispatch(stateSlice.actions.ready({}))
+      dispatch(uiSlice.actions.ready({}))
       void loadContents()
     })()
   }, [dispatch, loadContents, loadSettings])
