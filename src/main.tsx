@@ -7,6 +7,7 @@ import store from "./redux"
 
 import pkg from "^/package.json"
 import "$utils/debug"
+import "$utils/globals"
 
 import "~/utils/worker"
 import "./style.scss"
