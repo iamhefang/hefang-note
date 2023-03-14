@@ -102,7 +102,16 @@ export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) 
   )
 
   return (
-    <Row wrap={false} gutter={10} className={ss.item} onClick={onItemClick} onContextMenu={onRightClick} data-active={current === item.id} style={style}>
+    <Row
+      wrap={false}
+      gutter={10}
+      className={ss.item}
+      onClick={onItemClick}
+      onContextMenu={onRightClick}
+      data-active={current === item.id}
+      style={style}
+      data-id={item.id}
+    >
       <Col style={{ width, textAlign: "right", flexShrink: 0 }}>{expandIcon}</Col>
       <Col>{item.isLeaf ? <FileTextOutlined /> : expandItems[item.id] ? <FolderOpenOutlined /> : <FolderOutlined />}</Col>
       <Col flex={1}>{title}</Col>

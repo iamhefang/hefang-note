@@ -87,7 +87,12 @@ export default function NoteTree({ search }: NoteTreeProps) {
     [rightClickItem, dispatch, itemArray, modal, showModal],
   )
 
-  const onListRightClick = useCallback(() => rightClickItem && setRightClickItem(undefined), [rightClickItem])
+  const onListRightClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const pathes = e.nativeEvent.composedPath()
+    if (!pathes.some((item) => (item as HTMLDivElement)?.getAttribute?.("data-id"))) {
+      setRightClickItem(undefined)
+    }
+  }, [])
 
   return (
     <NoteTreeItemMenu item={rightClickItem} onClick={onMenuClick}>
