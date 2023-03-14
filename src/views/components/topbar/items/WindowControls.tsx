@@ -10,6 +10,7 @@ import WindowRestore from "~/views/icons/window-restore.svg"
 import ss from "./WindowControls.module.scss"
 
 import useMaximized from "$hooks/useMaximized"
+import { closeWindow } from "$utils/window"
 
 export default function WindowControls() {
   const {
@@ -17,10 +18,7 @@ export default function WindowControls() {
   } = theme.useToken()
   const maximized = useMaximized()
   const minimize = useCallback(async () => appWindow.minimize(), [])
-  const toggleMaximize = useCallback(
-    async () => appWindow.toggleMaximize(),
-    [],
-  )
+  const toggleMaximize = useCallback(async () => appWindow.toggleMaximize(), [])
 
   return useMemo(() => {
     return (
@@ -28,10 +26,8 @@ export default function WindowControls() {
         <button onClick={minimize}>
           <WindowMinimize />
         </button>
-        <button onClick={toggleMaximize}>
-          {maximized ? <WindowRestore /> : <WindowMaximize />}
-        </button>
-        <button onClick={window.close} className={ss.close}>
+        <button onClick={toggleMaximize}>{maximized ? <WindowRestore /> : <WindowMaximize />}</button>
+        <button onClick={closeWindow} className={ss.close}>
           <WindowClose />
         </button>
       </div>

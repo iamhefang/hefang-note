@@ -1,5 +1,5 @@
 import { CaretDownOutlined, CaretRightOutlined, FileTextOutlined, FolderOpenOutlined, FolderOutlined } from "@ant-design/icons"
-import { App, Col, Input, Row, theme } from "antd"
+import { App, Col, Input, Row, RowProps, theme } from "antd"
 import React, { useCallback, useMemo } from "react"
 
 import { NAME_MAX_LENGTH } from "~/config"
@@ -15,7 +15,7 @@ import { useNotes, useSettings } from "$hooks/useSelectors"
 
 export type NoteTreeItemProps = {
   item: NoteIndentItem
-  onRightClick?: () => void
+  onRightClick?: RowProps["onContextMenu"]
 }
 export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) {
   const { current, expandItems } = useSettings()

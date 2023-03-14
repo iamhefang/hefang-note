@@ -8,6 +8,7 @@ import { shortcuts } from "~/utils/shortcuts"
 
 import CommonMenuItem from "$components/menus/CommonMenuItem"
 import usePlatform from "$hooks/usePlatform"
+import { closeWindow } from "$utils/window"
 import pkg from "^/package.json"
 import logo from "^/src-tauri/icons/icon.png"
 
@@ -34,12 +35,13 @@ export default function AppLogo() {
     if (!isInTauri) {
       return
     }
+
     shortcuts.register({ shortcut: "Ctrl+,", handler: toggleSettings })
-    shortcuts.register({ shortcut: "Ctrl+Q", handler: window.close })
+    shortcuts.register({ shortcut: "Ctrl+Q", handler: closeWindow })
 
     return () => {
       shortcuts.remove({ shortcut: "Ctrl+,", handler: toggleSettings })
-      shortcuts.remove({ shortcut: "Ctrl+Q", handler: window.close })
+      shortcuts.remove({ shortcut: "Ctrl+Q", handler: closeWindow })
     }
   }, [toggleSettings])
 
@@ -60,7 +62,7 @@ export default function AppLogo() {
                 { type: "divider" },
                 { key: "menu-settings", label: <CommonMenuItem title="设置" shortcut="Ctrl+," />, onClick: toggleSettings },
                 { type: "divider" },
-                { key: "menu-quit", label: <CommonMenuItem title="退出" shortcut="Ctrl+Q" />, onClick: window.close },
+                { key: "menu-quit", label: <CommonMenuItem title="退出" shortcut="Ctrl+Q" />, onClick: closeWindow },
               ]
             : [
                 {

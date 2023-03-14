@@ -5,9 +5,9 @@ import { Provider } from "react-redux"
 import Application from "./Application"
 import store from "./redux"
 
-import pkg from "^/package.json"
 import "$utils/debug"
 import "$utils/globals"
+import pkg from "^/package.json"
 
 import "~/utils/worker"
 import "./style.scss"
