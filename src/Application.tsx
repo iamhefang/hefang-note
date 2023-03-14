@@ -26,9 +26,6 @@ export default function Application() {
   const loadSettings = useSettingsLoader()
   const dispatch = useAppDispatch()
   useEffect(() => {
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-      // setState({})
-    })
     void (async () => {
       await loadSettings()
       dispatch(uiSlice.actions.ready({}))

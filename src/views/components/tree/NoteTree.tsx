@@ -15,6 +15,7 @@ import useItemArray from "$hooks/useItemArray"
 import useItemsTree from "$hooks/useItemsTree"
 import useNewModal from "$hooks/useNewModal"
 import { useSettings } from "$hooks/useSelectors"
+import { isContentEditable } from "~/utils/dom"
 
 export type NoteTreeProps = {
   search: string
@@ -34,13 +35,13 @@ export default function NoteTree({ search }: NoteTreeProps) {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      if (!current || isContentEditable(document.activeElement)) {
+        return
+      }
       if (e.key.startsWith("Arrow")) {
         e.preventDefault()
         e.stopPropagation()
         e.stopImmediatePropagation()
-      }
-      if (!current) {
-        return
       }
       const currentIndex = data.findIndex((item) => item.id === current)
       if (currentIndex === -1) {
