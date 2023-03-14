@@ -11,6 +11,7 @@ import { lockScreen } from "~/redux/settingSlice"
 import ss from "./ScreenLocker.module.scss"
 
 import { useSettings } from "$hooks/useSelectors"
+import { shortcuts } from "$utils/shortcuts"
 
 export default function ScreenLocker() {
   const {
@@ -79,21 +80,11 @@ export default function ScreenLocker() {
 
   useEffect(() => {
     if (shortcut?.lock) {
-      const keys = shortcut.lock.split("+")
-      const metaKey = keys.includes("Meta")
-      const shiftKey = keys.includes("Shift")
-      const ctrlKey = keys.includes("Ctrl")
-      const altKey = keys.includes("Alt")
-      const onWindowKeyPress = (e: KeyboardEvent) => {
-        if (e.metaKey === metaKey && e.shiftKey === shiftKey && e.ctrlKey === ctrlKey && e.altKey === altKey && e.key.toUpperCase() === _.last(keys)) {
-          onLockClick()
-        }
-      }
-      window.addEventListener("keypress", onWindowKeyPress)
+      shortcuts.register({ shortcut: shortcut.lock, handler: onLockClick })
+    }
 
-      return () => {
-        window.removeEventListener("keypress", onWindowKeyPress)
-      }
+    return () => {
+      shortcuts.remove({ shortcut: shortcut.lock, handler: onLockClick })
     }
   }, [onLockClick, shortcut.lock])
 

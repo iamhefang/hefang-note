@@ -5,10 +5,10 @@ import { useDispatch } from "react-redux"
 import { Settings } from "~/types"
 import { settingsStore } from "~/utils/database"
 
-import { noteSlice, NoteState } from "./noteSlice"
-import { pluginSlice, PluginState } from "./pluginSlice"
+import { noteSlice } from "./noteSlice"
+import { pluginSlice } from "./pluginSlice"
 import { settingSlice } from "./settingSlice"
-import { States, uiSlice } from "./uiSlice"
+import { uiSlice } from "./uiSlice"
 
 export const defaultState: Settings = {
   theme: "auto",
@@ -26,7 +26,7 @@ export const defaultState: Settings = {
     fontFamily: "inherit",
     fontSize: "inherit",
   },
-  shortcut: { lock: "Ctrl+L" },
+  shortcut: { lock: "CmdOrCtrl+L", closeWindow: "CmdOrCtrl+W" },
 }
 
 
