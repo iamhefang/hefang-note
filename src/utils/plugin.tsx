@@ -1,14 +1,13 @@
-import { dialog } from "@tauri-apps/api"
-import { readTextFile, writeTextFile } from "@tauri-apps/api/fs"
+import { dialog, path } from "@tauri-apps/api"
+import { readTextFile } from "@tauri-apps/api/fs"
 import Ajv from "ajv"
-import { Button, Col, Dropdown, message, Modal, Row } from "antd"
+import { Button, Col, Dropdown, Modal, Row } from "antd"
 
 import { isInTauri } from "~/consts"
 import { NoteItem, WorkerEventKeys } from "~/types"
 
 import { contentStore, notesStore } from "./database"
 import schema from "./note-data-schema.json"
-import { buildExportJson } from "./notes"
 import { emit2worker } from "./worker"
 
 import pkg from "^/package.json"
@@ -36,13 +35,13 @@ async function importWithTauri(): Promise<NoteData> {
         title: "选择文件",
         multiple: false,
         directory: false,
-        filters: [{ name: "JSON文件", extensions: ["json"] }],
+        filters: [{ name: "何方笔记备份文件", extensions: ["hbk"] }],
       })
-      .then((path) => {
-        if (!path) {
+      .then((filePath) => {
+        if (!filePath) {
           return reject("未选择文件")
         }
-        readTextFile(path as string)
+        readTextFile(filePath as string)
           .then((value) => {
             try {
               const json: NoteData = JSON.parse(value)
@@ -69,7 +68,7 @@ async function importWithHtml(): Promise<NoteData> {
   return new Promise((resolve, reject) => {
     const input = document.createElement("input")
     input.setAttribute("type", "file")
-    input.setAttribute("accept", ".json")
+    input.setAttribute("accept", ".hbk")
     input.addEventListener("change", () => {
       if (!input.files?.length) {
         return
@@ -112,11 +111,12 @@ export const hefang = {
   contens: {
     export: async () => {
       if (isInTauri) {
+        const downloadDir = await path.downloadDir()
         void dialog
           .save({
             title: "保存笔记数据",
-            filters: [{ name: "JSON文件", extensions: ["json"] }],
-            defaultPath: `${pkg.productName}-${Date.now()}`,
+            filters: [{ name: "何方笔记备份文件", extensions: ["hbk"] }],
+            defaultPath: await path.join(downloadDir, `${pkg.productName}-${Date.now()}`),
           })
           .then(async (res) => {
             emit2worker(WorkerEventKeys.exportStart, { type: "json", path: res })

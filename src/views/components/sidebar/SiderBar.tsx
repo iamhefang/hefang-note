@@ -1,21 +1,22 @@
 import { CheckOutlined, MoreOutlined } from "@ant-design/icons"
-import { Button, Col, Dropdown, Input, MenuProps, Row, Skeleton } from "antd"
+import { App, Button, Col, Dropdown, Input, MenuProps, Row, Skeleton } from "antd"
 import { useCallback, useMemo, useState } from "react"
 
 import { useAppDispatch } from "~/redux"
 import { setSort } from "~/redux/settingSlice"
 import { NoteSort } from "~/types"
-import { sortItems } from "~/utils/sort"
 
 import { iconPlacehodler } from "$components/icons/IconPlaceholder"
 import { NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
 import NoteTree from "$components/tree/NoteTree"
 import useNewModal from "$hooks/useNewModal"
 import { useNotes, useSettings } from "$hooks/useSelectors"
+import { sortItems } from "$utils/sort"
 
 export default function SiderBar() {
   const { initializing } = useNotes()
   const { sort } = useSettings()
+  const { modal } = App.useApp()
   const [search, setSearch] = useState<string>("")
   const dispatch = useAppDispatch()
   const showModal = useNewModal()
@@ -51,28 +52,27 @@ export default function SiderBar() {
           },
         ] as MenuProps["items"],
       },
-      // { type: "divider" },
-      // {
-      //   key: "export",
-      //   label: "导出全部笔记",
-      //   onClick: async () =>
-      //     import("~/utils/plugin").then((res) => {
-      //       void res.hefang.contens.export()
-      //     }),
-      // },
-      // {
-      //   key: "import",
-      //   label: "导入笔记",
-      //   onClick: async () =>
-      //     import("~/utils/plugin").then((res) => {
-      //       void res.hefang.contens.import().then((count) => {
-      //         void loadContent()
-      //         modal.info({ title: `共导入${count}条数据` })
-      //       })
-      //     }),
-      // },
+      { type: "divider" },
+      {
+        key: "export",
+        label: "导出全部笔记",
+        onClick: async () =>
+          import("~/utils/plugin").then((res) => {
+            void res.hefang.contens.export()
+          }),
+      },
+      {
+        key: "import",
+        label: "导入笔记",
+        onClick: async () =>
+          import("~/utils/plugin").then((res) => {
+            void res.hefang.contens.import().then((count) => {
+              modal.info({ title: `共导入${count}条数据` })
+            })
+          }),
+      },
     ],
-    [createOnSortChange, showModal, sort.field, sort.type],
+    [createOnSortChange, modal, showModal, sort.field, sort.type],
   )
 
   return (
@@ -87,8 +87,8 @@ export default function SiderBar() {
           </Dropdown>
         </Col>
       </Row>
-      <Skeleton loading={initializing} active={true} style={{ padding: 20 }}>
-        <div style={{ overflowY: "auto", overflowX: "hidden", height: "calc(100vh - 110px)" }}>
+      <Skeleton loading={initializing} active style={{ padding: 20 }}>
+        <div style={{ overflow: "hidden", height: "calc(100vh - 110px)" }}>
           <NoteTree search={search} />
         </div>
       </Skeleton>

@@ -1,10 +1,12 @@
 import type { ThemeConfig } from "antd"
 import type { CSSProperties, ReactNode } from "react"
 
+
 export const enum WorkerEventKeys {
   startExport = "startExport",
   exportStart = "exportStart",
-  exportSuccess = "exportSuccess"
+  exportSuccess = "exportSuccess",
+  databaseBlocking = "databaseBlocking"
 }
 
 export type ExportType = {
