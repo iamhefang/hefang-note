@@ -1,10 +1,14 @@
 import { dialog, shell } from "@tauri-apps/api"
+import { appWindow } from "@tauri-apps/api/window"
 import { Modal } from "antd"
 
 import { isInTauri, productName } from "~/consts"
 
 export function closeWindow() {
-    window.close()
+    // window.close()
+    if (isInTauri) {
+        void appWindow.minimize()
+    }
 }
 
 export function showDbBlockingDialog({ }: { currentVersion: number, blockedVersion: number | null }) {
