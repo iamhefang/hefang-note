@@ -8,8 +8,8 @@ pub mod utils;
 
 use commands::fs::is_directory;
 use tauri::{
-    App, AppHandle, CustomMenuItem, GlobalWindowEvent, Manager, Menu,
-    SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, WindowMenuEvent,
+    App, AppHandle, CustomMenuItem, GlobalWindowEvent, Manager, Menu, SystemTray, SystemTrayEvent,
+    SystemTrayMenu, SystemTrayMenuItem, WindowMenuEvent,
 };
 use utils::consts::{
     EVENT_TOGGLE_LOCK, EVENT_TOGGLE_SETTINGS, MENU_ID_QUIT, MENU_ID_TOGGLE_LOCK,

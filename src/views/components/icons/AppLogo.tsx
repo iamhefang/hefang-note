@@ -52,7 +52,7 @@ export default function AppLogo() {
         placement="bottomLeft"
         overlayStyle={{ zIndex: 10000 }}
         menu={{
-          items: ["Linux", "Windows"].includes(osType)
+          items: ["Linux", "Windows_NT"].includes(osType)
             ? [
                 {
                   key: "app-name",

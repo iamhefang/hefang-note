@@ -3,6 +3,15 @@
 
 <head>
   <script>
+    const editableTags = ["INPUT", "TEXTAREA"]
+    function isContentEditable(element) {
+      return element instanceof Element && (editableTags.includes(element.tagName) || element.getAttribute("contentEditable") === "true")
+    }
+    window.addEventListener("contextmenu", e => {
+      if (!e.composedPath().some(isContentEditable)) {
+        e.preventDefault()
+      }
+    })
     document.documentElement.style.backgroundColor = localStorage.getItem("bgColor")
   </script>
   <meta charset="UTF-8" />
