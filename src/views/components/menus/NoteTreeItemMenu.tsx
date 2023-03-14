@@ -1,4 +1,4 @@
-import { Dropdown, MenuProps } from "antd"
+import { Dropdown, DropdownProps, MenuProps } from "antd"
 import React, { useCallback, useMemo } from "react"
 
 import { NoteIndentItem, NoteItem } from "~/types"
@@ -11,7 +11,11 @@ export type MenuInfo = {
   domEvent: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>
 }
 export type NoteTreeMenuOnClick = (info: MenuInfo, item?: NoteIndentItem) => void
-export type NoteTreeItemMenuProps = React.PropsWithChildren<{ onClick?: NoteTreeMenuOnClick; item?: NoteIndentItem }>
+export type NoteTreeItemMenuProps = React.PropsWithChildren<{
+  onClick?: NoteTreeMenuOnClick
+  item?: NoteIndentItem
+  onOpenChange: DropdownProps["onOpenChange"]
+}>
 
 export const enum NoteTreeMenuKeys {
   delete = "delete",
@@ -20,7 +24,7 @@ export const enum NoteTreeMenuKeys {
   newDir = "newDir",
 }
 
-export default function NoteTreeItemMenu({ children, onClick, item }: NoteTreeItemMenuProps) {
+export default function NoteTreeItemMenu({ children, onClick, item, onOpenChange }: NoteTreeItemMenuProps) {
   const onMenuClick = useCallback((info: MenuInfo) => onClick?.(info, item), [item, onClick])
   const items: MenuProps["items"] = useMemo(() => {
     if (!item) {
@@ -46,7 +50,7 @@ export default function NoteTreeItemMenu({ children, onClick, item }: NoteTreeIt
   }, [item])
 
   return (
-    <Dropdown trigger={["contextMenu"]} menu={{ items, onClick: onMenuClick as never }}>
+    <Dropdown trigger={["contextMenu"]} menu={{ items, onClick: onMenuClick as never }} onOpenChange={onOpenChange}>
       {children}
     </Dropdown>
   )

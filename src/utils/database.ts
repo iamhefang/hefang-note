@@ -1,10 +1,9 @@
-import { dialog, shell } from "@tauri-apps/api"
-import { Modal } from "antd"
 import { openDB } from "idb"
 import _ from "lodash"
 
-import { isInTauri, productName } from "~/consts"
-import { NoteItem, Settings } from "~/types"
+import { emit2main } from "~/common/utils"
+import { isInWorker } from "~/consts"
+import { NoteItem, Settings, WorkerEventKeys } from "~/types"
 
 import { IPluginInfo } from "$hooks/usePlugins"
 import pkg from "^/package.json"
@@ -45,18 +44,10 @@ export const database = openDB(pkg.name, 10, {
     await transaction.done
   },
   async blocking(currentVersion, blockedVersion, event) {
-    const title = `您已经使用过新版本的${productName}`
-    const content = "您使用的当前版本低于之前使用的版本"
-    if (isInTauri) {
-      await dialog.message(`${content}，请下载使用新版本`, { title })
-      void shell.open("https://github.com/iamhefang/hefang-note/releases")
+    if (isInWorker) {
+      emit2main(WorkerEventKeys.databaseBlocking, { currentVersion, blockedVersion })
     } else {
-      Modal.info({
-        title, content: `${content}，请刷新后使用`,
-        onOk() {
-          window.location.reload()
-        },
-      })
+      dispatchEvent(new CustomEvent(WorkerEventKeys.databaseBlocking, { detail: { currentVersion, blockedVersion } }))
     }
   },
 })

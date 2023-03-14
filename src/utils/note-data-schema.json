@@ -3,7 +3,8 @@
   "required": [
     "name",
     "version",
-    "contents"
+    "contents",
+    "notes"
   ],
   "properties": {
     "name": {
@@ -13,7 +14,8 @@
       "type": "string"
     },
     "contents": {
-      "type": "object"
+      "type": "object",
+      "properties": {}
     },
     "notes": {
       "type": "array",

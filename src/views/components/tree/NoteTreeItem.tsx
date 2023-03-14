@@ -1,6 +1,7 @@
 import { CaretDownOutlined, CaretRightOutlined, FileTextOutlined, FolderOpenOutlined, FolderOutlined } from "@ant-design/icons"
-import { App, Col, Input, Row, RowProps, theme } from "antd"
-import React, { useCallback, useMemo } from "react"
+import { App, Col, Input, Row, theme } from "antd"
+import React, { CSSProperties, useCallback, useMemo } from "react"
+import { ItemProps } from "react-virtuoso"
 
 import { NAME_MAX_LENGTH } from "~/config"
 import { useAppDispatch } from "~/redux"
@@ -13,11 +14,16 @@ import ss from "./NoteTree.module.scss"
 import { iconPlacehodler } from "$components/icons/IconPlaceholder"
 import { useNotes, useSettings } from "$hooks/useSelectors"
 
-export type NoteTreeItemProps = {
-  item: NoteIndentItem
-  onRightClick?: RowProps["onContextMenu"]
-}
-export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) {
+// export type NoteTreeItemProps = {
+//   item: NoteIndentItem
+//   onRightClick?: RowProps["onContextMenu"]
+// }
+export default function NoteTreeItem({
+  item,
+  "data-index": dataIndex,
+  "data-item-index": dataItemIndex,
+  "data-known-size": dataSize,
+}: ItemProps<NoteIndentItem>) {
   const { current, expandItems } = useSettings()
   const { renamingId } = useNotes()
   const { token } = theme.useToken()
@@ -92,13 +98,14 @@ export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) 
   )
 
   const style = useMemo(
-    () => ({
+    (): CSSProperties => ({
       background: current === item.id ? token.colorPrimaryBg : "none",
       color: current === item.id ? token.colorPrimaryTextActive : undefined,
       marginInline: 10,
       borderColor: token.colorPrimary,
+      height: dataSize,
     }),
-    [current, item.id, token.colorPrimary, token.colorPrimaryBg, token.colorPrimaryTextActive],
+    [current, dataSize, item.id, token.colorPrimary, token.colorPrimaryBg, token.colorPrimaryTextActive],
   )
 
   return (
@@ -107,10 +114,11 @@ export default function NoteTreeItem({ item, onRightClick }: NoteTreeItemProps) 
       gutter={10}
       className={ss.item}
       onClick={onItemClick}
-      onContextMenu={onRightClick}
-      data-active={current === item.id}
       style={style}
+      data-active={current === item.id}
       data-id={item.id}
+      data-index={dataIndex}
+      data-item-index={dataItemIndex}
     >
       <Col style={{ width, textAlign: "right", flexShrink: 0 }}>{expandIcon}</Col>
       <Col>{item.isLeaf ? <FileTextOutlined /> : expandItems[item.id] ? <FolderOpenOutlined /> : <FolderOutlined />}</Col>
