@@ -9,8 +9,8 @@ import { useCallback } from "react"
 import { isInTauri } from "~/consts"
 import schema from "~/data/note-data-schema.json"
 import { NoteItem } from "~/types"
-import { notesStore } from "~/utils/database"
 
+import { notesStore } from "$utils/database"
 import pkg from "^/package.json"
 
 type NoteData = {

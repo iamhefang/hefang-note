@@ -31,7 +31,7 @@ export default function useItemArray({ needSort = false, search }: UseItemArrayO
 
   const sorter = useMemo(() => treeSorter({ field, type }), [field, type])
 
-  const sorted = useMemo(() => (needSort ? searched.sort(sorter) : searched), [needSort, searched, sorter])
+  const sorted = useMemo(() => (needSort ? [...searched].sort(sorter) : searched), [needSort, searched, sorter])
 
   return sorted
 }
