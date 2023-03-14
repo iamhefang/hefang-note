@@ -1,9 +1,21 @@
+import { path } from "@tauri-apps/api"
 import { deleteDB } from "idb"
+
+import { isInTauri } from "~/consts"
 
 import { contentStore, database, notesStore, pluginStore, settingsStore } from "./database"
 
 
 if (import.meta.env.DEV && typeof window !== "undefined") {
+
+    if (isInTauri) {
+        void (async () => {
+            console.info("appDataDir", await path.appDataDir())
+            console.info("appCacheDir", await path.appCacheDir())
+            console.info("appConfigDir", await path.appConfigDir())
+        })()
+    }
+
     const devTools =
     {
         settingsStore,

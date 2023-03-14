@@ -28,7 +28,7 @@ export default function NoteTree({ search }: NoteTreeProps) {
   const showModal = useNewModal()
   const { modal } = App.useApp()
 
-  const createOnRightClick = useCallback((item: NoteIndentItem) => () => setRightClickItem(item), [])
+  const createOnRightClick = useCallback((item: NoteIndentItem) => (e: React.MouseEvent<HTMLDivElement>) => setRightClickItem(item), [])
 
   const itemContentRenderer = useCallback(
     (_index: number, item: NoteIndentItem) => <MemodNoteTreeItem key={item.id} item={item} onRightClick={createOnRightClick(item)} />,
@@ -87,7 +87,7 @@ export default function NoteTree({ search }: NoteTreeProps) {
     [rightClickItem, dispatch, itemArray, modal, showModal],
   )
 
-  const onListRightClick = useCallback(() => setRightClickItem(undefined), [])
+  const onListRightClick = useCallback(() => rightClickItem && setRightClickItem(undefined), [rightClickItem])
 
   return (
     <NoteTreeItemMenu item={rightClickItem} onClick={onMenuClick}>

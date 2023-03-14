@@ -12,6 +12,7 @@ import TopBarRight from "$components/topbar/TopBarRight"
 import VersionView from "$components/version/VersionView"
 import { useNotes, useSettings } from "$hooks/useSelectors"
 import { shortcuts } from "$utils/shortcuts"
+import { closeWindow } from "$utils/window"
 
 const { Sider, Content, Header, Footer } = Layout
 export default function View() {
@@ -61,11 +62,6 @@ export default function View() {
   useEffect(() => {
     if (!shortcut?.closeWindow) {
       return
-    }
-
-    const closeWindow = () => {
-      console.info({ shortcut: shortcut.closeWindow })
-      window.close()
     }
 
     shortcuts.register({ shortcut: shortcut.closeWindow, handler: closeWindow })
