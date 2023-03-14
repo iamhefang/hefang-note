@@ -1,7 +1,10 @@
 import { EditOutlined } from "@ant-design/icons"
-import { Button, Input, Space, theme } from "antd"
+import { App, Button, Space, theme } from "antd"
 import _ from "lodash"
-import { CSSProperties, ReactNode, useCallback, useMemo, useState } from "react"
+import { CSSProperties, ReactNode, useCallback, useMemo, useRef, useState } from "react"
+import { Shortcut } from "shortcuts"
+
+import { shortcuts } from "~/utils/shortcuts"
 
 export type ShortcutsViewProps = {
   value?: string
@@ -11,7 +14,8 @@ export type ShortcutsViewProps = {
 
 export default function ShortcutsView({ value, onChange, placeholder = <span>未设置</span> }: ShortcutsViewProps) {
   const { token } = theme.useToken()
-  const [editing, setEditing] = useState<string | undefined>()
+  const [recording, setRecording] = useState<string>()
+  const { message, modal } = App.useApp()
   const style = useMemo((): CSSProperties => {
     return {
       color: token.colorText,
@@ -20,51 +24,47 @@ export default function ShortcutsView({ value, onChange, placeholder = <span>未
       boxShadow: `inset 0 -1px 0 ${token.colorBorder}`,
     }
   }, [token.colorBgBase, token.colorBorder, token.colorText])
-  const items = useMemo(
-    () =>
-      value?.split("+").map((k) => (
+  const renderKeys = useCallback(
+    (keys: string) =>
+      keys.split("+").map((k) => (
         <kbd key={`${value}-${k}`} style={style}>
-          {k}
+          {Shortcut.shortcut2symbols(k)}
         </kbd>
       )),
     [style, value],
   )
-
+  const refLastKeys = useRef<string>("")
   const onEditClick = useCallback(() => {
-    setEditing(value || "")
-  }, [value])
+    setRecording("")
+    const stopRecord = shortcuts.record((newValue) => {
+      const [key, modifier] = newValue.replace(refLastKeys.current, "").trim().split(" ").slice(-2)
 
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      e.preventDefault()
-      e.stopPropagation()
-      if (e.key === "Escape") {
-        setEditing(undefined)
-
-        return
+      if (Shortcut.hasModifierKey(Shortcut.shortcut2id(key)[0])) {
+        setRecording(key)
+      } else {
+        refLastKeys.current = newValue
+        void message.error("请输入组合键")
       }
-      if (e.key === "Enter") {
-        editing && onChange?.(editing)
-        setEditing(undefined)
 
-        return
+      if (modifier) {
+        stopRecord()
       }
-      const keys: string[] = []
-      e.metaKey && keys.push("Meta")
-      e.ctrlKey && keys.push("Ctrl")
-      e.shiftKey && keys.push("Shift")
-      e.altKey && keys.push("Alt")
-      e.key.length === 1 && keys.push(e.key.toUpperCase())
-      setEditing(keys.join("+"))
-    },
-    [editing, onChange],
-  )
+      if (modifier === "Enter") {
+        setRecording(undefined)
+        refLastKeys.current = newValue
+        onChange?.(key)
+      } else if (modifier === "Escape") {
+        setRecording(undefined)
+        refLastKeys.current = newValue
+      }
+    })
+  }, [message, onChange])
 
-  return _.isString(editing) ? (
-    <Input size="small" placeholder="请按下快捷键" style={{ width: 200 }} onKeyDown={onKeyDown} value={editing} />
+  return _.isString(recording) ? (
+    <Space size="small">请按下组合键{recording ? renderKeys(recording) : ""}</Space>
   ) : (
     <Space size="small">
-      {items?.length ? items : placeholder}
+      {value?.length ? renderKeys(value) : placeholder}
       <Button icon={<EditOutlined />} type="text" size="small" onClick={onEditClick} />
     </Space>
   )

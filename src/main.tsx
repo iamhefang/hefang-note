@@ -14,7 +14,6 @@ import "./style.scss"
 
 message.config({ top: 40 })
 const root = ReactDOMClient.createRoot(document.getElementById("root") as HTMLElement)
-
 void navigator.locks.request("hefang-note", { ifAvailable: true }, async (lock) => {
   if (lock) {
     root.render(

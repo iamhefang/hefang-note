@@ -11,14 +11,11 @@ async function doExport(type: ExportType) {
     if (type.type === "json") {
         emit(WorkerEventKeys.exportSuccess, { type, data: json, path: type.path })
     } else if (type.type === "url") {
-        const blob = new Blob([json], {
-            type: "application/json;charset=utf-8",
-        })
+        const blob = new Blob([json], { type: "application/json;charset=utf-8" })
         const url = URL.createObjectURL(blob)
         emit(WorkerEventKeys.exportSuccess, { type, data: url, path: type.path })
     }
 }
-
 
 self.addEventListener("message", (e: MessageEvent<IWorkerMessage>) => {
     const { name, data } = e.data

@@ -11,6 +11,7 @@ import TopBarLeft from "$components/topbar/TopBarLeft"
 import TopBarRight from "$components/topbar/TopBarRight"
 import VersionView from "$components/version/VersionView"
 import { useNotes, useSettings } from "$hooks/useSelectors"
+import { shortcuts } from "$utils/shortcuts"
 
 const { Sider, Content, Header, Footer } = Layout
 export default function View() {
@@ -19,6 +20,7 @@ export default function View() {
     theme,
     lock: { locked },
     current,
+    shortcut,
   } = useSettings()
   const { entities, status } = useNotes()
   const {
@@ -55,6 +57,23 @@ export default function View() {
       </span>
     )
   }, [status])
+
+  useEffect(() => {
+    if (!shortcut?.closeWindow) {
+      return
+    }
+
+    const closeWindow = () => {
+      console.info({ shortcut: shortcut.closeWindow })
+      window.close()
+    }
+
+    shortcuts.register({ shortcut: shortcut.closeWindow, handler: closeWindow })
+
+    return () => {
+      shortcuts.remove({ shortcut: shortcut.closeWindow, handler: closeWindow })
+    }
+  }, [shortcut?.closeWindow])
 
   useEffect(() => {
     localStorage.setItem("bgColor", colorBgBase)

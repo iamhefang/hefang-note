@@ -56,14 +56,14 @@ export default function NoteTree({ search }: NoteTreeProps) {
 
   const onMenuClick = useCallback(
     (info: MenuInfo) => {
-      if (!rightClickItem) {
-        return
-      }
       switch (info.key) {
         case NoteTreeMenuKeys.rename:
-          dispatch(startRenaming(rightClickItem.id))
+          rightClickItem && dispatch(startRenaming(rightClickItem.id))
           break
         case NoteTreeMenuKeys.delete:
+          if (!rightClickItem) {
+            return
+          }
           const children = itemArray.filter((c) => c.parentId === rightClickItem.id)
           modal.confirm({
             title: `要删除"${rightClickItem.title}"吗?`,
@@ -78,7 +78,7 @@ export default function NoteTree({ search }: NoteTreeProps) {
           break
         case NoteTreeMenuKeys.newDir:
         case NoteTreeMenuKeys.newNote:
-          showModal(info, rightClickItem.id)
+          showModal(info, rightClickItem?.id)
           break
         default:
           console.warn("未生效的菜单")
@@ -87,21 +87,23 @@ export default function NoteTree({ search }: NoteTreeProps) {
     [rightClickItem, dispatch, itemArray, modal, showModal],
   )
 
-  return data.length ? (
+  const onListRightClick = useCallback(() => setRightClickItem(undefined), [])
+
+  return (
     <NoteTreeItemMenu item={rightClickItem} onClick={onMenuClick}>
-      <Virtuoso
-        data={data}
-        totalCount={data.length}
-        itemContent={itemContentRenderer}
-        fixedItemHeight={30}
-        increaseViewportBy={300}
-        onContextMenu={() => {
-          console.log(rightClickItem)
-        }}
-      />
+      {data.length ? (
+        <Virtuoso
+          data={data}
+          totalCount={data.length}
+          itemContent={itemContentRenderer}
+          fixedItemHeight={30}
+          increaseViewportBy={300}
+          onContextMenu={onListRightClick}
+        />
+      ) : (
+        <Empty description="没有笔记" />
+      )}
     </NoteTreeItemMenu>
-  ) : (
-    <Empty description="没有笔记" />
   )
 }
 

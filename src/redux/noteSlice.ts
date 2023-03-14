@@ -25,8 +25,7 @@ export const loadNotesProgressively = createAsyncThunk(`${sliceName}/loadNotesPr
     let cursor = await tx.objectStore("notes").openCursor()
     const buffer: NoteItem[] = new Array(bufferSize)
     let index = 0
-    const state: StoreState = api.getState() as StoreState
-    while (cursor && state.states.cleaning) {
+    while (cursor) {
         buffer[index++] = cursor.value
         if (index === bufferSize) {
             api.dispatch(slice.actions.setNotes(buffer))

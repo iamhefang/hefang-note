@@ -10,8 +10,8 @@ export type MenuInfo = {
   item: React.ReactInstance
   domEvent: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>
 }
-export type NoteTreeMenuOnClick = (info: MenuInfo, item: NoteIndentItem) => void
-export type NoteTreeItemMenuProps = React.PropsWithChildren<{ onClick?: NoteTreeMenuOnClick; item: NoteIndentItem | undefined }>
+export type NoteTreeMenuOnClick = (info: MenuInfo, item?: NoteIndentItem) => void
+export type NoteTreeItemMenuProps = React.PropsWithChildren<{ onClick?: NoteTreeMenuOnClick; item?: NoteIndentItem }>
 
 export const enum NoteTreeMenuKeys {
   delete = "delete",
@@ -21,10 +21,13 @@ export const enum NoteTreeMenuKeys {
 }
 
 export default function NoteTreeItemMenu({ children, onClick, item }: NoteTreeItemMenuProps) {
-  const onMenuClick = useCallback((info: MenuInfo) => item && onClick?.(info, item), [item, onClick])
+  const onMenuClick = useCallback((info: MenuInfo) => onClick?.(info, item), [item, onClick])
   const items: MenuProps["items"] = useMemo(() => {
     if (!item) {
-      return []
+      return [
+        { key: NoteTreeMenuKeys.newDir, label: "新建目录" },
+        { key: NoteTreeMenuKeys.newNote, label: "新建笔记" },
+      ]
     }
     if (item.isLeaf) {
       return [

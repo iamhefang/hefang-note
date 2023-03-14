@@ -58,7 +58,7 @@ export type Settings = {
   showTimeAboveEditor: boolean
   autoCheckUpdate: boolean
   editorStyle: CSSProperties
-  shortcut: { lock: string }
+  shortcut: { lock: string, closeWindow: string }
 }
 
 export type NoteSort = Sort<keyof Omit<NoteItem, "id" | "parentId" | "isLeaf">>

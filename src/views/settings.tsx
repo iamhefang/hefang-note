@@ -43,6 +43,7 @@ export default function SettingsModal() {
           <span>设置</span>
         </Space>
       }
+      keyboard={false}
       destroyOnClose
       footer={null}
       maskClosable={false}

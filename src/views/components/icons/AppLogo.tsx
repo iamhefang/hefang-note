@@ -1,10 +1,10 @@
-import { register, unregister } from "@tauri-apps/api/globalShortcut"
 import { App, Button, Descriptions, Dropdown, Modal } from "antd"
 import { useCallback, useEffect } from "react"
 
 import { isInTauri } from "~/consts"
 import { useAppDispatch } from "~/redux"
 import { toggleSettingsModal } from "~/redux/uiSlice"
+import { shortcuts } from "~/utils/shortcuts"
 
 import CommonMenuItem from "$components/menus/CommonMenuItem"
 import usePlatform from "$hooks/usePlatform"
@@ -34,13 +34,13 @@ export default function AppLogo() {
     if (!isInTauri) {
       return
     }
-    // void register("Ctrl+,", toggleSettings)
-    // void register("Ctrl+Q", window.close)
+    shortcuts.register({ shortcut: "Ctrl+,", handler: toggleSettings })
+    shortcuts.register({ shortcut: "Ctrl+Q", handler: window.close })
 
-    // return () => {
-    //   void unregister("Ctrl+,")
-    //   void unregister("Ctrl+Q")
-    // }
+    return () => {
+      shortcuts.remove({ shortcut: "Ctrl+,", handler: toggleSettings })
+      shortcuts.remove({ shortcut: "Ctrl+Q", handler: window.close })
+    }
   }, [toggleSettings])
 
   return (
