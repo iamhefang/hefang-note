@@ -34,7 +34,7 @@ export default function NoteTree({ search }: NoteTreeProps) {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (!current || window.isContentEditable(document.activeElement)) {
+      if (!current || isContentEditable(document.activeElement)) {
         return
       }
       if (e.key.startsWith("Arrow")) {

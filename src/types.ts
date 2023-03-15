@@ -2,10 +2,7 @@ import type { ThemeConfig } from "antd"
 import type { CSSProperties, ReactNode } from "react"
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  interface Window {
-    isContentEditable(electron: Element | null | EventTarget): boolean
-  }
+  function isContentEditable(electron: Element | null | EventTarget): boolean
 }
 
 export const enum WorkerEventKeys {
