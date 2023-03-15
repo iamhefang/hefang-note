@@ -24,10 +24,10 @@ if (import.meta.env.DEV && typeof window !== "undefined") {
         async initPluginsMockData(count: number = 10) {
             const c = Math.abs(count)
             if (count < 0) {
-                void (await database).clear("plugins")
+                await (await database).clear("plugins")
             }
             for (let i = 0; i < c; i++) {
-                void pluginStore.set({
+                await pluginStore.set({
                     id: crypto.randomUUID(),
                     author: `何方${i}`,
                     name: `插件${i}`,
