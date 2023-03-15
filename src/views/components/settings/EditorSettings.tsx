@@ -1,25 +1,20 @@
 import { Form, List, Select, Space, Switch } from "antd"
-import { ReactNode, useEffect, useMemo } from "react"
-import useGlobalState from "~/hooks/useGlobalState"
-import usePlugins from "~/hooks/usePlugins"
+import { ReactNode, useMemo } from "react"
+
+import usePlugins from "$hooks/usePlugins"
 
 const fontSizeItems = ["12px", "14px", "16px", "18px", "20px", "22px"]
 const fontFamilyMaps = {
   serif: "衬线字体",
   "sans-serif": "无衬线字体",
 }
+const lineHeights = [1, 1.2, 1.5]
 
 export default function EditorSettings() {
-  const [form] = Form.useForm()
   const allPlugins = usePlugins()
-  const [{ loading, launching, showSettingModal, renaming, ...settings }, setState] = useGlobalState()
   const plugins = useMemo(() => {
     return allPlugins.filter((item) => item.components?.includes("Editor"))
   }, [allPlugins])
-
-  useEffect(() => {
-    form.setFieldsValue({ ...settings })
-  }, [form, settings])
 
   const formItems: Record<string, ReactNode> = useMemo(
     () => ({
@@ -67,6 +62,17 @@ export default function EditorSettings() {
             </Select>
           </Form.Item>
         </Space>
+      ),
+      行高: (
+        <Form.Item name={["editorStyle", "lineHeight"]} noStyle>
+          <Select style={{ minWidth: 60 }}>
+            {lineHeights.map((value) => (
+              <Select.Option value={value} key={`line-height-${value}`}>
+                {value}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
       ),
     }),
     [plugins],

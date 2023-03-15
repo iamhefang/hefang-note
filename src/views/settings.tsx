@@ -2,37 +2,38 @@ import { SettingOutlined } from "@ant-design/icons"
 import { appWindow } from "@tauri-apps/api/window"
 import { Modal, Space, Tabs } from "antd"
 import { useCallback, useEffect } from "react"
-import { isInTauri } from "~/consts"
 
-import useGlobalState from "~/hooks/useGlobalState"
-import { PluginManager } from "~/views/components/plugins"
-import SettingForm from "~/views/components/settings/SettingForm"
+import { isInTauri } from "~/consts"
+import { useAppDispatch } from "~/redux"
+import { toggleSettingsModal } from "~/redux/uiSlice"
+
+import { PluginManager } from "$components/plugins"
+import SettingForm from "$components/settings/SettingForm"
+import { useSettings, useStates } from "$hooks/useSelectors"
 
 export default function SettingsModal() {
-  const [
-    {
-      showSettingModal,
-      lock: { locked },
-    },
-    setState,
-  ] = useGlobalState()
+  const {
+    lock: { locked },
+  } = useSettings()
+  const { showSettingsModal } = useStates()
+  const dispatch = useAppDispatch()
   const onCancel = useCallback(() => {
-    setState({ showSettingModal: false })
-  }, [setState])
+    dispatch(toggleSettingsModal(null))
+  }, [dispatch])
   useEffect(() => {
     if (!isInTauri) {
       return
     }
     const unlisten = appWindow.listen("toggleSettingsModal", (event) => {
       if (!locked) {
-        setState({ showSettingModal: !showSettingModal })
+        dispatch(toggleSettingsModal(null))
       }
     })
 
     return () => {
       unlisten.then((callback) => callback()).catch(console.error)
     }
-  }, [locked, setState, showSettingModal])
+  }, [dispatch, locked, showSettingsModal])
 
   return (
     <Modal
@@ -42,9 +43,11 @@ export default function SettingsModal() {
           <span>设置</span>
         </Space>
       }
+      keyboard={false}
+      destroyOnClose
       footer={null}
       maskClosable={false}
-      open={showSettingModal && !locked}
+      open={showSettingsModal && !locked}
       onCancel={onCancel}
       width="90%"
       style={{

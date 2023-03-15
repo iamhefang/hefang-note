@@ -1,12 +1,12 @@
 import { BaseDirectory, createDir, exists, readDir, readTextFile } from "@tauri-apps/api/fs"
 import { join } from "@tauri-apps/api/path"
 import { GlobalToken, ThemeConfig } from "antd"
-import { ClassicComponentClass, ComponentClass, FC, ReactNode, useEffect, useMemo, useRef, useState } from "react"
+import { ComponentClass, FC, ReactNode, useEffect, useMemo, useRef, useState } from "react"
 
-import { GlobalState, ThemeDefine, Themes, ThemeType } from "~/types"
+import { GlobalState, ThemeDefine, ThemeType } from "~/types"
 
-import useGlobalState from "./useGlobalState"
 import { PlatformType } from "./usePlatform"
+import { usePluginState } from "./useSelectors"
 
 export interface IPluginInfo {
   id: string
@@ -76,7 +76,7 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
   const [installedPlugins, setPlugins] = useState<IPlugin[]>([])
   const [pluginsInfos, setPluginInfos] = useState<IPluginInfo[]>([])
   const pluginPath = useRef<Record<string, string>>({})
-  const [{ plugins }] = useGlobalState()
+  const { entities: plugins } = usePluginState()
 
   useEffect(() => {
     if (!window.__TAURI_IPC__) { return }

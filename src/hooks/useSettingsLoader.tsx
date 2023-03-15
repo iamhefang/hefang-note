@@ -1,16 +1,10 @@
 import { useCallback } from "react"
 
-import { settingsStore } from "~/utils/database"
-
-import useGlobalState from "./useGlobalState"
+import { useAppDispatch } from "~/redux"
+import { loadSettings } from "~/redux/settingSlice"
 
 export default function useSettingsLoader() {
-  const [{}, setState] = useGlobalState()
+  const dispatch = useAppDispatch()
 
-  return useCallback(() => {
-    settingsStore
-      .getObject()
-      .then((settings) => setState(settings))
-      .catch(console.error)
-  }, [setState])
+  return useCallback(() => dispatch(loadSettings()), [dispatch])
 }

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext", "WebWorker"],
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": false,
@@ -17,7 +17,10 @@
     "jsx": "react-jsx",
     "paths": {
       "~/*": ["./src/*"],
-      "^/*": ["./*"]
+      "^/*": ["./*"],
+      "$hooks/*": ["./src/hooks/*"],
+      "$utils/*": ["./src/utils/*"],
+      "$components/*": ["./src/views/components/*"]
     }
   },
   "include": ["src"],

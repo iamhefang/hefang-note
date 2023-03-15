@@ -1,27 +1,10 @@
 import { useCallback } from "react"
 
-import { contentStore } from "~/utils/database"
-
-import useGlobalState from "./useGlobalState"
+import { useAppDispatch } from "~/redux"
+import { loadAllNotes, loadNotesProgressively } from "~/redux/noteSlice"
 
 export default function useContentLoader() {
-  const [{}, setState] = useGlobalState()
+  const dispatch = useAppDispatch()
 
-  return useCallback(() => {
-    contentStore
-      .getAll()
-      .then((items) =>
-        setState({
-          items: Object.fromEntries(
-            items.map((item) => {
-              delete item.content
-
-              return [item.id, { ...item }]
-            }),
-          ),
-          loading: false,
-        }),
-      )
-      .catch(console.error)
-  }, [setState])
+  return useCallback(() => dispatch(loadNotesProgressively()), [dispatch])
 }

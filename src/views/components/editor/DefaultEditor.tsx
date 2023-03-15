@@ -1,4 +1,4 @@
-import { IEditorProps } from "~/hooks/usePlugins"
+import { IEditorProps } from "$hooks/usePlugins"
 
 export default function DefaultEditor({ placeholder, value, onChange, onBlur, onFocus }: IEditorProps) {
   return (
@@ -17,6 +17,8 @@ export default function DefaultEditor({ placeholder, value, onChange, onBlur, on
         outline: "none",
         border: "none",
         fontSize: "inherit",
+        fontFamily: "inherit",
+        lineHeight: "inherit",
         resize: "none",
         padding: 15,
         boxSizing: "border-box",

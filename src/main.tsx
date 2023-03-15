@@ -1,27 +1,25 @@
 import { Empty, message, Modal } from "antd"
-import React from "react"
-import ReactDOM from "react-dom/client"
+import ReactDOMClient from "react-dom/client"
 import { Provider } from "react-redux"
 
 import Application from "./Application"
 import store from "./redux"
 
+import "$utils/debug"
+import "$utils/globals"
 import pkg from "^/package.json"
+
+import "~/utils/worker"
 import "./style.scss"
 
-window.React = React
-
 message.config({ top: 40 })
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
-
+const root = ReactDOMClient.createRoot(document.getElementById("root") as HTMLElement)
 void navigator.locks.request("hefang-note", { ifAvailable: true }, async (lock) => {
   if (lock) {
     root.render(
-      <React.StrictMode>
-        <Provider store={store}>
-          <Application />
-        </Provider>
-      </React.StrictMode>,
+      <Provider store={store}>
+        <Application />
+      </Provider>,
     )
 
     if (localStorage.getItem("firstRun") !== pkg.version) {
@@ -47,7 +45,7 @@ void navigator.locks.request("hefang-note", { ifAvailable: true }, async (lock) 
       })
     }
   } else {
-    root.render(<Empty description={`${pkg.productName}已在其他标签页打开`} />)
+    root.render(<Empty description={`${pkg.productName}已在其他窗口打开`} />)
   }
 
   return new Promise(() => {})

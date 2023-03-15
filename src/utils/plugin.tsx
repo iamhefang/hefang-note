@@ -1,13 +1,14 @@
-import { dialog } from "@tauri-apps/api"
-import { readTextFile, writeTextFile } from "@tauri-apps/api/fs"
+import { dialog, path } from "@tauri-apps/api"
+import { readTextFile } from "@tauri-apps/api/fs"
 import Ajv from "ajv"
-import { Button, Col, Dropdown, message, Modal, Row } from "antd"
+import { Button, Col, Dropdown, Modal, Row } from "antd"
 
 import { isInTauri } from "~/consts"
-import { NoteItem } from "~/types"
+import { NoteItem, WorkerEventKeys } from "~/types"
 
-import { contentStore } from "./database"
+import { contentStore, notesStore } from "./database"
 import schema from "./note-data-schema.json"
+import { emit2worker } from "./worker"
 
 import pkg from "^/package.json"
 export const enum ExportType {
@@ -19,7 +20,8 @@ export const enum ExportType {
 type NoteData = {
   name: string
   version: string
-  contents: NoteItem[]
+  notes: NoteItem[]
+  contents: { [id: string]: string }
   saveTime: number
 }
 
@@ -33,13 +35,13 @@ async function importWithTauri(): Promise<NoteData> {
         title: "选择文件",
         multiple: false,
         directory: false,
-        filters: [{ name: "JSON文件", extensions: ["json"] }],
+        filters: [{ name: "何方笔记备份文件", extensions: ["hbk"] }],
       })
-      .then((path) => {
-        if (!path) {
+      .then((filePath) => {
+        if (!filePath) {
           return reject("未选择文件")
         }
-        readTextFile(path as string)
+        readTextFile(filePath as string)
           .then((value) => {
             try {
               const json: NoteData = JSON.parse(value)
@@ -66,7 +68,7 @@ async function importWithHtml(): Promise<NoteData> {
   return new Promise((resolve, reject) => {
     const input = document.createElement("input")
     input.setAttribute("type", "file")
-    input.setAttribute("accept", ".json")
+    input.setAttribute("accept", ".hbk")
     input.addEventListener("change", () => {
       if (!input.files?.length) {
         return
@@ -108,47 +110,26 @@ async function importWithHtml(): Promise<NoteData> {
 export const hefang = {
   contens: {
     export: async () => {
-      const all = await contentStore.getAll()
-      const json = JSON.stringify({
-        name: pkg.productName,
-        version: pkg.version,
-        contents: all,
-        saveTime: Date.now(),
-      })
       if (isInTauri) {
+        const downloadDir = await path.downloadDir()
         void dialog
           .save({
             title: "保存笔记数据",
-            filters: [{ name: "JSON文件", extensions: ["json"] }],
-            defaultPath: `${pkg.productName}-${Date.now()}`,
+            filters: [{ name: "何方笔记备份文件", extensions: ["hbk"] }],
+            defaultPath: await path.join(downloadDir, `${pkg.productName}-${Date.now()}`),
           })
-          .then((res) => {
-            res &&
-              void writeTextFile(res, json).then(() => {
-                void dialog.message("导出成功")
-              })
+          .then(async (res) => {
+            emit2worker(WorkerEventKeys.exportStart, { type: "json", path: res })
           })
       } else {
-        const blob = new Blob([json], {
-          type: "application/json;charset=utf-8",
-        })
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.setAttribute("href", url)
-        link.setAttribute("download", `${pkg.productName}-${Date.now()}.json`)
-        document.body.append(link)
-        void message.info("已发起下载")
-        link.click()
-        setTimeout(() => {
-          link.remove()
-        }, 0)
+        emit2worker(WorkerEventKeys.exportStart, { type: "url" })
       }
     },
     import: async (): Promise<number> => {
       return new Promise<number>(async (resolve, reject) => {
         const json: NoteData = isInTauri ? await importWithTauri() : await importWithHtml()
-        const importIds = json.contents.map((item) => item.id)
-        const currentIds = await contentStore.getAllIds()
+        const importIds = json.notes.map((item) => item.id)
+        const currentIds = await notesStore.getAllIds()
         const ids = new Set([...currentIds, ...importIds])
         const total = currentIds.length + importIds.length
         if (ids.size !== total) {
@@ -169,14 +150,15 @@ export const hefang = {
                           key: "保留最新的",
                           label: "保留最新的",
                           onClick: async () => {
-                            const currentItems = await contentStore.getAll()
+                            const currentItems = await notesStore.getAll()
                             const currentItemMap: Record<string, NoteItem> = Object.fromEntries(currentItems.map((item) => [item.id, item]))
 
-                            const data = json.contents.filter((item) => {
+                            const data = json.notes.filter((item) => {
                               return item.modifyTime > (currentItemMap[item.id]?.modifyTime || 0)
                             })
 
-                            await contentStore.set(...data)
+                            await notesStore.set(...data)
+                            await contentStore.setObject(Object.fromEntries(data.map((item) => [item.id, json.contents[item.id]])))
                             Modal.destroyAll()
                             resolve(data.length)
                           },
@@ -185,8 +167,9 @@ export const hefang = {
                           key: "保留本地的",
                           label: "保留本地的",
                           onClick: async () => {
-                            const data = json.contents.filter((item) => !currentIds.includes(item.id))
-                            await contentStore.set(...data)
+                            const data = json.notes.filter((item) => !currentIds.includes(item.id))
+                            await notesStore.set(...data)
+                            await contentStore.setObject(Object.fromEntries(data.map((item) => [item.id, json.contents[item.id]])))
                             Modal.destroyAll()
                             resolve(data.length)
                           },
@@ -195,7 +178,8 @@ export const hefang = {
                           key: "保留置导入的",
                           label: "保留导入的",
                           onClick: async () => {
-                            await contentStore.set(...json.contents)
+                            await notesStore.set(...json.notes)
+                            await contentStore.setObject(json.contents)
                             Modal.destroyAll()
                             resolve(importIds.length)
                           },
@@ -204,15 +188,19 @@ export const hefang = {
                           key: "全部保留",
                           label: "全部保留",
                           onClick: async () => {
-                            await contentStore.set(
-                              ...json.contents.map((item) => {
-                                if (currentIds.includes(item.id)) {
-                                  return { ...item, id: crypto.randomUUID() }
-                                }
+                            const data = json.notes.map((item) => {
+                              if (currentIds.includes(item.id)) {
+                                const newId = crypto.randomUUID()
+                                json.contents[newId] = json.contents[item.id]
+                                delete json.contents[item.id]
 
-                                return item
-                              }),
-                            )
+                                return { ...item, id: newId }
+                              }
+
+                              return item
+                            })
+                            await notesStore.set(...data)
+                            await contentStore.setObject(json.contents)
                             Modal.destroyAll()
                             resolve(importIds.length)
                           },
@@ -227,7 +215,8 @@ export const hefang = {
             ),
           })
         } else {
-          await contentStore.set(...json.contents)
+          await notesStore.set(...json.notes)
+          await contentStore.setObject(json.contents)
           Modal.destroyAll()
           resolve(importIds.length)
         }

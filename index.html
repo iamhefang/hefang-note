@@ -3,6 +3,15 @@
 
 <head>
   <script>
+    const editableTags = ["INPUT", "TEXTAREA"]
+    function isContentEditable(element) {
+      return element instanceof Element && (editableTags.includes(element.tagName) || element.getAttribute("contentEditable") === "true")
+    }
+    window.addEventListener("contextmenu", e => {
+      if (!e.composedPath().some(isContentEditable)) {
+        e.preventDefault()
+      }
+    })
     document.documentElement.style.backgroundColor = localStorage.getItem("bgColor")
   </script>
   <meta charset="UTF-8" />
@@ -198,7 +207,7 @@
 
 <body>
   <div id="root">
-    <div class="ant-app">
+    <div class="ant-app" data-tauri-drag-region>
       <div class="loading-container">
         <div class="ant-spin ant-spin-lg ant-spin-spinning" aria-live="polite" aria-busy="true"><span
             class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i

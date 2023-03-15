@@ -1,52 +1,46 @@
-import { EditOutlined, HomeOutlined } from "@ant-design/icons"
+import { EditOutlined, HomeOutlined, KeyOutlined } from "@ant-design/icons"
 import { Form, Segmented } from "antd"
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
 
-import useGlobalState from "~/hooks/useGlobalState"
-import useSettingsLoader from "~/hooks/useSettingsLoader"
+import { useAppDispatch } from "~/redux"
+import { setSettings } from "~/redux/settingSlice"
 import type { Settings } from "~/types"
-import { settingsStore } from "~/utils/database"
+
 import EditorSettings from "./EditorSettings"
 import GeneralSettings from "./GeneralSettings"
+import ShortcutSettings from "./ShortcutSettings"
 
-type SettingTypes = "general" | "editor" | string | number
+import { useSettings } from "$hooks/useSelectors"
+
+type SettingTypes = "general" | "editor" | "shortcut" | string | number
 
 export default function SettingForm() {
   const [form] = Form.useForm()
-  const [{ loading, launching, showSettingModal, renaming, ...settings }, setState] = useGlobalState()
-  const loadSettings = useSettingsLoader()
+  const settings = useSettings()
+  const dispatch = useAppDispatch()
   const [active, setActive] = useState<SettingTypes>("general")
   const onValuesChange = useCallback(
     (changedValues: Partial<Settings>, values: Settings) => {
-      settingsStore
-        .setObject({
-          ...changedValues,
-          lock: { ...settings.lock, ...changedValues.lock },
-          sort: { ...settings.sort, ...changedValues.sort },
-          editorStyle: { ...settings.editorStyle, ...changedValues.editorStyle },
-        })
-        .then(loadSettings)
-        .catch(console.error)
+      setTimeout(() => {
+        dispatch(setSettings(changedValues))
+      }, 0)
     },
-    [loadSettings, settings.editorStyle, settings.lock, settings.sort],
+    [dispatch],
   )
 
-  useEffect(() => {
-    form.setFieldsValue({ ...settings })
-  }, [form, settings])
-
   const formItems: Record<SettingTypes, ReactNode> = useMemo(() => {
-    return { general: <GeneralSettings />, editor: <EditorSettings /> }
+    return { general: <GeneralSettings />, editor: <EditorSettings />, shortcut: <ShortcutSettings /> }
   }, [])
 
   return (
-    <Form form={form} layout="inline" onValuesChange={onValuesChange} style={{ width: "100%" }}>
+    <Form form={form} layout="inline" onValuesChange={onValuesChange} style={{ width: "100%" }} initialValues={settings}>
       <Segmented
         value={active}
         onChange={setActive}
         options={[
           { label: "通用", value: "general", icon: <HomeOutlined /> },
           { label: "编辑器", value: "editor", icon: <EditOutlined /> },
+          { label: "快捷键", value: "shortcut", icon: <KeyOutlined /> },
         ]}
       />
       {formItems[active]}

@@ -2,10 +2,10 @@ import { checkUpdate, installUpdate } from "@tauri-apps/api/updater"
 import { App, Space, Spin } from "antd"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
-import { versionCode } from "~/consts"
+import { isInTauri, versionCode } from "~/consts"
 
+import { useSettings } from "$hooks/useSelectors"
 import pkg from "^/package.json"
-import useGlobalState from "~/hooks/useGlobalState"
 
 const enum UpdateStatus {
   none = "none",
@@ -17,12 +17,12 @@ const enum UpdateStatus {
 let needCheckUpdate = true
 
 export default function VersionView() {
-  const [{ autoCheckUpdate }] = useGlobalState()
+  const { autoCheckUpdate } = useSettings()
   const { message, modal } = App.useApp()
-  const checkedVersion = Number((localStorage.getItem("version") || pkg.version).replace(/\./g, ""))
+  const checkedVersion = Number((localStorage?.getItem("version") || pkg.version).replace(/\./g, ""))
   const [status, setStatus] = useState(checkedVersion > versionCode ? UpdateStatus.hasUpgrade : UpdateStatus.none)
   const doInstallUpdate = useCallback(() => {
-    if (!window.__TAURI_IPC__) {
+    if (!isInTauri) {
       return
     }
     void message.info("正在尝试安装新版本")
@@ -32,7 +32,7 @@ export default function VersionView() {
     })
   }, [message, modal])
   const doCheckUpdate = useCallback(() => {
-    if (!window.__TAURI_IPC__) {
+    if (!isInTauri) {
       return
     }
     setStatus(UpdateStatus.checking)

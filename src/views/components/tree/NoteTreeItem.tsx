@@ -1,66 +1,130 @@
-import { CaretDownOutlined, CaretRightOutlined, FileTextOutlined, FolderOutlined, PlusCircleOutlined } from "@ant-design/icons"
+import { CaretDownOutlined, CaretRightOutlined, FileTextOutlined, FolderOpenOutlined, FolderOutlined } from "@ant-design/icons"
 import { App, Col, Input, Row, theme } from "antd"
-import { useCallback, useMemo } from "react"
+import React, { CSSProperties, useCallback, useMemo } from "react"
+import { ItemProps } from "react-virtuoso"
 
-import useGlobalState from "~/hooks/useGlobalState"
-import { NoteItem } from "~/types"
-import NoteTreeItemMenu, { MenuInfo } from "~/views/components/menus/NoteTreeItemMenu"
+import { NAME_MAX_LENGTH } from "~/config"
+import { useAppDispatch } from "~/redux"
+import { stopRenaming } from "~/redux/noteSlice"
+import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
+import { NoteIndentItem } from "~/types"
 
 import ss from "./NoteTree.module.scss"
 
-export type NoteTreeItemProps = {
-  item: NoteItem
-  onMenuClick: (info: MenuInfo, item: NoteItem) => void
-  onClick: (item: NoteItem) => void
-  indent?: number
-}
-export default function NoteTreeItem({ item, onMenuClick, onClick, indent = 0 }: NoteTreeItemProps) {
-  const [{ current, renaming, expandItems }, setState] = useGlobalState()
+import { iconPlacehodler } from "$components/icons/IconPlaceholder"
+import { useNotes, useSettings } from "$hooks/useSelectors"
+
+// export type NoteTreeItemProps = {
+//   item: NoteIndentItem
+//   onRightClick?: RowProps["onContextMenu"]
+// }
+export default function NoteTreeItem({
+  item,
+  "data-index": dataIndex,
+  "data-item-index": dataItemIndex,
+  "data-known-size": dataSize,
+}: ItemProps<NoteIndentItem>) {
+  const { current, expandItems } = useSettings()
+  const { renamingId } = useNotes()
   const { token } = theme.useToken()
   const { message } = App.useApp()
+  const dispatch = useAppDispatch()
+
+  const onItemClick = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      if (renamingId === item.id) {
+        return
+      }
+      if (!item.isLeaf) {
+        dispatch(setItemsExpanded({ [item.id]: !expandItems[item.id] }))
+        if (e.nativeEvent.composedPath().find((node: EventTarget) => (node as HTMLElement).classList?.contains("anticon"))) {
+          return
+        }
+      }
+      if (current !== item.id) {
+        dispatch(setCurrent(item.id))
+      }
+    },
+    [current, dispatch, expandItems, item.id, item.isLeaf, renamingId],
+  )
+
+  const onRenamingBlur = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      const newName = e.currentTarget.value
+      if (!newName.trim()) {
+        void message.warning("名称不为能空")
+      } else {
+        dispatch(stopRenaming({ id: item.id, newName }))
+      }
+    },
+    [dispatch, item, message],
+  )
+
+  const onRenameKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.currentTarget.blur()
+    }
+  }, [])
+
   const expandIcon = useMemo(() => {
     if (item.isLeaf) {
-      return <span style={{ display: "inline-block", width: 14, height: 14 }} />
+      return iconPlacehodler
     }
 
     return expandItems[item.id] ? <CaretDownOutlined /> : <CaretRightOutlined />
   }, [expandItems, item.id, item.isLeaf])
-  const onRenamingBlur = useCallback(
-    (e: React.FocusEvent<HTMLInputElement>) => {
-      const newName = e.currentTarget.value
-      if (!newName) {
-        void message.warning("名称不为能空")
-      }
-      setState({ renaming: "" })
-    },
-    [message, setState],
+
+  const width = useMemo(() => `${24 + item.indent * 16}px`, [item.indent])
+
+  const title = useMemo(
+    () =>
+      renamingId === item.id ? (
+        <Input
+          key={`rename-input-${item.id}`}
+          autoFocus
+          size="small"
+          placeholder={item.title}
+          defaultValue={item.title}
+          onKeyDown={onRenameKeyDown}
+          onBlur={onRenamingBlur}
+          maxLength={NAME_MAX_LENGTH}
+        />
+      ) : (
+        <div title={item.title} style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          {item.title}
+        </div>
+      ),
+    [item.id, item.title, onRenameKeyDown, onRenamingBlur, renamingId],
   )
 
-  const onItemClick = useCallback(() => {
-    onClick?.(item)
-  }, [item, onClick])
+  const style = useMemo(
+    (): CSSProperties => ({
+      background: current === item.id ? token.colorPrimaryBg : "none",
+      color: current === item.id ? token.colorPrimaryTextActive : undefined,
+      marginInline: 10,
+      borderColor: token.colorPrimary,
+      height: dataSize,
+    }),
+    [current, dataSize, item.id, token.colorPrimary, token.colorPrimaryBg, token.colorPrimaryTextActive],
+  )
 
   return (
-    <NoteTreeItemMenu onClick={onMenuClick} item={item} indent={0}>
-      <Row
-        wrap={false}
-        gutter={10}
-        className={ss.item}
-        onClick={onItemClick}
-        data-active={current === item.id}
-        style={{ background: current === item.id ? token.colorPrimaryActive : "none" }}
-      >
-        <Col offset={indent}>{expandIcon}</Col>
-        <Col>{item.isLeaf ? <FileTextOutlined /> : <FolderOutlined />}</Col>
-        <Col flex={1}>
-          {renaming === item.id ? (
-            <Input key={`rename-input-${item.id}`} autoFocus size="small" placeholder={item.title} defaultValue={item.title} onBlur={onRenamingBlur} />
-          ) : (
-            item.title
-          )}
-        </Col>
-        <Col>{item.isLeaf || <PlusCircleOutlined className={ss.newDir} />}</Col>
-      </Row>
-    </NoteTreeItemMenu>
+    <Row
+      wrap={false}
+      gutter={10}
+      className={ss.item}
+      onClick={onItemClick}
+      style={style}
+      data-active={current === item.id}
+      data-id={item.id}
+      data-index={dataIndex}
+      data-item-index={dataItemIndex}
+    >
+      <Col style={{ width, textAlign: "right", flexShrink: 0 }}>{expandIcon}</Col>
+      <Col>{item.isLeaf ? <FileTextOutlined /> : expandItems[item.id] ? <FolderOpenOutlined /> : <FolderOutlined />}</Col>
+      <Col flex={1}>{title}</Col>
+    </Row>
   )
 }
+
+export const MemodNoteTreeItem = React.memo(NoteTreeItem)

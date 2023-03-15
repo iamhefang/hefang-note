@@ -16,7 +16,7 @@ use utils::consts::{
     MENU_ID_TOGGLE_SETTINGS, MENU_ID_TOGGLE_VISIBLE,
 };
 
-use crate::commands::{git::git_clone, menu::show_note_menu};
+use crate::commands::{fs::save_file, git::git_clone, menu::show_note_menu};
 #[derive(Clone, serde::Serialize)]
 struct Payload {}
 fn main() {
@@ -29,7 +29,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             is_directory,
             git_clone,
-            show_note_menu
+            show_note_menu,
+            save_file
         ])
         .setup(setup)
         .run(tauri::generate_context!())
@@ -118,7 +119,7 @@ fn on_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
             let id_str = id.as_str();
             let window = app.get_window("main").unwrap();
             match id_str {
-                "quit" => app.exit(0),
+                MENU_ID_QUIT => app.exit(0),
                 MENU_ID_TOGGLE_VISIBLE => {
                     if window.is_visible().unwrap() {
                         window.minimize().unwrap();
@@ -151,7 +152,9 @@ fn on_window_event(event: GlobalWindowEvent) {
             api.prevent_close();
             event.window().minimize().unwrap();
         }
-        _ => {}
+        _others => {
+            println!("未监听的窗口事件: {:?}", _others)
+        }
     }
 }
 

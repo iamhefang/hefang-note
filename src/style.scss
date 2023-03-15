@@ -8,8 +8,20 @@ h6 {
   margin: 0;
 }
 
-[data-tauri-drag-region] {
+kbd {
+  display: inline-block;
+  padding: 3px 5px;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+  line-height: 1;
+  vertical-align: middle;
+  border: solid 1px grey;
+  border-radius: 4px;
+}
+
+[data-tauri-drag-region],
+:not(input, textarea, [contenteditable="true"], a, svg) {
   cursor: default !important;
+  user-select: none;
 }
 
 .ant-empty {
@@ -32,12 +44,10 @@ h6 {
   line-height: var(--top-bar-height) !important;
   padding: 0 !important;
   text-align: center;
-  // z-index: var(--top-bar-z-index);
   z-index: 10000;
 }
 
 .ant-layout-sider {
-  padding: 10px;
   transition: none !important;
   height: 100%;
 

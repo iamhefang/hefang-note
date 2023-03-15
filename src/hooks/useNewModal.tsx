@@ -1,12 +1,15 @@
-import { App, Form, Input, message, ModalFuncProps } from "antd"
+import { App, Form, Input, Modal, ModalFuncProps } from "antd"
 import React, { useCallback, useRef } from "react"
 
-import { nameMaxLength } from "~/config"
-import { contentStore } from "~/utils/database"
-import { MenuInfo, NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
+import { NAME_MAX_LENGTH } from "~/config"
+import { useAppDispatch } from "~/redux"
+import { newNote } from "~/redux/noteSlice"
+import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
 
-import useContentLoader from "./useContentLoader"
-import useGlobalState from "./useGlobalState"
+import { useNotes } from "./useSelectors"
+
+import { MenuInfo, NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
+
 
 export default function useNewModal() {
   const { modal } = App.useApp()
@@ -14,37 +17,35 @@ export default function useNewModal() {
     destroy: () => void
     update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void
   }>()
-  const [{}, setState] = useGlobalState()
   const [form] = Form.useForm()
-  const loadContent = useContentLoader()
+  const { entities } = useNotes()
+  const dispatch = useAppDispatch()
 
   const doSave = useCallback(
-    (info: MenuInfo, parentId?: string) => {
+    (info: MenuInfo, parentId?: string, closeModal?: () => void) => {
       void form.validateFields().then((values) => {
         const id = crypto.randomUUID()
         const isLeaf = info.key === NoteTreeMenuKeys.newNote
-        contentStore
-          .set({
+        const createTime = Date.now()
+        dispatch(
+          newNote({
             id,
             title: values.title,
             parentId,
             isLeaf,
-            createTime: Date.now(),
-            modifyTime: Date.now(),
+            createTime,
+            modifyTime: createTime,
             content: isLeaf ? "" : undefined,
-          })
-          .then(() => {
-            loadContent()
-            refModal.current?.destroy()
-            setTimeout(() => setState({ current: id }), 0)
-          })
-          .catch((e) => {
-            console.error(e)
-            void message.error(`出现错误: ${JSON.stringify(e)}`)
-          })
+          }),
+        )
+        Modal.destroyAll()
+        setTimeout(() => {
+          dispatch(setCurrent(id))
+          parentId && dispatch(setItemsExpanded({ [parentId]: true }))
+        }, 0)
       })
     },
-    [form, loadContent, setState],
+    [dispatch, form],
   )
 
   const createOnKeyDown = useCallback(
@@ -65,12 +66,12 @@ export default function useNewModal() {
         content: (
           <Form form={form}>
             <Form.Item name="title" rules={[{ required: true, message: `请输入${type}名` }]}>
-              <Input placeholder={`请输入${type}名`} maxLength={nameMaxLength} autoFocus onKeyDown={createOnKeyDown(info, parentId)} />
+              <Input placeholder={`请输入${type}名`} maxLength={NAME_MAX_LENGTH} autoFocus onKeyDown={createOnKeyDown(info, parentId)} />
             </Form.Item>
           </Form>
         ),
         okText: "新建",
-        onOk(closeModal) {
+        onOk() {
           doSave(info, parentId)
         },
       })

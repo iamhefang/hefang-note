@@ -1,21 +1,24 @@
 import { LockOutlined, UnlockOutlined } from "@ant-design/icons"
 import { appWindow } from "@tauri-apps/api/window"
 import { App, Button, Form, Input, Modal, theme } from "antd"
-// eslint-disable-next-line import/no-internal-modules
+import _ from "lodash"
 import { useCallback, useEffect } from "react"
-import { isInTauri } from "~/consts"
 
-import useGlobalState from "~/hooks/useGlobalState"
+import { isInTauri } from "~/consts"
+import { useAppDispatch } from "~/redux"
+import { lockScreen } from "~/redux/settingSlice"
 
 import ss from "./ScreenLocker.module.scss"
 
+import { useSettings } from "$hooks/useSelectors"
+import { shortcuts } from "$utils/shortcuts"
+
 export default function ScreenLocker() {
-  const [
-    {
-      lock: { locked, password, immediately },
-    },
-    setState,
-  ] = useGlobalState()
+  const {
+    lock: { locked, password, immediately },
+    shortcut,
+  } = useSettings()
+  const dispatch = useAppDispatch()
   const { modal, message } = App.useApp()
   const {
     token: { colorBgContainer },
@@ -26,7 +29,7 @@ export default function ScreenLocker() {
 
   const onLockClick = useCallback(() => {
     if (immediately && password) {
-      setState({ lock: { locked: true, password, immediately } })
+      dispatch(lockScreen({ locked: true }))
 
       return
     }
@@ -45,12 +48,12 @@ export default function ScreenLocker() {
       okText: "锁定",
       onOk(closeModal: () => void) {
         void lockForm.validateFields().then((values) => {
-          setState({ lock: { locked: true, password: values.password, immediately } })
+          dispatch(lockScreen({ locked: true, password: values.password }))
           closeModal()
         })
       },
     })
-  }, [lockForm, password, modal, setState, immediately])
+  }, [immediately, password, lockForm, modal, dispatch])
 
   const onUnlockClick = useCallback(
     ({ password: pwd }: { password: string }) => {
@@ -60,10 +63,10 @@ export default function ScreenLocker() {
         void message.error("密码错误")
       } else {
         unlockForm.resetFields()
-        setState({ lock: { locked: false, password, immediately } })
+        dispatch(lockScreen({ locked: false }))
       }
     },
-    [password, message, unlockForm, setState, immediately],
+    [password, message, unlockForm, dispatch],
   )
 
   useEffect(() => {
@@ -74,6 +77,16 @@ export default function ScreenLocker() {
 
     return () => void unlistener.then((unlisten) => unlisten())
   }, [locked, onLockClick])
+
+  useEffect(() => {
+    if (shortcut?.lock) {
+      shortcuts.register({ shortcut: shortcut.lock, handler: onLockClick })
+    }
+
+    return () => {
+      shortcuts.remove({ shortcut: shortcut.lock, handler: onLockClick })
+    }
+  }, [onLockClick, shortcut.lock])
 
   return (
     <>

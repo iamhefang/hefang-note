@@ -2,13 +2,17 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
 import { Button } from "antd"
 import { useCallback, useMemo } from "react"
 
-import useGlobalState from "~/hooks/useGlobalState"
+import { useAppDispatch } from "~/redux"
+import { toggleSidebar } from "~/redux/settingSlice"
+
+import { useSettings } from "$hooks/useSelectors"
 
 export default function SiderBarToggle() {
-  const [{ showSideBar }, setState] = useGlobalState()
+  const { showSideBar } = useSettings()
+  const dispatch = useAppDispatch()
   const onClick = useCallback(() => {
-    setState({ showSideBar: !showSideBar })
-  }, [showSideBar, setState])
+    dispatch(toggleSidebar(null))
+  }, [dispatch])
 
   return useMemo(
     () => (

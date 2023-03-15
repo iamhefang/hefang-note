@@ -101,7 +101,7 @@ module.exports = {
     "prefer-const": "error",
     "prefer-object-spread": "error",
     "prefer-template": "error",
-    "sort-imports": ["error", { ignoreCase: true, ignoreDeclarationSort: true }],
+    "sort-imports": ["warn", { ignoreCase: true, ignoreDeclarationSort: true }],
     radix: "error",
     yoda: "error",
 

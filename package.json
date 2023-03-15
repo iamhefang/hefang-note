@@ -1,8 +1,8 @@
 {
   "name": "hefang-note",
   "productName": "何方笔记",
-  "private": true,
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "license": "GPL3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,10 +11,10 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build",
-    "turbo:build": "turbo build",
-    "turbo:dev": "turbo dev",
-    "eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx ."
+    "tauri:build": "tauri build && pnpm run create-dmg",
+    "eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx .",
+    "syncinfo": "node ./scripts/before-build.cjs",
+    "create-dmg": "sh ./scripts/build-dmg.sh"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
@@ -25,12 +25,13 @@
     "dayjs": "^1.11.7",
     "idb": "^7.1.1",
     "lodash": "^4.17.21",
-    "rc-virtual-list": "^3.4.13",
     "re-resizable": "^6.9.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
-    "redux": "^4.2.1"
+    "react-virtuoso": "^4.1.0",
+    "redux": "^4.2.1",
+    "shortcuts": "^2.0.3"
   },
   "devDependencies": {
     "@tauri-apps/cli": "1.2.3",
@@ -50,6 +51,9 @@
     "typescript": "^4.6.4",
     "typescript-eslint-language-service": "^5.0.0",
     "vite": "^4.0.0",
+    "vite-plugin-externalize-deps": "^0.5.0",
+    "vite-plugin-html-minifier": "^1.0.3",
+    "vite-plugin-static-copy": "^0.13.1",
     "vite-plugin-svgr": "^2.4.0"
   }
 }

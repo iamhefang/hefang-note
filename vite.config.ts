@@ -3,7 +3,10 @@ import path from "path"
 import react from "@vitejs/plugin-react"
 import { internalIpV4 } from "internal-ip"
 import { defineConfig } from "vite"
+import htmlMinifier from "vite-plugin-html-minifier"
+import { viteStaticCopy } from "vite-plugin-static-copy"
 import svgr from "vite-plugin-svgr"
+
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => {
@@ -14,11 +17,20 @@ export default defineConfig(async () => {
     plugins: [
       react(),
       svgr({ exportAsDefault: true, svgrOptions: { icon: true } }),
+      viteStaticCopy({
+        targets: [
+          { src: "src-tauri/icons/icon.ico", dest: "./", rename: "favicon.ico" },
+        ],
+      }),
+      htmlMinifier({ minify: true }),
     ],
     resolve: {
       alias: {
         "~": path.resolve(__dirname, "src"),
         "^": __dirname,
+        "$hooks": path.resolve(__dirname, "src/hooks"),
+        "$components": path.resolve(__dirname, "src/views/components"),
+        "$utils": path.resolve(__dirname, "src/utils"),
       },
     },
     // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
@@ -45,6 +57,29 @@ export default defineConfig(async () => {
       minify: !process.env.TAURI_DEBUG ? true : false,
       // produce sourcemaps for debug builds
       sourcemap: !!process.env.TAURI_DEBUG,
+      modulePreload: true,
+      rollupOptions: {
+        // external: ["antd", "react", "react-dom", "lodash"],
+        output: {
+          manualChunks: {
+            react: [
+              "react",
+              "react-dom",
+              "react-dom/client",
+            ],
+            antd: [
+              "antd",
+            ],
+            icons: [
+              "@ant-design/icons",
+            ],
+            utils: [
+              "lodash",
+              "dayjs",
+            ],
+          },
+        },
+      },
     },
   }
 })

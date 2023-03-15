@@ -1,19 +1,22 @@
-import { register, unregister } from "@tauri-apps/api/globalShortcut"
 import { App, Button, Descriptions, Dropdown, Modal } from "antd"
 import { useCallback, useEffect } from "react"
 
-import useGlobalState from "~/hooks/useGlobalState"
-import usePlatform from "~/hooks/usePlatform"
-import CommonMenuItem from "~/views/components/menus/CommonMenuItem"
-import logo from "~/views/icons/icon.png"
+import { isInTauri } from "~/consts"
+import { useAppDispatch } from "~/redux"
+import { toggleSettingsModal } from "~/redux/uiSlice"
+import { shortcuts } from "~/utils/shortcuts"
 
+import CommonMenuItem from "$components/menus/CommonMenuItem"
+import usePlatform from "$hooks/usePlatform"
+import { closeWindow } from "$utils/window"
 import pkg from "^/package.json"
+import logo from "^/src-tauri/icons/icon.png"
 
 export default function AppLogo() {
-  const [{ showSettingModal }, setState] = useGlobalState()
+  const dispatch = useAppDispatch()
   const toggleSettings = useCallback(() => {
-    setState({ showSettingModal: !showSettingModal })
-  }, [showSettingModal, setState])
+    dispatch(toggleSettingsModal(null))
+  }, [dispatch])
   const osType = usePlatform()
   const { modal } = App.useApp()
   const showAboutModal = useCallback(() => {
@@ -23,18 +26,22 @@ export default function AppLogo() {
       content: (
         <Descriptions column={1} size="small">
           <Descriptions.Item label="版本号">v{pkg.version}</Descriptions.Item>
-          <Descriptions.Item label="操作系统">{osType}</Descriptions.Item>
+          <Descriptions.Item label="平台">{osType}</Descriptions.Item>
         </Descriptions>
       ),
     })
   }, [modal, osType])
   useEffect(() => {
-    void register("Ctrl+,", toggleSettings)
-    void register("Ctrl+Q", window.close)
+    if (!isInTauri) {
+      return
+    }
+
+    shortcuts.register({ shortcut: "Ctrl+,", handler: toggleSettings })
+    shortcuts.register({ shortcut: "Ctrl+Q", handler: closeWindow })
 
     return () => {
-      void unregister("Ctrl+,")
-      void unregister("Ctrl+Q")
+      shortcuts.remove({ shortcut: "Ctrl+,", handler: toggleSettings })
+      shortcuts.remove({ shortcut: "Ctrl+Q", handler: closeWindow })
     }
   }, [toggleSettings])
 
@@ -42,18 +49,28 @@ export default function AppLogo() {
     <>
       <Dropdown
         trigger={["click", "contextMenu"]}
+        placement="bottomLeft"
+        overlayStyle={{ zIndex: 10000 }}
         menu={{
-          items: [
-            {
-              key: "app-name",
-              label: `关于${pkg.productName}`,
-              onClick: showAboutModal,
-            },
-            //   { type: "divider" },
-            { key: "menu-settings", label: <CommonMenuItem title="设置" shortcut="Ctrl+," />, onClick: toggleSettings },
-            //   { type: "divider" },
-            { key: "menu-quit", label: <CommonMenuItem title="退出" shortcut="Ctrl+Q" />, onClick: window.close },
-          ],
+          items: ["Linux", "Windows_NT"].includes(osType)
+            ? [
+                {
+                  key: "app-name",
+                  label: `关于${pkg.productName}`,
+                  onClick: showAboutModal,
+                },
+                { type: "divider" },
+                { key: "menu-settings", label: <CommonMenuItem title="设置" shortcut="Ctrl+," />, onClick: toggleSettings },
+                { type: "divider" },
+                { key: "menu-quit", label: <CommonMenuItem title="退出" shortcut="Ctrl+Q" />, onClick: closeWindow },
+              ]
+            : [
+                {
+                  key: "app-name",
+                  label: `关于${pkg.productName}`,
+                  onClick: showAboutModal,
+                },
+              ],
         }}
       >
         <Button

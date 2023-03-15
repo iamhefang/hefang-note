@@ -1,11 +1,15 @@
 import { Button, Dropdown, Tooltip } from "antd"
 import { useMemo } from "react"
 
-import useGlobalState from "~/hooks/useGlobalState"
-import useThemes from "~/hooks/useThemes"
+import { useAppDispatch } from "~/redux"
+import { changeTheme } from "~/redux/settingSlice"
+
+import { useSettings } from "$hooks/useSelectors"
+import useThemes from "$hooks/useThemes"
 
 export default function ThemeSelector() {
-  const [{ theme }, setState] = useGlobalState()
+  const { theme } = useSettings()
+  const dispatch = useAppDispatch()
   const themes = useThemes()
   const items = useMemo(
     () => [
@@ -21,11 +25,11 @@ export default function ThemeSelector() {
         key,
         icon,
         onClick: () => {
-          setState({ theme: key })
+          dispatch(changeTheme(key))
         },
       })),
     ],
-    [themes, setState],
+    [themes, dispatch],
   )
 
   const themeConfig = useMemo(() => {

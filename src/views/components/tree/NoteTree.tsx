@@ -1,138 +1,80 @@
-import { CaretDownOutlined, CaretRightOutlined, FileTextOutlined, FolderOpenOutlined, FolderOutlined } from "@ant-design/icons"
-import { App, Col, Input, Row, theme } from "antd"
+import { App, Empty } from "antd"
 import _ from "lodash"
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { ListRange, Virtuoso, VirtuosoHandle } from "react-virtuoso"
 
-import { nameMaxLength } from "~/config"
-import useContentLoader from "~/hooks/useContentLoader"
-import useGlobalState from "~/hooks/useGlobalState"
-import useItemChildrens from "~/hooks/useItemChildrens"
-import useNewModal from "~/hooks/useNewModal"
-import type { GlobalState, NoteItem } from "~/types"
-import { contentStore } from "~/utils/database"
-import { iconPlacehodler } from "~/views/components/icons/IconPlaceholder"
-import NoteTreeItemMenu, { MenuInfo, NoteTreeMenuKeys } from "~/views/components/menus/NoteTreeItemMenu"
+import { useAppDispatch } from "~/redux"
+import { deleteNote, startRenaming } from "~/redux/noteSlice"
+import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
+import type { NoteIndentItem } from "~/types"
 
-import ss from "./NoteTree.module.scss"
+import { MemodNoteTreeItem } from "./NoteTreeItem"
+
+import NoteTreeItemMenu, { MenuInfo, NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
+import useItemArray from "$hooks/useItemArray"
+import useItemsTree from "$hooks/useItemsTree"
+import useNewModal from "$hooks/useNewModal"
+import { useSettings } from "$hooks/useSelectors"
+
 export type NoteTreeProps = {
-  indent?: number
   search: string
-  parentId?: string
 }
-export default function NoteTree({ search, indent = 0, parentId }: NoteTreeProps) {
-  const [{ current, expandItems, items }, setState] = useGlobalState()
-  const data = useItemChildrens(parentId, search)
-  const { token } = theme.useToken()
-  const { message, modal } = App.useApp()
-  const [renaming, setRenaming] = useState("")
+
+export default function NoteTree({ search }: NoteTreeProps) {
+  const { current, expandItems } = useSettings()
+  const data = useItemsTree(search)
+  const itemArray = useItemArray()
+  const [rightClickItem, setRightClickItem] = useState<NoteIndentItem>()
+  const dispatch = useAppDispatch()
+  const [range, setRange] = useState<ListRange>({ startIndex: 0, endIndex: data.length })
   const showModal = useNewModal()
-  const renderExpandIcon = useCallback(
-    (item: NoteItem) => {
-      if (item.isLeaf) {
-        return iconPlacehodler
-      }
+  const { modal } = App.useApp()
+  const refVirtuoso = useRef<VirtuosoHandle>(null)
+  const [menuOpened, setMenuOpened] = useState(false)
 
-      return expandItems[item.id] ? <CaretDownOutlined /> : <CaretRightOutlined />
-    },
-    [expandItems],
-  )
-  const createOnItemClick = useCallback(
-    (item: NoteItem) => {
-      return (e: React.MouseEvent<HTMLElement>) => {
-        if (renaming === item.id) {
-          return
-        }
-        const newState: Partial<GlobalState> = {}
-        if (!item.isLeaf) {
-          newState.expandItems = { ...expandItems, [item.id]: !expandItems[item.id] }
-          if (e.nativeEvent.composedPath().find((node: EventTarget) => (node as HTMLElement).classList?.contains("anticon"))) {
-            setState(newState)
-
-            return
-          }
-        }
-        if (current !== item.id) {
-          newState.current = item.id
-        }
-        _.isEmpty(newState) || setState(newState)
-      }
-    },
-    [current, expandItems, renaming, setState],
-  )
-
-  const createOnItemDoubleClick = useCallback((item: NoteItem) => {
-    return (e: React.MouseEvent<HTMLDivElement>) => {
-      e.preventDefault()
-      e.stopPropagation()
-    }
-  }, [])
-  const loadContent = useContentLoader()
-  const createOnMenuClick = useCallback(
-    (item: NoteItem) => {
-      return (info: MenuInfo) => {
-        switch (info.key) {
-          case NoteTreeMenuKeys.rename:
-            setRenaming(item.id)
-            break
-          case NoteTreeMenuKeys.delete:
-            const children = Object.values(items).filter((c) => c.parentId === item.id)
-            modal.confirm({
-              title: `要删除"${item.title}"吗?`,
-              content: item.isLeaf || !children.length ? null : `${item.title}是一个非空目录，删除后，其下面的${children.length}条内容将移动到上级目录`,
-              onOk() {
-                Promise.all([
-                  contentStore.delete(item.id),
-                  item.isLeaf ? Promise.resolve() : contentStore.set(...children.map((c) => ({ ...c, parentId: item.parentId }))),
-                ])
-                  .then(() => {
-                    void loadContent()
-                  })
-                  .catch(console.error)
-              },
-            })
-            break
-          case NoteTreeMenuKeys.newDir:
-          case NoteTreeMenuKeys.newNote:
-            showModal(info, item.id)
-            break
-          default:
-            console.warn("未生效的菜单")
-        }
-      }
-    },
-    [items, loadContent, modal, showModal],
-  )
-  const createOnRenamingBlur = useCallback(
-    (item: NoteItem) => {
-      return (e: React.FocusEvent<HTMLInputElement>) => {
-        const newName = e.currentTarget.value
-        if (!newName.trim()) {
-          void message.warning("名称不为能空")
-        } else {
-          contentStore
-            .set({ ...item, title: newName })
-            .then(loadContent)
-            .catch(console.error)
-        }
-        setRenaming("")
-      }
-    },
-    [loadContent, message],
-  )
-  const onRenameKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.currentTarget.blur()
-    }
-  }, [])
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (!current) {
+      if (!current || isContentEditable(document.activeElement)) {
         return
       }
+      if (e.key.startsWith("Arrow")) {
+        e.preventDefault()
+        e.stopPropagation()
+        e.stopImmediatePropagation()
+      }
+      const currentIndex = data.findIndex((item) => item.id === current)
+      if (currentIndex === -1) {
+        return
+      }
+      const currentItem = data[currentIndex]
       if (e.key === "ArrowLeft" && expandItems[current]) {
-        setState({ expandItems: { ...expandItems, [current]: false } })
-      } else if (e.key === "ArrowRight" && !expandItems[current]) {
-        setState({ expandItems: { ...expandItems, [current]: true } })
+        if (currentItem?.isLeaf) {
+          if (currentItem.parentId) {
+            dispatch(setItemsExpanded({ [currentItem.parentId]: false }))
+            dispatch(setCurrent(currentItem.parentId))
+          }
+        } else {
+          dispatch(setItemsExpanded({ [current]: false }))
+        }
+
+        return
+      }
+      if (e.key === "ArrowRight" && !expandItems[current]) {
+        dispatch(setItemsExpanded({ [current]: true }))
+
+        return
+      }
+      let newIndex: number = -1
+      if (e.key === "ArrowDown") {
+        newIndex = currentIndex === data.length - 1 ? 0 : currentIndex + 1
+      } else if (e.key === "ArrowUp") {
+        newIndex = currentIndex ? currentIndex - 1 : data.length - 1
+      }
+      if (newIndex !== -1) {
+        dispatch(setCurrent(data[newIndex].id))
+        if (newIndex < range.startIndex + 10 || newIndex > range.endIndex - 10) {
+          refVirtuoso.current?.scrollToIndex({ index: newIndex, align: "center", behavior: "smooth" })
+        }
       }
     }
 
@@ -141,51 +83,72 @@ export default function NoteTree({ search, indent = 0, parentId }: NoteTreeProps
     return () => {
       window.removeEventListener("keydown", onKeyDown)
     }
-  }, [current, expandItems, setState])
+  }, [current, data, dispatch, expandItems, range, range.endIndex, range.startIndex])
 
-  return (
-    <ol className={ss.root}>
-      {data.map((item: NoteItem) => (
-        <li key={item.id}>
-          <NoteTreeItemMenu onClick={createOnMenuClick(item)} item={item} indent={indent}>
-            <Row
-              wrap={false}
-              gutter={10}
-              className={ss.item}
-              onClick={createOnItemClick(item)}
-              onDoubleClick={createOnItemDoubleClick(item)}
-              data-active={current === item.id}
-              style={{
-                background: current === item.id ? token.colorPrimaryBg : "none",
-                color: current === item.id ? token.colorPrimaryTextActive : undefined,
-              }}
-            >
-              <Col style={{ width: `${24 + indent * 16}px`, textAlign: "right" }}>{renderExpandIcon(item)}</Col>
-              <Col>{item.isLeaf ? <FileTextOutlined /> : expandItems[item.id] ? <FolderOpenOutlined /> : <FolderOutlined />}</Col>
-              <Col flex={1}>
-                {renaming === item.id ? (
-                  <Input
-                    key={`rename-input-${item.id}`}
-                    autoFocus
-                    size="small"
-                    placeholder={item.title}
-                    defaultValue={item.title}
-                    onKeyDown={onRenameKeyDown}
-                    onBlur={createOnRenamingBlur(item)}
-                    maxLength={nameMaxLength}
-                  />
-                ) : (
-                  <div title={item.title} style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {item.title}
-                  </div>
-                )}
-              </Col>
-              {/* <Col>{item.isLeaf || 11}</Col> */}
-            </Row>
-          </NoteTreeItemMenu>
-          {!item.isLeaf && expandItems[item.id] ? <NoteTree search={search} parentId={item.id} indent={indent + 1} /> : null}
-        </li>
-      ))}
-    </ol>
+  const onMenuClick = useCallback(
+    (info: MenuInfo) => {
+      switch (info.key) {
+        case NoteTreeMenuKeys.rename:
+          rightClickItem && dispatch(startRenaming(rightClickItem.id))
+          break
+        case NoteTreeMenuKeys.delete:
+          if (!rightClickItem) {
+            return
+          }
+          const children = itemArray.filter((c) => c.parentId === rightClickItem.id)
+          modal.confirm({
+            title: `要删除"${rightClickItem.title}"吗?`,
+            content:
+              rightClickItem.isLeaf || !children.length
+                ? null
+                : `${rightClickItem.title}是一个非空目录，删除后，其下面的${children.length}条内容将移动到上级目录`,
+            onOk() {
+              dispatch(deleteNote(rightClickItem.id))
+            },
+          })
+          break
+        case NoteTreeMenuKeys.newDir:
+        case NoteTreeMenuKeys.newNote:
+          showModal(info, rightClickItem?.id)
+          break
+        default:
+          console.warn("未生效的菜单")
+      }
+    },
+    [rightClickItem, dispatch, itemArray, modal, showModal],
+  )
+
+  const onListRightClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const pathes = e.nativeEvent.composedPath()
+      const itemId = (pathes.find((path) => path instanceof HTMLDivElement && path.getAttribute("data-id")) as HTMLDivElement)?.getAttribute("data-id")
+      setRightClickItem(data.find((item) => item.id === itemId))
+    },
+    [data],
+  )
+
+  return useMemo(
+    () => (
+      <NoteTreeItemMenu item={rightClickItem} onClick={onMenuClick} onOpenChange={setMenuOpened}>
+        {data.length ? (
+          <Virtuoso
+            style={{ overflowY: menuOpened ? "hidden" : "auto" }}
+            ref={refVirtuoso}
+            data={data}
+            totalCount={data.length}
+            fixedItemHeight={30}
+            increaseViewportBy={300}
+            onContextMenu={onListRightClick}
+            components={{ Item: MemodNoteTreeItem }}
+            rangeChanged={setRange}
+          />
+        ) : (
+          <Empty description="没有笔记" />
+        )}
+      </NoteTreeItemMenu>
+    ),
+    [data, menuOpened, onListRightClick, onMenuClick, rightClickItem],
   )
 }
+
+export const MemoedNoteTree = React.memo(NoteTree)

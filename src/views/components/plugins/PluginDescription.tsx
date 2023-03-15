@@ -2,9 +2,10 @@ import { shell } from "@tauri-apps/api"
 import { Col, Row, Space, Tag } from "antd"
 import React, { useMemo } from "react"
 
-import { IPluginInfo, PluginAbility, PluginComponents } from "~/hooks/usePlugins"
-
 import ss from "./PluginDescription.module.scss"
+
+import { IPluginInfo, PluginAbility, PluginComponents } from "$hooks/usePlugins"
+
 
 const abilities: Record<PluginAbility, string> = {
   themes: "主题",
