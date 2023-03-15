@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction, Slice, SliceCaseReducers } from "@reduxjs/toolkit"
 import _ from "lodash"
 
-import { NoteItem, NoteState, StoreState } from "~/types"
+import { DeleteNotePayload, NoteItem, NoteState } from "~/types"
 import { contentStore, database, notesStore } from "~/utils/database"
 import { findNoteParents } from "~/utils/notes"
 
@@ -61,19 +61,23 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
             void notesStore.set(...notes)
             void contentStore.set(item.id, content)
         },
-        deleteNote(state, action: PayloadAction<string>) {
-            const id = action.payload
-            const note = state.entities[id]
-            delete state.entities[id]
-            state.ids.splice(state.ids.indexOf(id), 1)
-            const children = Object.values(state.entities).filter(item => item.parentId === id)
-            for (const entity of Object.values(state.entities)) {
-                if (entity.parentId === id) {
-                    entity.parentId = note.parentId
+        deleteNote(state, action: PayloadAction<DeleteNotePayload>) {
+            const { noteId, deleteChildren } = action.payload
+            const note = state.entities[noteId]
+            delete state.entities[noteId]
+            state.ids.splice(state.ids.indexOf(noteId), 1)
+            const children = Object.values(state.entities).filter(item => item.parentId === noteId)
+            if (deleteChildren) {
+                void notesStore.delete(...children.map(item => item.id))
+            } else {
+                for (const entity of Object.values(state.entities)) {
+                    if (entity.parentId === noteId) {
+                        entity.parentId = note.parentId
+                    }
                 }
+                note.isLeaf || void notesStore.set(...children.map((c) => ({ ...c, parentId: note.parentId })))
             }
-            void notesStore.delete(id)
-            note.isLeaf || void notesStore.set(...children.map((c) => ({ ...c, parentId: note.parentId })))
+            void notesStore.delete(noteId)
         },
         startRenaming(state: NoteState, action) {
             state.renamingId = action.payload

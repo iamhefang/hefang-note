@@ -9,7 +9,7 @@ import { NoteSort } from "~/types"
 import { iconPlacehodler } from "$components/icons/IconPlaceholder"
 import { NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
 import NoteTree from "$components/tree/NoteTree"
-import useNewModal from "$hooks/useNewModal"
+import useNewModal from "$hooks/modals/useNewModal"
 import { useNotes, useSettings } from "$hooks/useSelectors"
 import { sortItems } from "$utils/sort"
 
@@ -79,7 +79,7 @@ export default function SiderBar() {
     <>
       <Row style={{ margin: 10 }} gutter={10} wrap={false}>
         <Col flex={1}>
-          <Input.Search placeholder="搜索目录和标题" onSearch={setSearch} allowClear={true} disabled={initializing} />
+          <Input.Search name="search" placeholder="搜索目录和标题" onSearch={setSearch} allowClear={true} disabled={initializing} />
         </Col>
         <Col>
           <Dropdown trigger={["click"]} menu={{ items: menuItems }} disabled={initializing}>
