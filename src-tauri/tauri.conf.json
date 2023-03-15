@@ -2,7 +2,6 @@
     "build": {
         "beforeDevCommand": "pnpm dev",
         "beforeBuildCommand": "pnpm run syncinfo && pnpm build",
-        "beforeBundleCommand": "pnpm run create-dmg",
         "devPath": "http://localhost:8888",
         "distDir": "../dist",
         "withGlobalTauri": false
