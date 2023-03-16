@@ -1,7 +1,7 @@
 
 import { emit2main } from "~/common/utils"
 import { ExportType, IWorkerMessage, WorkerEventKeys } from "~/types"
-import { buildExportJson } from "~/utils/notes"
+import { buildExportJson } from "$utils/notes"
 
 async function doExport(type: ExportType) {
     const json = await buildExportJson()

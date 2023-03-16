@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 
-import { findNoteParents } from "~/utils/notes"
+import { findNoteParents } from "$utils/notes"
 
 import { useNotes } from "./useSelectors"
 

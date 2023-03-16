@@ -7,6 +7,7 @@ import { productName, versionName } from "~/consts"
 
 import Editor from "$components/editor/Editor"
 import SiderBar from "$components/sidebar/SiderBar"
+import Github from "$components/topbar/items/Github"
 import TopBarLeft from "$components/topbar/TopBarLeft"
 import TopBarRight from "$components/topbar/TopBarRight"
 import VersionView from "$components/version/VersionView"
@@ -29,9 +30,9 @@ export default function View() {
   } = antdTheme.useToken()
   const [width, setWidth] = useState(240)
   const [sw, setSW] = useState(width)
-  const onResizeStop = useCallback<ResizeCallback>((e, d, ref, delta) => setSW(width), [width])
+  const onResizeStop = useCallback<ResizeCallback>((_e, _d, _ref, _delta) => setSW(width), [width])
   const onResize = useCallback<ResizeCallback>(
-    (e, d, ref, delta) => {
+    (_e, _d, _ref, delta) => {
       const newWidth = sw + delta.width
       setWidth(newWidth)
     },
@@ -114,6 +115,9 @@ export default function View() {
           <Col>{footer}</Col>
           {loadStatus && <Col>{loadStatus}</Col>}
           <Col flex={1} />
+          <Col>
+            <Github />
+          </Col>
           <Col>
             <VersionView />
           </Col>

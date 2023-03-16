@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react"
 
 import { NoteIndentItem } from "~/types"
-import { isNoteLocked } from "~/utils/notes"
+import { isNoteLocked } from "$utils/notes"
 
 import useItemArray from "./useItemArray"
 import { useSettings, useStates } from "./useSelectors"

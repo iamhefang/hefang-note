@@ -1,7 +1,7 @@
 import { Form, List, Select, Space, Switch } from "antd"
 import { ReactNode, useMemo } from "react"
 
-import { sortItems } from "~/utils/sort"
+import { sortItems } from "$utils/sort"
 
 export default function GeneralSettings() {
   const formItems: Record<string, ReactNode> = useMemo(

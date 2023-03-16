@@ -57,7 +57,7 @@ export default function SiderBar() {
         key: "export",
         label: "导出全部笔记",
         onClick: async () =>
-          import("~/utils/plugin").then((res) => {
+          import("$utils/plugin").then((res) => {
             void res.hefang.contens.export()
           }),
       },
@@ -65,7 +65,7 @@ export default function SiderBar() {
         key: "import",
         label: "导入笔记",
         onClick: async () =>
-          import("~/utils/plugin").then((res) => {
+          import("$utils/plugin").then((res) => {
             void res.hefang.contens.import().then((count) => {
               modal.info({ title: `共导入${count}条数据` })
             })

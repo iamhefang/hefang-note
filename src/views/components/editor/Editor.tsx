@@ -7,7 +7,7 @@ import { CONTENT_SAVE_DELAY } from "~/config"
 import useNoteLocked from "~/hooks/useNoteLocked"
 import { useAppDispatch } from "~/redux"
 import { updateContent } from "~/redux/noteSlice"
-import { contentStore } from "~/utils/database"
+import { contentStore } from "$utils/database"
 
 import DefaultEditor from "./DefaultEditor"
 

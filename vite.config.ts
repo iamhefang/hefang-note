@@ -4,6 +4,7 @@ import react from "@vitejs/plugin-react"
 import { internalIpV4 } from "internal-ip"
 import { defineConfig } from "vite"
 import htmlMinifier from "vite-plugin-html-minifier"
+import { plugin as markdown, Mode } from "vite-plugin-markdown"
 import { viteStaticCopy } from "vite-plugin-static-copy"
 import svgr from "vite-plugin-svgr"
 
@@ -23,6 +24,7 @@ export default defineConfig(async () => {
         ],
       }),
       htmlMinifier({ minify: true }),
+      markdown({ mode: [Mode.HTML] }),
     ],
     resolve: {
       alias: {

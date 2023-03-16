@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction, SliceCaseReducers } from 
 import _ from "lodash"
 
 import { Settings } from "~/types"
-import { settingsStore } from "~/utils/database"
+import { settingsStore } from "$utils/database"
 
 export const defaultState: Settings = {
     theme: "auto",

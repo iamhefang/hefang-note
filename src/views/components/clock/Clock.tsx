@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-import { time } from "~/utils/time"
+import { time } from "$utils/time"
 
 export default function Clock() {
   const [value, setValue] = useState(time())

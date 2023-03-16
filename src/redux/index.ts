@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit"
 import _ from "lodash"
 import { useDispatch } from "react-redux"
 
-import { settingsStore } from "~/utils/database"
+import { settingsStore } from "$utils/database"
 
 import { noteSlice } from "./noteSlice"
 import { pluginSlice } from "./pluginSlice"

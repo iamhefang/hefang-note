@@ -4,7 +4,7 @@ import { useCallback, useEffect } from "react"
 import { isInTauri } from "~/consts"
 import { useAppDispatch } from "~/redux"
 import { toggleSettingsModal } from "~/redux/uiSlice"
-import { shortcuts } from "~/utils/shortcuts"
+import { shortcuts } from "$utils/shortcuts"
 
 import CommonMenuItem from "$components/menus/CommonMenuItem"
 import usePlatform from "$hooks/usePlatform"
@@ -23,9 +23,11 @@ export default function AppLogo() {
     Modal.destroyAll()
     modal.info({
       title: `关于${pkg.productName}`,
+      width: 500,
       content: (
         <Descriptions column={1} size="small">
           <Descriptions.Item label="版本号">v{pkg.version}</Descriptions.Item>
+          <Descriptions.Item label="源码版本">{import.meta.env.VITE_COMMIT}</Descriptions.Item>
           <Descriptions.Item label="平台">{osType}</Descriptions.Item>
         </Descriptions>
       ),

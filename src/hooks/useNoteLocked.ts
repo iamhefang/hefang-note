@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 
-import { isNoteLocked } from "~/utils/notes"
+import { isNoteLocked } from "$utils/notes"
 
 import { useSettings, useStates } from "./useSelectors"
 

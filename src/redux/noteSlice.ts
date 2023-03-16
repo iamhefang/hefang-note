@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice, PayloadAction, Slice, SliceCaseReducers 
 import _ from "lodash"
 
 import { DeleteNotePayload, NoteItem, NoteState } from "~/types"
-import { contentStore, database, notesStore } from "~/utils/database"
-import { findNoteParents } from "~/utils/notes"
+import { contentStore, database, notesStore } from "$utils/database"
+import { findNoteParents } from "$utils/notes"
 
 
 
