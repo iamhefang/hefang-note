@@ -64,6 +64,9 @@ export type Settings = {
   autoCheckUpdate: boolean
   editorStyle: CSSProperties
   shortcut: { lock: string; closeWindow: string }
+  // key: 笔记的id，value: 加密密码
+  lockedContents: { [id: string]: string }
+  unlockContentByAppLockPassword: boolean
 }
 
 export type NoteSort = Sort<keyof Omit<NoteItem, "id" | "parentId" | "isLeaf">>
@@ -72,6 +75,8 @@ export type UIState = {
   showSettingsModal: boolean
   launching: boolean
   exporting: boolean
+  // key: 笔记的id，value: 解锁有效期
+  unlockedContents: { [id: string]: number }
 }
 export type StoreState = {
   settings: Settings
@@ -103,3 +108,8 @@ export type GlobalState = Settings & {
 export type GlobalDispatcher = (state: Partial<GlobalState>) => void
 
 export type Sort<F> = { field: F; type: "asc" | "desc" }
+
+export type DeleteNotePayload = {
+  noteId: string
+  deleteChildren?: boolean
+}

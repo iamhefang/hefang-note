@@ -37,3 +37,9 @@ export async function buildExportJson(): Promise<string> {
 
     return json
 }
+
+export function isNoteLocked(noteId: string | undefined, lockedContents: { [id: string]: string }, unlockedContents: { [id: string]: number }): boolean {
+    if (!noteId) { return false }
+
+    return !!(lockedContents[noteId] && (unlockedContents[noteId] || Number.MIN_SAFE_INTEGER) < Date.now())
+}

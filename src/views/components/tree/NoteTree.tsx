@@ -1,19 +1,19 @@
-import { App, Empty } from "antd"
-import _ from "lodash"
+import { Empty } from "antd"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ListRange, Virtuoso, VirtuosoHandle } from "react-virtuoso"
 
+import useDeleteModal from "~/hooks/modals/useDeleteModal"
+import useLockContentModal from "~/hooks/modals/useLockContentModal"
 import { useAppDispatch } from "~/redux"
-import { deleteNote, startRenaming } from "~/redux/noteSlice"
+import { startRenaming } from "~/redux/noteSlice"
 import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
 import type { NoteIndentItem } from "~/types"
 
 import { MemodNoteTreeItem } from "./NoteTreeItem"
 
 import NoteTreeItemMenu, { MenuInfo, NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
-import useItemArray from "$hooks/useItemArray"
+import useNewModal from "$hooks/modals/useNewModal"
 import useItemsTree from "$hooks/useItemsTree"
-import useNewModal from "$hooks/useNewModal"
 import { useSettings } from "$hooks/useSelectors"
 
 export type NoteTreeProps = {
@@ -23,12 +23,12 @@ export type NoteTreeProps = {
 export default function NoteTree({ search }: NoteTreeProps) {
   const { current, expandItems } = useSettings()
   const data = useItemsTree(search)
-  const itemArray = useItemArray()
   const [rightClickItem, setRightClickItem] = useState<NoteIndentItem>()
   const dispatch = useAppDispatch()
   const [range, setRange] = useState<ListRange>({ startIndex: 0, endIndex: data.length })
-  const showModal = useNewModal()
-  const { modal } = App.useApp()
+  const showNewModal = useNewModal()
+  const showLockModal = useLockContentModal()
+  const showDeleteModal = useDeleteModal()
   const refVirtuoso = useRef<VirtuosoHandle>(null)
   const [menuOpened, setMenuOpened] = useState(false)
 
@@ -92,30 +92,20 @@ export default function NoteTree({ search }: NoteTreeProps) {
           rightClickItem && dispatch(startRenaming(rightClickItem.id))
           break
         case NoteTreeMenuKeys.delete:
-          if (!rightClickItem) {
-            return
-          }
-          const children = itemArray.filter((c) => c.parentId === rightClickItem.id)
-          modal.confirm({
-            title: `要删除"${rightClickItem.title}"吗?`,
-            content:
-              rightClickItem.isLeaf || !children.length
-                ? null
-                : `${rightClickItem.title}是一个非空目录，删除后，其下面的${children.length}条内容将移动到上级目录`,
-            onOk() {
-              dispatch(deleteNote(rightClickItem.id))
-            },
-          })
+          rightClickItem && showDeleteModal(rightClickItem)
           break
         case NoteTreeMenuKeys.newDir:
         case NoteTreeMenuKeys.newNote:
-          showModal(info, rightClickItem?.id)
+          showNewModal(info, rightClickItem?.id)
+          break
+        case NoteTreeMenuKeys.lock:
+          showLockModal(rightClickItem)
           break
         default:
           console.warn("未生效的菜单")
       }
     },
-    [rightClickItem, dispatch, itemArray, modal, showModal],
+    [rightClickItem, dispatch, showDeleteModal, showNewModal, showLockModal],
   )
 
   const onListRightClick = useCallback(
