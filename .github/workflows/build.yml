@@ -57,9 +57,10 @@ jobs:
           releaseName: "App Name v__VERSION__" # tauri-action replaces \_\_VERSION\_\_ with the app version.
           releaseBody: "See the assets to download and install this version."
           releaseDraft: true
-          prerelease: false
+          prerelease: true
 
       - name: Upload Web Assets to COS
+        if: matrix.platform == 'ubuntu-20.04'
         uses: zkqiang/tencent-cos-action@v0.1.0
         with:
           args: upload -r ./dist/ /tools/notebook
@@ -68,8 +69,8 @@ jobs:
           bucket: ${{ secrets.COS_BUCKET }}
           region: ap-hongkong
 
-
       - name: Upload Installer to COS
+        if: matrix.platform == 'ubuntu-20.04'
         uses: zkqiang/tencent-cos-action@v0.1.0
         with:
           args: upload -r ./src-tauri/dist/ /tools/notebook/releases/
