@@ -1,12 +1,14 @@
 import { useCallback, useMemo } from "react"
 
 import { NoteIndentItem } from "~/types"
+import { isNoteLocked } from "$utils/notes"
 
 import useItemArray from "./useItemArray"
-import { useSettings } from "./useSelectors"
+import { useSettings, useStates } from "./useSelectors"
 
 export default function useItemsTree(search?: string): NoteIndentItem[] {
-  const { expandItems } = useSettings()
+  const { expandItems, lockedContents } = useSettings()
+  const { unlockedContents } = useStates()
 
   const itemArray = useItemArray({ needSort: true, search })
   const findChildren = useCallback(
@@ -15,7 +17,7 @@ export default function useItemsTree(search?: string): NoteIndentItem[] {
         .filter((item) => item.parentId === parentId)
         .map((item) => {
           const treeItem: NoteIndentItem = { ...item, indent }
-          if (item.isLeaf || !expandItems[item.id]) {
+          if (item.isLeaf || !expandItems[item.id] || isNoteLocked(item.id, lockedContents, unlockedContents)) {
             return treeItem
           }
           const children = findChildren(item.id, indent + 1)
@@ -23,7 +25,7 @@ export default function useItemsTree(search?: string): NoteIndentItem[] {
           return [treeItem, ...children]
         })
         .flat(2),
-    [expandItems, itemArray],
+    [expandItems, itemArray, lockedContents, unlockedContents],
   )
 
   return useMemo(() => findChildren(undefined, 0), [findChildren])

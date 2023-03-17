@@ -1,9 +1,8 @@
-import { createAsyncThunk, createSlice, SliceCaseReducers } from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice, PayloadAction, SliceCaseReducers } from "@reduxjs/toolkit"
 import _ from "lodash"
 
 import { Settings } from "~/types"
-import { settingsStore } from "~/utils/database"
-
+import { settingsStore } from "$utils/database"
 
 export const defaultState: Settings = {
     theme: "auto",
@@ -22,7 +21,9 @@ export const defaultState: Settings = {
         fontSize: "inherit",
         lineHeight: 1.2,
     },
-    shortcut: { lock: "Ctrl+L" },
+    shortcut: { lock: "CmdOrCtrl+L", closeWindow: "CmdOrCtrl+W" },
+    lockedContents: {},
+    unlockContentByAppLockPassword: true,
 }
 const sliceName = "settings"
 
@@ -39,6 +40,13 @@ export const settingSlice = createSlice<Settings, SliceCaseReducers<Settings>>({
     reducers: {
         lockScreen(state, action) {
             state.lock = { ...state.lock, ...action.payload }
+        },
+        lockContent(state, action: PayloadAction<{ noteId: string, password: string }>) {
+            const { noteId, password } = action.payload
+            state.lockedContents[noteId] = password
+        },
+        cancelLockContent(state, action: PayloadAction<string>) {
+            delete state.lockedContents[action.payload]
         },
         toggleSidebar(state) {
             state.showSideBar = !state.showSideBar
@@ -73,4 +81,8 @@ export const settingSlice = createSlice<Settings, SliceCaseReducers<Settings>>({
 })
 
 
-export const { lockScreen, toggleSidebar, changeTheme, setItemsExpanded, setCurrent, setSort, setSettings } = settingSlice.actions
+export const {
+    lockScreen, lockContent, cancelLockContent,
+    toggleSidebar, changeTheme,
+    setItemsExpanded, setCurrent, setSort, setSettings,
+} = settingSlice.actions

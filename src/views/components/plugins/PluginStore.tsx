@@ -2,7 +2,7 @@ import { Button, Col, Divider, Row, Space, Tag } from "antd"
 import React, { ForwardedRef, useEffect, useMemo, useState } from "react"
 import { ItemProps, ListProps, Virtuoso } from "react-virtuoso"
 
-import { pluginStore } from "~/utils/database"
+import { pluginStore } from "$utils/database"
 
 import { PluginDescription } from "./PluginDescription"
 import ss from "./PluginStore.module.scss"

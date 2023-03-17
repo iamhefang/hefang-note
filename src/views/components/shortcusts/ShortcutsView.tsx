@@ -4,7 +4,7 @@ import _ from "lodash"
 import { CSSProperties, ReactNode, useCallback, useMemo, useRef, useState } from "react"
 import { Shortcut } from "shortcuts"
 
-import { shortcuts } from "~/utils/shortcuts"
+import { shortcuts } from "$utils/shortcuts"
 
 export type ShortcutsViewProps = {
   value?: string

@@ -6,10 +6,7 @@ import { useAppDispatch } from "~/redux"
 import { newNote } from "~/redux/noteSlice"
 import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
 
-import { useNotes } from "./useSelectors"
-
 import { MenuInfo, NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
-
 
 export default function useNewModal() {
   const { modal } = App.useApp()
@@ -18,7 +15,6 @@ export default function useNewModal() {
     update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void
   }>()
   const [form] = Form.useForm()
-  const { entities } = useNotes()
   const dispatch = useAppDispatch()
 
   const doSave = useCallback(

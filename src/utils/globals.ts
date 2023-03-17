@@ -1,4 +1,5 @@
-import * as icons from "@ant-design/icons"
+// eslint-disable-next-line import/no-internal-modules
+import * as icons from "@ant-design/icons/lib/icons"
 import * as antd from "antd"
 import dayjs from "dayjs"
 import _ from "lodash"

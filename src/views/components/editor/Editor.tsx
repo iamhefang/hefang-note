@@ -1,15 +1,17 @@
-import { Divider, Empty, theme as antTheme } from "antd"
+import { theme as antTheme, Divider, Empty } from "antd"
 import dayjs from "dayjs"
 import _ from "lodash"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { CONTENT_SAVE_DELAY } from "~/config"
+import useNoteLocked from "~/hooks/useNoteLocked"
 import { useAppDispatch } from "~/redux"
 import { updateContent } from "~/redux/noteSlice"
-import { contentStore } from "~/utils/database"
+import { contentStore } from "$utils/database"
 
 import DefaultEditor from "./DefaultEditor"
 
+import NoteUnlocker from "$components/locker/NoteUnlocker"
 import { IEditor, usePluginMap } from "$hooks/usePlugins"
 import { useNotes, useSettings } from "$hooks/useSelectors"
 
@@ -49,13 +51,18 @@ export default function Editor() {
     },
     [changing, saveContent],
   )
-
+  const noteLocked = useNoteLocked(item?.id)
   useEffect(() => {
     if (!item?.isLeaf) {
       return
     }
-    contentStore.get(item.id, "").then(setValue).catch(console.error)
-  }, [item?.id, item?.isLeaf])
+    contentStore.get(current, "").then(setValue).catch(console.error)
+  }, [current, item?.isLeaf])
+
+  if (noteLocked) {
+    // FIXME: 从加锁笔记切换到非加锁笔记时内容区会闪一下
+    return <NoteUnlocker item={item} />
+  }
 
   if ((item && !item.isLeaf) || _.isEmpty(ids) || !item) {
     return <Empty description="尽情记录吧" />

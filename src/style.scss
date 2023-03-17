@@ -96,3 +96,19 @@ kbd {
   opacity: .618;
   text-align: center;
 }
+
+.changelog-container {
+  max-height: calc(100vh - 400px);
+  overflow: auto;
+
+  p {
+    margin: 10px 0;
+  }
+
+  code {
+    font-size: 85%;
+    background-color: #88888833;
+    padding: 2px;
+    border-radius: 4px;
+  }
+}
