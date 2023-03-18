@@ -14,7 +14,7 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build",
+    "tauri:build": "pnpm run syncinfo && tauri build",
     "eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx .",
     "syncinfo": "node ./scripts/before-build.cjs",
     "create-dmg": "sh ./scripts/build-dmg.sh",

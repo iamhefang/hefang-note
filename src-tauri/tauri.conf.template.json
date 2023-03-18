@@ -1,7 +1,7 @@
 {
     "build": {
         "beforeDevCommand": "pnpm dev",
-        "beforeBuildCommand": "pnpm run syncinfo && pnpm build",
+        "beforeBuildCommand": "pnpm build",
         "devPath": "http://localhost:8888",
         "distDir": "../dist",
         "withGlobalTauri": false
