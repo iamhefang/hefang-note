@@ -4,6 +4,7 @@ import { deleteDB } from "idb"
 import { isInTauri } from "~/consts"
 
 import { contentStore, database, notesStore, pluginStore, settingsStore } from "./database"
+import { decrypt, encrypt } from "./encrypt"
 
 
 if (import.meta.env.DEV && typeof window !== "undefined") {
@@ -21,6 +22,7 @@ if (import.meta.env.DEV && typeof window !== "undefined") {
         settingsStore,
         notesStore,
         pluginStore,
+        encrypt, decrypt,
         async initPluginsMockData(count: number = 10) {
             const c = Math.abs(count)
             if (count < 0) {
