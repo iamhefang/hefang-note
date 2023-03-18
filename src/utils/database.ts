@@ -121,14 +121,14 @@ function createKeyValueDbStore<T extends object, K extends keyof T = keyof T>(st
       const db = await database
       const keys = await db.getAllKeys(storeName)
       const values = await db.getAll(storeName)
-      // @ts-ignore
-      const data: T = {}
+      const data: Partial<T> = {}
       for (let i = 0; i < keys.length; i++) {
-        const key = keys[i]
-        data[key as K] = (shouldEncrypt(key as K) ? JSON.parse(decrypt(values[i])) : values[i]) as T[K]
+        const key = keys[i] as K
+        const value = values[i]
+        data[key] = shouldEncrypt(key) ? JSON.parse(decrypt(value)) : value
       }
 
-      return data
+      return data as T
     },
   }
 }

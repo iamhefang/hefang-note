@@ -1,5 +1,7 @@
 import { createSlice, SliceCaseReducers } from "@reduxjs/toolkit"
 
+import { PluginState } from "~/types"
+
 const sliceName = "plugins"
 
 

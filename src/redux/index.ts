@@ -24,8 +24,11 @@ let lastSettings = defaultSettings
 
 const saveSettings = _.debounce(() => {
   const newSettings = store.getState().settings
-  _.isEqual(lastSettings, newSettings) || void settingsStore.setObject(newSettings)
-  lastSettings = newSettings
+  if (!_.isEqual(lastSettings, newSettings)) {
+    console.info("正在保存新配置", Date.now())
+    void settingsStore.setObject(newSettings)
+    lastSettings = newSettings
+  }
 }, 1000)
 
 store.subscribe(() => {
