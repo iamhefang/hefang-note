@@ -1,4 +1,5 @@
 import { path } from "@tauri-apps/api"
+import { BaseDirectory, createDir, exists, writeTextFile } from "@tauri-apps/api/fs"
 import { deleteDB } from "idb"
 
 import { isInTauri } from "~/consts"
@@ -6,9 +7,27 @@ import { isInTauri } from "~/consts"
 import { contentStore, database, notesStore, pluginStore, settingsStore } from "./database"
 import { decrypt, encrypt } from "./encrypt"
 
+if (isInTauri) {
+
+    void (async () => {
+        if (!(await exists("test", { dir: BaseDirectory.AppLog }))) {
+            await createDir("test", { dir: BaseDirectory.AppLog, recursive: true })
+        }
+
+        for (const method of ["log", "info", "warn", "error"] as (keyof Console)[]) {
+            const origin = window.console[method]
+            // @ts-ignore
+            window.console[method] = function () {
+                // @ts-ignore
+                origin(...arguments)
+
+                void writeTextFile(`${method}.log`, JSON.stringify(arguments), { dir: BaseDirectory.AppLog })
+            }
+        }
+    })()
+}
 
 if (import.meta.env.DEV && typeof window !== "undefined") {
-
     if (isInTauri) {
         void (async () => {
             console.info("appDataDir", await path.appDataDir())
@@ -83,7 +102,10 @@ if (import.meta.env.DEV && typeof window !== "undefined") {
             void pluginStore.getAll().then(console.log)
         },
         async clearData() {
+            (await database).close()
             await deleteDB("hefang-note")
+            localStorage.clear()
+            sessionStorage.clear()
             window.location.reload()
         },
     }

@@ -35,7 +35,7 @@ export const database = openDB(pkg.name, versionCode, {
       await storeSettings.add(example.id, "current")
     }
     let storeContents
-    if (nv >= 10) {
+    if (nv >= 10 && oldVersion < 10) {
       console.info(`正在把数据库从${oldVersion}升级到v0.1.0`)
       if (!storeContent) {
         storeContent = transaction.objectStore("content")
@@ -49,7 +49,7 @@ export const database = openDB(pkg.name, versionCode, {
       }
       db.deleteObjectStore("content")
     }
-    if (nv >= 20) {
+    if (nv >= 20 && oldVersion < 20) {
       console.info(`正在把数据库从${oldVersion}升级到v0.2.0`)
       if (!storeContents) {
         storeContents = transaction.objectStore("contents")
@@ -58,16 +58,16 @@ export const database = openDB(pkg.name, versionCode, {
         storeSettings = transaction.objectStore("settings")
       }
       const allKeys = await storeContents.getAllKeys() || []
+      console.info("upgrade keys", allKeys)
       const allContents = await storeContents.getAll() || []
       const lockedContents = await storeSettings.get("lockedContents")
       for (let i = 0; i < allKeys.length; i++) {
         const key = allKeys[i]
         const conetent = allContents[i]
-        // FIXME: 在数据库升级函数中异步调用会中断升级事务
-        const newContent = await encrypt(JSON.stringify(conetent))
+        const newContent = encrypt(JSON.stringify(conetent))
         await storeContents.put(newContent, key).catch(console.error)
       }
-      await storeSettings.put(await encrypt(JSON.stringify(lockedContents)), "lockedContents").catch(console.error)
+      await storeSettings.put(encrypt(JSON.stringify(lockedContents)), "lockedContents").catch(console.error)
     }
     await transaction.done.catch(console.error)
   },
@@ -103,23 +103,17 @@ function createKeyValueDbStore<T extends object, K extends keyof T = keyof T>(st
       const db = await database
       const value = await db.get(storeName, name as string)
 
-      const result = shouldEncrypt(name) ? JSON.parse(await decrypt(value)) : value
 
-      return _.isUndefined(value) ? defaultValue : result
+      return _.isUndefined(value) ? defaultValue : (shouldEncrypt(name) ? JSON.parse(decrypt(value)) : value)
     },
     async set(name: K, value: T[K]): Promise<void> {
-      await (await database).put(storeName, shouldEncrypt(name) ? await encrypt(JSON.stringify(value)) : value, name as string)
+      await (await database).put(storeName, shouldEncrypt(name) ? encrypt(JSON.stringify(value)) : value, name as string)
     },
     async setObject(values: Partial<T>): Promise<void> {
       const tx = (await database).transaction(storeName, "readwrite")
 
-      const kvs: [string, number[] | unknown][] = []
-
       for (const [key, value] of Object.entries(values)) {
-        kvs.push([key, shouldEncrypt(key as K) ? await encrypt(JSON.stringify(value)) : value])
-      }
-      for (const [key, value] of kvs) {
-        await tx.store.put(value, key)
+        await tx.store.put(shouldEncrypt(key as K) ? encrypt(JSON.stringify(value)) : value, key)
       }
       await tx.done
     },
@@ -131,7 +125,7 @@ function createKeyValueDbStore<T extends object, K extends keyof T = keyof T>(st
       const data: T = {}
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i]
-        data[key as K] = (shouldEncrypt(key as K) ? JSON.parse(await decrypt(values[i])) : values[i]) as T[K]
+        data[key as K] = (shouldEncrypt(key as K) ? JSON.parse(decrypt(values[i])) : values[i]) as T[K]
       }
 
       return data
@@ -175,7 +169,11 @@ function createRecordsDbStore<T>(storeName: string): IRecordDbStore<T> {
   }
 }
 
+// export const settingsStore = createKeyValueDbStore<Settings>("settings")
+// export const contentStore = createKeyValueDbStore<{ [id: string]: string }>("contents")
+
+
 export const settingsStore = createKeyValueDbStore<Settings>("settings", ["lockedContents"])
-export const notesStore = createRecordsDbStore<NoteItem>("notes")
 export const contentStore = createKeyValueDbStore<{ [id: string]: string }>("contents", true)
+export const notesStore = createRecordsDbStore<NoteItem>("notes")
 export const pluginStore = createRecordsDbStore<Omit<IPluginInfo, "path">>("plugins")
