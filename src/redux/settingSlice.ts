@@ -2,9 +2,10 @@ import { createAsyncThunk, createSlice, PayloadAction, SliceCaseReducers } from 
 import _ from "lodash"
 
 import { Settings } from "~/types"
+
 import { settingsStore } from "$utils/database"
 
-export const defaultState: Settings = {
+export const defaultSettings: Settings = {
     theme: "auto",
     items: {},
     plugins: [],
@@ -36,7 +37,7 @@ export const loadSettings = createAsyncThunk(`${sliceName}/loadSettings`, async 
 
 export const settingSlice = createSlice<Settings, SliceCaseReducers<Settings>>({
     name: sliceName,
-    initialState: defaultState,
+    initialState: defaultSettings,
     reducers: {
         lockScreen(state, action) {
             state.lock = { ...state.lock, ...action.payload }

@@ -1,14 +1,14 @@
 {
     "build": {
         "beforeDevCommand": "pnpm dev",
-        "beforeBuildCommand": "pnpm run syncinfo && pnpm build",
+        "beforeBuildCommand": "pnpm build",
         "devPath": "http://localhost:8888",
         "distDir": "../dist",
         "withGlobalTauri": false
     },
     "package": {
         "productName": "何方笔记",
-        "version": "0.2.0"
+        "version": "0.2.1"
     },
     "tauri": {
         "systemTray": {
@@ -28,7 +28,8 @@
             "fs": {
                 "all": true,
                 "scope": [
-                    "$APPDATA/**/*"
+                    "$APPDATA/**/*",
+                    "$APPLOG/**/*"
                 ]
             },
             "window": {

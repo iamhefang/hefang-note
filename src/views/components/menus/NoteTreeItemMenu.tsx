@@ -1,8 +1,10 @@
 import { Dropdown, DropdownProps, MenuProps } from "antd"
 import React, { useCallback, useMemo } from "react"
-import { useSettings } from "~/hooks/useSelectors"
 
 import { NoteIndentItem } from "~/types"
+
+import { useSettings } from "$hooks/useSelectors"
+
 
 export type MenuInfo = {
   key: NoteTreeMenuKeys
@@ -42,7 +44,7 @@ export default function NoteTreeItemMenu({ children, onClick, item, onOpenChange
       _items.push({ key: NoteTreeMenuKeys.newNote, label: "新建笔记" })
     }
 
-    _items.push({ key: NoteTreeMenuKeys.rename, label: "重命名" }, { key: NoteTreeMenuKeys.delete, label: "删除" })
+    _items.push({ type: "divider" }, { key: NoteTreeMenuKeys.rename, label: "重命名" }, { key: NoteTreeMenuKeys.delete, label: "删除" })
 
     if (!item.indent) {
       _items.push({ type: "divider" }, { key: NoteTreeMenuKeys.lock, label: lockedContents[item.id] ? "取消锁定" : "锁定" })

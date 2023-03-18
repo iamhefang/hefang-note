@@ -1,14 +1,14 @@
 import { dialog, path } from "@tauri-apps/api"
-import { readTextFile } from "@tauri-apps/api/fs"
+import { readTextFile, writeTextFile } from "@tauri-apps/api/fs"
 import Ajv from "ajv"
-import { Button, Col, Dropdown, Modal, Row } from "antd"
+import { Button, Col, Dropdown, message, Modal, Row } from "antd"
 
 import { isInTauri } from "~/consts"
-import { NoteItem, WorkerEventKeys } from "~/types"
+import { NoteItem } from "~/types"
 
 import { contentStore, notesStore } from "./database"
 import schema from "./note-data-schema.json"
-import { emit2worker } from "./worker"
+import { buildExportJson } from "./notes"
 
 import pkg from "^/package.json"
 export const enum ExportType {
@@ -119,10 +119,32 @@ export const hefang = {
             defaultPath: await path.join(downloadDir, `${pkg.productName}-${Date.now()}`),
           })
           .then(async (res) => {
-            emit2worker(WorkerEventKeys.exportStart, { type: "json", path: res })
+            if (!res) {
+              return
+            }
+            const loading = message.loading("正在导出")
+            const json = await buildExportJson()
+            writeTextFile(res, json)
+              .then(() => {
+                void message.success("导出成功")
+              })
+              .catch((e) => {
+                void message.error(`导出失败:${JSON.stringify(e)}`)
+              })
+              .finally(loading)
           })
       } else {
-        emit2worker(WorkerEventKeys.exportStart, { type: "url" })
+        const loading = message.loading("正在导出")
+        const json = await buildExportJson()
+        const blob = new Blob([json], { type: "application/json;charset=utf-8" })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.setAttribute("href", url)
+        link.setAttribute("download", `${pkg.productName}-${Date.now()}.hbk`)
+        document.body.append(link)
+        link.click()
+        loading?.()
+        setTimeout(() => link.remove(), 0)
       }
     },
     import: async (): Promise<number> => {

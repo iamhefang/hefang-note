@@ -83,7 +83,7 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
     void (async () => {
       const options = {
         dir: BaseDirectory.AppData,
-        recursive: false,
+        recursive: true,
       }
       if (!(await exists("plugins", options))) {
         await createDir("plugins", options)
