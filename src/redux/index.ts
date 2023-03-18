@@ -2,12 +2,13 @@ import { configureStore } from "@reduxjs/toolkit"
 import _ from "lodash"
 import { useDispatch } from "react-redux"
 
-import { settingsStore } from "$utils/database"
 
 import { noteSlice } from "./noteSlice"
 import { pluginSlice } from "./pluginSlice"
-import { settingSlice } from "./settingSlice"
+import { defaultSettings, settingSlice } from "./settingSlice"
 import { uiSlice } from "./uiSlice"
+
+import { settingsStore } from "$utils/database"
 
 const store = configureStore({
   reducer: {
@@ -19,9 +20,15 @@ const store = configureStore({
   devTools: import.meta.env.DEV,
 })
 
+let lastSettings = defaultSettings
+
 const saveSettings = _.debounce(() => {
-  console.info("正在保存配置")
-  void settingsStore.setObject(store.getState().settings)
+  const newSettings = store.getState().settings
+  if (!_.isEqual(lastSettings, newSettings)) {
+    console.info("正在保存新配置", Date.now())
+    void settingsStore.setObject(newSettings)
+    lastSettings = newSettings
+  }
 }, 1000)
 
 store.subscribe(() => {

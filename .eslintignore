@@ -6,3 +6,5 @@ src/proto/im_message.ts
 !/.eslintrc.cjs
 !/.prettierrc.cjs
 scripts/
+jest.config.ts
+babel.config.cjs

@@ -28,7 +28,8 @@
             "fs": {
                 "all": true,
                 "scope": [
-                    "$APPDATA/**/*"
+                    "$APPDATA/**/*",
+                    "$APPLOG/**/*"
                 ]
             },
             "window": {
