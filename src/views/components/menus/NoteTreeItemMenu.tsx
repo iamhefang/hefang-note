@@ -1,8 +1,10 @@
 import { Dropdown, DropdownProps, MenuProps } from "antd"
 import React, { useCallback, useMemo } from "react"
 
-import { useSettings } from "~/hooks/useSelectors"
 import { NoteIndentItem } from "~/types"
+
+import { useSettings } from "$hooks/useSelectors"
+
 
 export type MenuInfo = {
   key: NoteTreeMenuKeys
