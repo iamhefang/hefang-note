@@ -11,3 +11,9 @@ import ReactDomClient from "react-dom/client"
 const globals = { React, ReactDOM, ReactDomClient, _, lodash: _, antd, icons, dayjs }
 
 Object.defineProperty(window, "globals", { value: globals, writable: false })
+
+type GlobalType = typeof globals
+
+declare global {
+    const globals: GlobalType
+}

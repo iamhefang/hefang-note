@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { productName, versionName } from "~/consts"
 
-import Editor from "$components/editor/Editor"
+import EditorArea from "$components/editor/EditorArea"
 import SiderBar from "$components/sidebar/SiderBar"
 import Github from "$components/topbar/items/Github"
 import TopBarLeft from "$components/topbar/TopBarLeft"
@@ -107,7 +107,7 @@ export default function View() {
           </Sider>
         </Resizable>
         <Content>
-          <Editor />
+          <EditorArea />
         </Content>
       </Layout>
       <Footer style={{ borderColor: colorBorder }}>

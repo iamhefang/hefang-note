@@ -1,15 +1,15 @@
 import { EditOutlined, HomeOutlined, KeyOutlined, SafetyOutlined } from "@ant-design/icons"
-import { Form, Segmented } from "antd"
+import { Form, List, Segmented } from "antd"
 import { ReactNode, useCallback, useMemo, useState } from "react"
 
 import { useAppDispatch } from "~/redux"
 import { setSettings } from "~/redux/settingSlice"
 import type { Settings } from "~/types"
 
-import EditorSettings from "./EditorSettings"
-import GeneralSettings from "./GeneralSettings"
-import SafeSettings from "./SafeSettings"
-import ShortcutSettings from "./ShortcutSettings"
+import useEditorSettings from "./useEditorSettings"
+import useGeneralSettings from "./useGeneralSettings"
+import useSafeSettings from "./useSafeSettings"
+import useShortcutSettings from "./useShortcutSettings"
 
 import { useSettings } from "$hooks/useSelectors"
 
@@ -22,21 +22,24 @@ export default function SettingForm() {
   const [active, setActive] = useState<SettingTypes>("general")
   const onValuesChange = useCallback(
     (changedValues: Partial<Settings>, values: Settings) => {
-      setTimeout(() => {
-        dispatch(setSettings(changedValues))
-      }, 0)
+      setTimeout(() => dispatch(setSettings(changedValues)), 0)
     },
     [dispatch],
   )
 
-  const formItems: Record<SettingTypes, ReactNode> = useMemo(
+  const generalSettings = useGeneralSettings()
+  const editorSettings = useEditorSettings()
+  const shortcutSettings = useShortcutSettings()
+  const safeSettings = useSafeSettings()
+
+  const formItems: Record<SettingTypes, Record<string, ReactNode>> = useMemo(
     () => ({
-      general: <GeneralSettings />,
-      editor: <EditorSettings />,
-      shortcut: <ShortcutSettings />,
-      safe: <SafeSettings />,
+      general: generalSettings,
+      editor: editorSettings,
+      shortcut: shortcutSettings,
+      safe: safeSettings,
     }),
-    [],
+    [editorSettings, generalSettings, safeSettings, shortcutSettings],
   )
 
   return (
@@ -51,7 +54,13 @@ export default function SettingForm() {
           { label: "快捷键", value: "shortcut", icon: <KeyOutlined /> },
         ]}
       />
-      {formItems[active]}
+      <List style={{ width: "100%" }}>
+        {Object.entries(formItems[active]).map(([label, dom]) => (
+          <List.Item extra={dom} key={`form-label-${label}`}>
+            {label}
+          </List.Item>
+        ))}
+      </List>
     </Form>
   )
 }

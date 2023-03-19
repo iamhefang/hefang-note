@@ -1,9 +1,10 @@
 import { useMemo } from "react"
 
+import { useNotes, useSettings } from "./useSelectors"
+
 import { findNoteParents } from "$utils/notes"
 import { treeSorter } from "$utils/sort"
 
-import { useNotes, useSettings } from "./useSelectors"
 
 export type UseItemArrayOptions = { needSort?: boolean; search?: string }
 

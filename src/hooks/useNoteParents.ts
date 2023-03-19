@@ -1,8 +1,9 @@
 import { useMemo } from "react"
 
+import { useNotes } from "./useSelectors"
+
 import { findNoteParents } from "$utils/notes"
 
-import { useNotes } from "./useSelectors"
 
 export default function useNoteParents(noteId: string | undefined) {
     const { entities } = useNotes()

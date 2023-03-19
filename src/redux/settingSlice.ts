@@ -34,7 +34,6 @@ export const loadSettings = createAsyncThunk(`${sliceName}/loadSettings`, async 
     return settings
 })
 
-
 export const settingSlice = createSlice<Settings, SliceCaseReducers<Settings>>({
     name: sliceName,
     initialState: defaultSettings,
@@ -73,6 +72,20 @@ export const settingSlice = createSlice<Settings, SliceCaseReducers<Settings>>({
         setSettings(state, action) {
             _.merge(state, action.payload)
         },
+        switchPlugin(state, action: PayloadAction<string>) {
+            const index = state.plugins.indexOf(action.payload)
+            if (index === -1) {
+                state.plugins.push(action.payload)
+            } else {
+                state.plugins.splice(index, 1)
+                if (state.editor === action.payload) {
+                    state.editor = ""
+                }
+                if (state.theme === action.payload) {
+                    state.theme = "auto"
+                }
+            }
+        },
     },
     extraReducers(builder) {
         builder.addCase(loadSettings.fulfilled, (state, action) => {
@@ -81,9 +94,9 @@ export const settingSlice = createSlice<Settings, SliceCaseReducers<Settings>>({
     },
 })
 
-
 export const {
     lockScreen, lockContent, cancelLockContent,
     toggleSidebar, changeTheme,
     setItemsExpanded, setCurrent, setSort, setSettings,
+    switchPlugin,
 } = settingSlice.actions

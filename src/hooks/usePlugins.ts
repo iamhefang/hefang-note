@@ -1,85 +1,28 @@
 import { BaseDirectory, createDir, exists, readDir, readTextFile } from "@tauri-apps/api/fs"
 import { join } from "@tauri-apps/api/path"
-import { GlobalToken, ThemeConfig } from "antd"
-import { ComponentClass, FC, ReactNode, useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
-import { GlobalState, ThemeDefine, ThemeType } from "~/types"
+import { isInTauri } from "~/consts"
+import { IPlugin, IPluginInfo } from "~/plugin/types"
 
-import { PlatformType } from "./usePlatform"
-import { usePluginState } from "./useSelectors"
+import { useSettings } from "./useSelectors"
 
-export interface IPluginInfo {
-  id: string
-  name: string
-  version: string
-  logo?: string
-  description?: string
-  author?: string
-  license?: string
-  homepage?: string
-  repository?: string
-  dependencies?: string[]
-  supports: PluginSupport
-  abilities?: PluginAbility[]
-  hooks?: PluginHookKeys[]
-  components?: PluginComponents[]
-  enable?: boolean
-}
-export type PluginSupport = { platform: PlatformType[], version: string }
-export type PluginAbility = "themes"
-export type PluginComponents = "Editor"
-export type PluginHookKeys = keyof IPluginHooks;
-export interface IPlugin extends IPluginInfo, Partial<IPluginHooks>, Partial<IPluginComponents>, Partial<IPluginAbility> {
+import { createObjectURL } from "$utils/url"
 
-}
-export interface IEditorProps {
-  value: string
-  onChange: (value: string) => void
-  placeholder?: string
-  onFocus?: () => void
-  onBlur?: () => void
-}
-export type IEditor = (ComponentClass<IEditorProps> | FC<IEditorProps>) & { editorName?: string }
-export interface IPluginHooks {
-  onInstall(): void
-  onUninstall(): void
-  onEnable(): void
-  onDisable(): void
-  onUpdate(): void
-  onThemeChange(theme: ThemeType, token: GlobalToken): void
-  // FIXME: 插件提供的组件实现方案需要改
-  onCreateEditor(state: GlobalState, themeToken: GlobalToken): IEditor | void
-  onRenderFooter(state: GlobalState, themeToken: GlobalToken): ReactNode | void
-}
-export type PluginTheme = ThemeConfig & { tooltip?: string, icon: ReactNode }
-export interface IPluginComponents {
-  Editor: IEditor
-}
-export interface IPluginAbility {
-  theme: ThemeDefine
-}
 async function require(path: string): Promise<IPlugin> {
   const js = await readTextFile(path)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const exports: any = {}
-  const module: {
-    exports: ({ __esModule?: false | undefined } & IPlugin) | { __esModule: true; default: IPlugin }
-  } = { exports }
-  // eslint-disable-next-line no-eval
-  eval(`${js}`)
-  const pluginsInstance: IPlugin = module.exports?.__esModule ? module.exports?.default : module.exports
 
-  return pluginsInstance
+  return (await import(createObjectURL(js, { type: "application/javascript; charset=utf-8" }))).default
 }
 
 export default function usePlugins(includeDisabled: boolean = false): IPlugin[] {
   const [installedPlugins, setPlugins] = useState<IPlugin[]>([])
   const [pluginsInfos, setPluginInfos] = useState<IPluginInfo[]>([])
+  const { plugins } = useSettings()
   const pluginPath = useRef<Record<string, string>>({})
-  const { entities: plugins } = usePluginState()
 
   useEffect(() => {
-    if (!window.__TAURI_IPC__) { return }
+    if (!isInTauri) { return }
     void (async () => {
       const options = {
         dir: BaseDirectory.AppData,
@@ -90,8 +33,8 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
       }
       const pluginDirs = await readDir("plugins", options)
       const ps: IPluginInfo[] = []
-      for (const { name, path } of pluginDirs) {
-        if (!name) {
+      for (const { name, path, children } of pluginDirs) {
+        if (!name || !children?.length) {
           continue
         }
         const jsonFile = await join(path, "index.json")
@@ -119,6 +62,7 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
         plugin.enable = plugins.includes(plugin.id)
         if (plugin.enable) {
           const pluginInstance = await require(pluginPath.current[plugin.id])
+          console.info("usePlugins", pluginPath.current, pluginInstance)
           infos[i] = { ...pluginInstance, description: "", license: "", ...plugin }
         }
       }

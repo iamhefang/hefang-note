@@ -4,10 +4,11 @@ import { useCallback, useEffect } from "react"
 import { isInTauri } from "~/consts"
 import { useAppDispatch } from "~/redux"
 import { toggleSettingsModal } from "~/redux/uiSlice"
-import { shortcuts } from "$utils/shortcuts"
+
 
 import CommonMenuItem from "$components/menus/CommonMenuItem"
 import usePlatform from "$hooks/usePlatform"
+import { shortcuts } from "$utils/shortcuts"
 import { closeWindow } from "$utils/window"
 import pkg from "^/package.json"
 import logo from "^/src-tauri/icons/icon.png"
