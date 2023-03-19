@@ -12,7 +12,6 @@ import { createObjectURL } from "$utils/url"
 async function require(path: string): Promise<IPlugin> {
   const js = await readTextFile(path)
 
-
   return (await import(/* @vite-ignore */ createObjectURL(js, { type: "application/javascript; charset=utf-8" }))).default
 }
 
@@ -23,7 +22,9 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
   const pluginPath = useRef<Record<string, string>>({})
 
   useEffect(() => {
-    if (!isInTauri) { return }
+    if (!isInTauri) {
+      return
+    }
     void (async () => {
       const options = {
         dir: BaseDirectory.AppData,
@@ -63,6 +64,7 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
         plugin.enable = plugins.includes(plugin.id)
         if (plugin.enable) {
           const pluginInstance = await require(pluginPath.current[plugin.id])
+          console.info("usePlugins", pluginPath.current, pluginInstance)
           infos[i] = { ...pluginInstance, description: "", license: "", ...plugin }
         }
       }
@@ -70,15 +72,11 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
     })()
   }, [pluginsInfos, plugins])
 
-  return useMemo(
-    () =>
-      installedPlugins.filter((item) => includeDisabled || item.enable),
-    [installedPlugins, includeDisabled],
-  )
+  return useMemo(() => installedPlugins.filter((item) => includeDisabled || item.enable), [installedPlugins, includeDisabled])
 }
 
 export function usePluginMap(includeDisabled: boolean = false): Record<string, IPlugin> {
   const plugins = usePlugins(includeDisabled)
 
-  return useMemo(() => Object.fromEntries(plugins.map(item => [item.id, item])), [plugins])
+  return useMemo(() => Object.fromEntries(plugins.map((item) => [item.id, item])), [plugins])
 }
