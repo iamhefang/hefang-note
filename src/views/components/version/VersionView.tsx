@@ -1,9 +1,11 @@
-import { checkUpdate, installUpdate } from "@tauri-apps/api/updater"
+import { shell } from "@tauri-apps/api"
+import { checkUpdate } from "@tauri-apps/api/updater"
 import { App, Space, Spin } from "antd"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
-import { isInTauri, versionCode } from "~/consts"
+import { clientUrls, isInTauri, versionCode } from "~/consts"
 
+import { useArch, useOsTypr as useOsType } from "$hooks/usePlatform"
 import { useSettings } from "$hooks/useSelectors"
 import pkg from "^/package.json"
 
@@ -21,16 +23,14 @@ export default function VersionView() {
   const { message, modal } = App.useApp()
   const checkedVersion = Number((localStorage?.getItem("version") || pkg.version).replace(/\./g, ""))
   const [status, setStatus] = useState(checkedVersion > versionCode ? UpdateStatus.hasUpgrade : UpdateStatus.none)
-  const doInstallUpdate = useCallback(() => {
-    if (!isInTauri) {
+  const osType = useOsType()
+  const arch = useArch()
+  const doInstallUpdate = useCallback(async () => {
+    if (!isInTauri || !osType || !arch || !(`${osType}-${arch}` in clientUrls)) {
       return
     }
-    void message.info("正在尝试安装新版本")
-    void installUpdate().catch((error) => {
-      console.error("安装更新失败", error)
-      modal.error({ title: "安装更新失败", content: error })
-    })
-  }, [message, modal])
+    await shell.open(clientUrls[`${osType}-${arch}`]!)
+  }, [arch, osType])
   const doCheckUpdate = useCallback(() => {
     if (!isInTauri) {
       return
@@ -60,7 +60,7 @@ export default function VersionView() {
             ),
             okText: "升级",
             async onOk() {
-              return installUpdate()
+              return doInstallUpdate()
             },
           })
         } else {
@@ -70,7 +70,7 @@ export default function VersionView() {
       .catch((error) => {
         console.error(error)
       })
-  }, [message, modal])
+  }, [doInstallUpdate, message, modal])
 
   useEffect(() => {
     if (autoCheckUpdate && needCheckUpdate) {
@@ -99,11 +99,11 @@ export default function VersionView() {
         return (
           <Space>
             <span>v{pkg.version}</span>
-            <a onClick={doInstallUpdate}>有新版本可用</a>
+            <a onClick={doCheckUpdate}>有新版本可用</a>
           </Space>
         )
       default:
         return <span onClick={doCheckUpdate}>v{pkg.version}</span>
     }
-  }, [status, doInstallUpdate, doCheckUpdate])
+  }, [status, doCheckUpdate])
 }
