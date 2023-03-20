@@ -1,14 +1,14 @@
 The interface and menus of the software already support multilingual (machine translation), and the update log does not plan to do multilingual. If you don’t know Chinese, then come on, Chinese is actually not difficult to learn.
 
-----
+---
 
 ソフトウェアのインターフェイスとメニューは既に多言語 (機械翻訳) をサポートしており、更新ログでは多言語をサポートする予定はありません.
 
-----
+---
 
 Die Oberfläche und Menüs der Software unterstützen bereits Mehrsprachigkeit (maschinelle Übersetzung), und das Update-Protokoll sieht keine Mehrsprachigkeit vor. Wenn Sie kein Chinesisch können, dann komm schon, Chinesisch ist eigentlich nicht schwer zu lernen.
 
-----
+---
 
 ## v0.4.0
 
@@ -16,11 +16,11 @@ Die Oberfläche und Menüs der Software unterstützen bereits Mehrsprachigkeit (
 
 ## v0.3.1
 
-1. `优化` Monaco编辑器加载速度
+1. `优化` Monaco 编辑器加载速度
 
 ## v0.3.0
 
-1. `优化` 使用Monaco做为编辑器
+1. `优化` 使用 Monaco 做为编辑器
 2. `优化` 修复一些 bug
 
 ## v0.2.2
@@ -29,7 +29,7 @@ Die Oberfläche und Menüs der Software unterstützen bereits Mehrsprachigkeit (
 
 ## v0.2.1
 
-1.  `新增` 笔记内容和一些配置项使用SM4强加密
+1.  `新增` 笔记内容和一些配置项使用 SM4 强加密
 
 ## v0.2.0
 
@@ -48,4 +48,3 @@ Die Oberfläche und Menüs der Software unterstützen bereits Mehrsprachigkeit (
 ## v0.0.1
 
 1.  第一个开源版本
-
