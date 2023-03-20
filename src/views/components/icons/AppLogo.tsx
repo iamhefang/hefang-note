@@ -5,9 +5,8 @@ import { isInTauri } from "~/consts"
 import { useAppDispatch } from "~/redux"
 import { toggleSettingsModal } from "~/redux/uiSlice"
 
-
 import CommonMenuItem from "$components/menus/CommonMenuItem"
-import usePlatform from "$hooks/usePlatform"
+import { usePlatformType } from "$hooks/usePlatform"
 import { shortcuts } from "$utils/shortcuts"
 import { closeWindow } from "$utils/window"
 import pkg from "^/package.json"
@@ -18,7 +17,7 @@ export default function AppLogo() {
   const toggleSettings = useCallback(() => {
     dispatch(toggleSettingsModal(null))
   }, [dispatch])
-  const osType = usePlatform()
+  const osType = usePlatformType()
   const { modal } = App.useApp()
   const showAboutModal = useCallback(() => {
     Modal.destroyAll()

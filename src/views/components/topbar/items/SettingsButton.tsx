@@ -5,10 +5,10 @@ import { useCallback } from "react"
 import { useAppDispatch } from "~/redux"
 import { toggleSettingsModal } from "~/redux/uiSlice"
 
-import usePlatform from "$hooks/usePlatform"
+import {usePlatformType} from "$hooks/usePlatform"
 
 export default function SettingsButton() {
-  const osType = usePlatform()
+  const osType = usePlatformType()
   const dispatch = useAppDispatch()
   const onClick = useCallback(() => {
     dispatch(toggleSettingsModal(null))
