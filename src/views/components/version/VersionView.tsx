@@ -59,8 +59,8 @@ export default function VersionView() {
               </div>
             ),
             okText: "升级",
-            onOk(...args) {
-              void installUpdate()
+            async onOk() {
+              return installUpdate()
             },
           })
         } else {

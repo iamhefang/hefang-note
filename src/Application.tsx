@@ -45,7 +45,7 @@ export default function Application() {
     <Loading />
   ) : (
     <ConfigProvider autoInsertSpaceInButton={false} locale={zhCN} theme={themeConfig}>
-      <Antd>
+      <Antd message={{ top: 40 }} notification={{ top: 40 }}>
         <View />
         <ShowInPlatform platforms={["Linux", "Darwin", "Windows_NT", "Browser"]}>
           {() => (
