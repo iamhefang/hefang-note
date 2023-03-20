@@ -8,7 +8,6 @@ import { contentStore, database, notesStore, pluginStore, settingsStore } from "
 import { decrypt, encrypt } from "./encrypt"
 
 if (isInTauri) {
-
     void (async () => {
         if (!(await exists("test", { dir: BaseDirectory.AppLog }))) {
             await createDir("test", { dir: BaseDirectory.AppLog, recursive: true })
@@ -60,7 +59,7 @@ const devTools =
                     platform: ["Darwin", "Linux", "Windows_NT"],
                     version: "0.0.1",
                 },
-                abilities: ["themes"],
+                abilities: ["theme"],
                 components: ["Editor"],
             })
         }

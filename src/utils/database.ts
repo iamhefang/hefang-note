@@ -3,11 +3,11 @@ import { openDB } from "idb"
 import _ from "lodash"
 
 import { versionCode } from "~/consts"
+import { IPluginInfo } from "~/plugin/types"
 import { NoteItem, Settings } from "~/types"
 
 import { decrypt, encrypt } from "./encrypt"
 
-import { IPluginInfo } from "$hooks/usePlugins"
 import changelog from "^/CHANGELOG.md?raw"
 import pkg from "^/package.json"
 

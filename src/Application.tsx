@@ -32,10 +32,10 @@ export default function Application() {
       void loadContents()
     })()
   }, [dispatch, loadContents, loadSettings])
+
   useEffect(() => {
     for (const plugin of plugins) {
-      console.info("call plugin hooks: onThemeChange", plugin, theme, token)
-      plugin.onThemeChange?.(theme, token)
+      plugin.hooks?.includes?.("onThemeChange") && plugin.onThemeChange?.(theme, token)
     }
   }, [theme, plugins, token])
 
@@ -45,7 +45,7 @@ export default function Application() {
     <Loading />
   ) : (
     <ConfigProvider autoInsertSpaceInButton={false} locale={zhCN} theme={themeConfig}>
-      <Antd>
+      <Antd message={{ top: 40 }} notification={{ top: 40 }}>
         <View />
         <ShowInPlatform platforms={["Linux", "Darwin", "Windows_NT", "Browser"]}>
           {() => (

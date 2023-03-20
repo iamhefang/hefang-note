@@ -20,8 +20,8 @@ kbd {
 
 [data-tauri-drag-region],
 :not(input, textarea, [contenteditable="true"], a, svg) {
-  cursor: default !important;
-  user-select: none;
+  cursor: default;
+  user-select: none !important;
 }
 
 .ant-empty {

@@ -3,8 +3,8 @@ import { ReactNode, useMemo } from "react"
 
 import { sortItems } from "$utils/sort"
 
-export default function GeneralSettings() {
-  const formItems: Record<string, ReactNode> = useMemo(
+export default function useGeneralSettings(): Record<string, ReactNode> {
+  return useMemo(
     () => ({
       排序方式: (
         <Space>
@@ -36,15 +36,5 @@ export default function GeneralSettings() {
       ),
     }),
     [],
-  )
-
-  return (
-    <List style={{ width: "100%" }}>
-      {Object.entries(formItems).map(([label, dom]) => (
-        <List.Item extra={dom} key={`form-label-${label}`}>
-          {label}
-        </List.Item>
-      ))}
-    </List>
   )
 }

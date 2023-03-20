@@ -2,13 +2,12 @@ import { shell } from "@tauri-apps/api"
 import { Col, Row, Space, Tag } from "antd"
 import React, { useMemo } from "react"
 
+import { IPluginInfo, PluginAbility, PluginComponents } from "~/plugin/types"
+
 import ss from "./PluginDescription.module.scss"
 
-import { IPluginInfo, PluginAbility, PluginComponents } from "$hooks/usePlugins"
-
-
 const abilities: Record<PluginAbility, string> = {
-  themes: "主题",
+  theme: "主题",
 }
 
 function pluginAbilities(value: PluginAbility) {
@@ -17,6 +16,10 @@ function pluginAbilities(value: PluginAbility) {
 
 const components: Record<PluginComponents, string> = {
   Editor: "编辑器",
+  FooterLeft: "",
+  FooterRight: "",
+  TopLeft: "",
+  TopRight: "",
 }
 
 function pluginComponents(value: PluginComponents) {

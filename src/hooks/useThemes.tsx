@@ -47,8 +47,7 @@ export default function useThemes(): Themes {
     }
 
     for (const plugin of plugins) {
-      if (plugin.abilities?.includes("themes") && plugin.theme) {
-        console.info(`插件${plugin.name}提供了主题`, plugin.theme)
+      if (plugin.abilities?.includes("theme") && plugin.theme) {
         themes[plugin.id] = plugin.theme
       }
     }

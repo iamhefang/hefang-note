@@ -1,10 +1,12 @@
 import { useCallback, useMemo } from "react"
 
 import { NoteIndentItem } from "~/types"
-import { isNoteLocked } from "$utils/notes"
+
 
 import useItemArray from "./useItemArray"
 import { useSettings, useStates } from "./useSelectors"
+
+import { isNoteLocked } from "$utils/notes"
 
 export default function useItemsTree(search?: string): NoteIndentItem[] {
   const { expandItems, lockedContents } = useSettings()

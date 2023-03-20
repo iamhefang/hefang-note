@@ -1,11 +1,13 @@
-import { Form, Input, List, Space, Switch } from "antd"
+import { Form, Input, Space, Switch } from "antd"
 import { ReactNode, useMemo, useState } from "react"
+
 import { useSettings } from "~/hooks/useSelectors"
 
-export default function SafeSettings() {
+export default function useSafeSettings(): Record<string, ReactNode> {
   const { lock } = useSettings()
   const [immediately, setImmediately] = useState(lock.immediately)
-  const formItems: Record<string, ReactNode> = useMemo(
+
+  return useMemo(
     () => ({
       锁定时不再弹窗提示: (
         <Space>
@@ -19,18 +21,7 @@ export default function SafeSettings() {
           </Form.Item>
         </Space>
       ),
-      
     }),
     [immediately],
-  )
-
-  return (
-    <List style={{ width: "100%" }}>
-      {Object.entries(formItems).map(([label, dom]) => (
-        <List.Item extra={dom} key={`form-label-${label}`}>
-          {label}
-        </List.Item>
-      ))}
-    </List>
   )
 }

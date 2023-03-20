@@ -5,17 +5,18 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { CONTENT_SAVE_DELAY } from "~/config"
 import useNoteLocked from "~/hooks/useNoteLocked"
+import { EditorComponent } from "~/plugin/types"
 import { useAppDispatch } from "~/redux"
 import { updateContent } from "~/redux/noteSlice"
-import { contentStore } from "$utils/database"
 
 import DefaultEditor from "./DefaultEditor"
 
 import NoteUnlocker from "$components/locker/NoteUnlocker"
-import { IEditor, usePluginMap } from "$hooks/usePlugins"
+import { usePluginMap } from "$hooks/usePlugins"
 import { useNotes, useSettings } from "$hooks/useSelectors"
+import { contentStore } from "$utils/database"
 
-export default function Editor() {
+export default function EditorArea() {
   const { entities, ids } = useNotes()
   const { current, editorStyle, showTimeAboveEditor, editor } = useSettings()
   const {
@@ -26,7 +27,7 @@ export default function Editor() {
   const [value, setValue] = useState("")
   const item = useMemo(() => entities[current], [current, entities])
   const plugins = usePluginMap()
-  const EditorComponent: IEditor = useMemo(() => {
+  const Editor: EditorComponent = useMemo(() => {
     return editor && plugins[editor]?.Editor ? plugins[editor].Editor! : DefaultEditor
   }, [editor, plugins])
 
@@ -84,7 +85,7 @@ export default function Editor() {
         </div>
       )}
       <div className="editor" style={editorStyle}>
-        <EditorComponent value={value} onChange={onValueChange} placeholder="尽情记录吧!" />
+        <Editor value={value} onChange={onValueChange} placeholder="尽情记录吧!" />
       </div>
     </div>
   )

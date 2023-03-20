@@ -10,5 +10,7 @@ export const pluginSlice = createSlice<PluginState, SliceCaseReducers<PluginStat
     initialState: {
         entities: [],
     },
-    reducers: {},
+    reducers: {
+        
+    },
 })

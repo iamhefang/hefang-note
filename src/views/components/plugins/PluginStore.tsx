@@ -1,14 +1,15 @@
-import { Button, Col, Divider, Row, Space, Tag } from "antd"
+import { Button, Col, Divider, Empty, Row, Space, Tag } from "antd"
 import React, { ForwardedRef, useEffect, useMemo, useState } from "react"
 import { ItemProps, ListProps, Virtuoso } from "react-virtuoso"
 
-import { pluginStore } from "$utils/database"
+import { IPluginInfo } from "~/plugin/types"
 
 import { PluginDescription } from "./PluginDescription"
 import ss from "./PluginStore.module.scss"
 import { PluginProps } from "./types"
 
-import { IPluginInfo } from "$hooks/usePlugins"
+import { pluginStore } from "$utils/database"
+
 const PluginListItem = React.memo(({ item, "data-known-size": dataKnownSize, ...props }: ItemProps<IPluginInfo>) => {
   return (
     <li className={ss.item} style={{ height: dataKnownSize }} {...props} key={`store-${item.id}`}>
@@ -43,6 +44,8 @@ const PluginList = React.forwardRef(({ children, ...props }: ListProps, ref: For
   )
 })
 
+const PluginListEmpty = React.memo(({ context }: { context?: unknown }) => <Empty />)
+
 export function PluginStore({ search }: PluginProps) {
   const [plugins, setPlugins] = useState<IPluginInfo[]>()
   const [height, setHeight] = useState(window.innerHeight - 200)
@@ -70,5 +73,13 @@ export function PluginStore({ search }: PluginProps) {
     })
   }, [plugins, search])
 
-  return <Virtuoso components={{ List: PluginList, Item: PluginListItem }} data={data} style={{ height }} fixedItemHeight={150} increaseViewportBy={300} />
+  return (
+    <Virtuoso
+      components={{ List: PluginList, Item: PluginListItem, EmptyPlaceholder: PluginListEmpty }}
+      data={data}
+      style={{ height }}
+      fixedItemHeight={150}
+      increaseViewportBy={300}
+    />
+  )
 }

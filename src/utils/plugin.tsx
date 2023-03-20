@@ -9,6 +9,7 @@ import { NoteItem } from "~/types"
 import { contentStore, notesStore } from "./database"
 import schema from "./note-data-schema.json"
 import { buildExportJson } from "./notes"
+import { createObjectURL } from "./url"
 
 import pkg from "^/package.json"
 export const enum ExportType {
@@ -136,8 +137,7 @@ export const hefang = {
       } else {
         const loading = message.loading("正在导出")
         const json = await buildExportJson()
-        const blob = new Blob([json], { type: "application/json;charset=utf-8" })
-        const url = URL.createObjectURL(blob)
+        const url = createObjectURL(json, { type: "application/json;charset=utf-8" })
         const link = document.createElement("a")
         link.setAttribute("href", url)
         link.setAttribute("download", `${pkg.productName}-${Date.now()}.hbk`)

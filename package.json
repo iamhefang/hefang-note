@@ -1,7 +1,7 @@
 {
   "name": "hefang-note",
   "productName": "何方笔记",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "GPL3",
   "type": "module",
   "repository": {
@@ -12,8 +12,8 @@
     "build": "vite build",
     "lint": "tsc",
     "preview": "vite preview",
-    "tauri": "tauri",
-    "tauri:dev": "tauri dev",
+    "tauri": "pnpm run syncinfo && tauri",
+    "tauri:dev": "pnpm run syncinfo && tauri dev",
     "tauri:build": "pnpm run syncinfo && tauri build",
     "eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx .",
     "syncinfo": "node ./scripts/before-build.cjs",
@@ -25,7 +25,7 @@
     "@reduxjs/toolkit": "^1.9.2",
     "@tauri-apps/api": "1.2.0",
     "ajv": "^8.12.0",
-    "antd": "^5.2.2",
+    "antd": "^5.3.1",
     "dayjs": "^1.11.7",
     "idb": "^7.1.1",
     "jssm4": "^1.0.3",

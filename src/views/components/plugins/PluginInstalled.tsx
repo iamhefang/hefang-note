@@ -1,16 +1,20 @@
 import { Avatar, List, Space, Switch, Tag } from "antd"
 import { useCallback, useMemo } from "react"
 
+import { IPlugin } from "~/plugin/types"
+import { useAppDispatch } from "~/redux"
+import { switchPlugin } from "~/redux/settingSlice"
+
 import { PluginDescription } from "./PluginDescription"
 import { PluginProps } from "./types"
 
 import useAntdConfirm from "$hooks/useAntdConfirm"
-import usePlugins, { IPlugin } from "$hooks/usePlugins"
+import usePlugins from "$hooks/usePlugins"
 import { useSettings } from "$hooks/useSelectors"
-
 
 export function PluginInstalled({ search }: PluginProps) {
   const { editor, theme } = useSettings()
+  const dispatch = useAppDispatch()
   const allPlugins = usePlugins(true)
   const showConfirm = useAntdConfirm()
   const createOnPluginEnable = useCallback(
@@ -26,29 +30,20 @@ export function PluginInstalled({ search }: PluginProps) {
           if (plugin.id === theme) {
             items.push("主题")
           }
-          sureClose = await showConfirm({
-            title: `正在使用插件提供的${items.join("、")}`,
-            content: `关闭插件后，${items.join("、")}将重置为默认值`,
-            okText: "关闭",
-          })
+          sureClose =
+            items.length === 0 ||
+            (await showConfirm({
+              title: `正在使用插件提供的${items.join("、")}`,
+              content: `关闭插件后，${items.join("、")}将重置为默认值`,
+              okText: "关闭",
+            }))
         }
-        sureClose &&
-          setState({
-            plugins: allPlugins
-              .map((item) => {
-                if ((item.id === plugin.id && checked) || (item.id !== plugin.id && item.enable)) {
-                  return item.id
-                }
-
-                return null
-              })
-              .filter((item) => item) as string[],
-            editor: !checked && plugin.id === editor ? "" : editor,
-            theme: !checked && plugin.id === theme ? "auto" : theme,
-          })
+        if (sureClose) {
+          dispatch(switchPlugin(plugin.id))
+        }
       }
     },
-    [allPlugins, editor, theme, showConfirm],
+    [editor, theme, showConfirm, dispatch],
   )
   const renderItem = useCallback(
     (item: IPlugin) => (
