@@ -94,7 +94,7 @@ export default function View() {
       </Header>
       <Layout>
         <Resizable
-          minWidth={240}
+          minWidth={250}
           maxWidth={400}
           size={{ width, height: "auto" }}
           enable={{ right: true }}

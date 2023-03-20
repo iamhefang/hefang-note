@@ -6,7 +6,7 @@ import Application from "./Application"
 import { versionName } from "./consts"
 import store from "./redux"
 
-import { Html } from "$components/utils/Html"
+import Html from "$components/utils/Html"
 import "$utils/debug"
 import "$utils/globals"
 import { html } from "^/CHANGELOG.md"
