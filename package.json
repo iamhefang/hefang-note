@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "sh ./scripts/vite-build.sh",
     "lint": "tsc",
     "preview": "vite preview",
     "tauri": "pnpm run syncinfo && tauri",
