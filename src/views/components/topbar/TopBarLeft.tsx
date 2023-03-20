@@ -6,13 +6,13 @@ import ss from "./TopBarLeft.module.scss"
 import AppLogo from "$components/icons/AppLogo"
 import SiderBarToggle from "$components/topbar/items/SiderBarToggle"
 import ShowInPlatform from "$components/utils/ShowInPlatform"
-import usePlatform from "$hooks/usePlatform"
+import {usePlatformType} from "$hooks/usePlatform"
 import { useSettings, useStates } from "$hooks/useSelectors"
 
 const LazyClientDownload = React.lazy(async () => import("$components/topbar/items/ClientDownload"))
 
 export default function TopBarLeft() {
-  const osType = usePlatform()
+  const osType = usePlatformType()
   const {
     lock: { locked },
   } = useSettings()
