@@ -1,4 +1,4 @@
-import { theme as antTheme, Divider, Empty } from "antd"
+import { Divider, Empty, theme as antTheme } from "antd"
 import dayjs from "dayjs"
 import _ from "lodash"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
@@ -9,7 +9,7 @@ import { EditorComponent } from "~/plugin/types"
 import { useAppDispatch } from "~/redux"
 import { updateContent } from "~/redux/noteSlice"
 
-import DefaultEditor from "./DefaultEditor"
+import MarkdownEditor from "./MarkdownEditor"
 
 import NoteUnlocker from "$components/locker/NoteUnlocker"
 import { usePluginMap } from "$hooks/usePlugins"
@@ -28,7 +28,7 @@ export default function EditorArea() {
   const item = useMemo(() => entities[current], [current, entities])
   const plugins = usePluginMap()
   const Editor: EditorComponent = useMemo(() => {
-    return editor && plugins[editor]?.Editor ? plugins[editor].Editor! : DefaultEditor
+    return editor && plugins[editor]?.Editor ? plugins[editor].Editor! : MarkdownEditor
   }, [editor, plugins])
 
   const refSaveTimer = useRef(0)
@@ -47,8 +47,8 @@ export default function EditorArea() {
   const onValueChange = useCallback(
     (newValue: string) => {
       changing || setChanging(true)
-      setValue(newValue)
-      saveContent(newValue)
+      setValue(newValue || "")
+      saveContent(newValue || "")
     },
     [changing, saveContent],
   )

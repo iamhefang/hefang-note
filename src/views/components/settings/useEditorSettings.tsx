@@ -1,7 +1,7 @@
 import { Form, Select, Switch } from "antd"
 import { ReactNode, useMemo } from "react"
 
-import DefaultEditor from "$components/editor/DefaultEditor"
+import MarkdownEditor from "$components/editor/MarkdownEditor"
 import usePlugins from "$hooks/usePlugins"
 import { useSettings } from "$hooks/useSelectors"
 
@@ -14,7 +14,7 @@ export default function useEditorSettings(): Record<string, ReactNode> {
   const { editor } = useSettings()
 
   const options = useMemo(() => {
-    const editorComponent = plugins.find((plugin) => plugin.id === editor)?.Editor || DefaultEditor
+    const editorComponent = plugins.find((plugin) => plugin.id === editor)?.Editor || MarkdownEditor
 
     return Object.fromEntries(
       editorComponent.options?.map(({ label, name, ...props }) => {

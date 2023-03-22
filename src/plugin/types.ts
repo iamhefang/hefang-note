@@ -43,6 +43,7 @@ export type PluginHookKeys = keyof IPluginHooks;
 export interface IPlugin extends IPluginInfo, Partial<IPluginHooks>, Partial<IPluginComponents>, Partial<IPluginAbility>, Partial<IPluginLifecycle> {
 
 }
+
 export interface IEditorProps {
     value: string
     onChange: (value: string) => void
@@ -89,6 +90,7 @@ export interface IPluginComponents {
     TopLeft: FooterTopComponent
     TopRight: FooterTopComponent
 }
+
 export interface IPluginAbility {
     theme: ThemeDefine
 }

@@ -12,7 +12,8 @@ import { createObjectURL } from "$utils/url"
 async function require(path: string): Promise<IPlugin> {
   const js = await readTextFile(path)
 
-  return (await import(createObjectURL(js, { type: "application/javascript; charset=utf-8" }))).default
+
+  return (await import(/* @vite-ignore */ createObjectURL(js, { type: "application/javascript; charset=utf-8" }))).default
 }
 
 export default function usePlugins(includeDisabled: boolean = false): IPlugin[] {
@@ -62,7 +63,6 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
         plugin.enable = plugins.includes(plugin.id)
         if (plugin.enable) {
           const pluginInstance = await require(pluginPath.current[plugin.id])
-          console.info("usePlugins", pluginPath.current, pluginInstance)
           infos[i] = { ...pluginInstance, description: "", license: "", ...plugin }
         }
       }

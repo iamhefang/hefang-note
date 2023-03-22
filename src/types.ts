@@ -5,6 +5,8 @@ declare global {
   function isContentEditable(electron: Element | null | EventTarget): boolean
 }
 
+export type ValueOrFactory<T, C = unknown> = T | ((c: C) => T)
+
 export const enum WorkerEventKeys {
   startExport = "startExport",
   exportStart = "exportStart",
