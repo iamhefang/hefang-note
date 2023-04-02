@@ -69,7 +69,7 @@ export type Settings = {
   // key: 笔记的id，value: 加密密码
   lockedContents: { [id: string]: string }
   unlockContentByAppLockPassword: boolean
-}
+} & { [pluginId: string]: unknown }
 
 export type NoteSort = Sort<keyof Omit<NoteItem, "id" | "parentId" | "isLeaf">>
 

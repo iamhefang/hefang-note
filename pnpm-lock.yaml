@@ -9,6 +9,7 @@ specifiers:
   '@milkdown/plugin-clipboard': ^7.1.0
   '@milkdown/plugin-listener': ^7.1.0
   '@milkdown/plugin-prism': ^7.1.0
+  '@milkdown/plugin-slash': ^7.1.1
   '@milkdown/preset-commonmark': ^7.1.0
   '@milkdown/preset-gfm': ^7.1.0
   '@milkdown/prose': ^7.1.0
@@ -69,6 +70,7 @@ dependencies:
   '@milkdown/plugin-clipboard': 7.1.0_732s7te4rg2orop6g3xf7k4a4q
   '@milkdown/plugin-listener': 7.1.0_732s7te4rg2orop6g3xf7k4a4q
   '@milkdown/plugin-prism': 7.1.0_732s7te4rg2orop6g3xf7k4a4q
+  '@milkdown/plugin-slash': 7.1.1_732s7te4rg2orop6g3xf7k4a4q
   '@milkdown/preset-commonmark': 7.1.0_732s7te4rg2orop6g3xf7k4a4q
   '@milkdown/preset-gfm': 7.1.0_s4gkqlm2kzzymfckug7bkebyd4
   '@milkdown/prose': 7.1.0
@@ -1132,6 +1134,12 @@ packages:
       tslib: 2.5.0
     dev: false
 
+  /@milkdown/exception/7.1.1:
+    resolution: {integrity: sha512-8oxWE4VbVuc+/D9zQlJUV2Yq7bwgClIHY22CQDHxl5Ck8UbKx2Oy+2XGacSiU2lXFQBmlh7/1wf3QyelCy7iUw==}
+    dependencies:
+      tslib: 2.5.0
+    dev: false
+
   /@milkdown/plugin-clipboard/7.1.0_732s7te4rg2orop6g3xf7k4a4q:
     resolution: {integrity: sha512-ipUofAkPa9/JYTyZw7XEffUX4uZ5/Sl0hCgGPo/iKG77lYw2BZLFrROqpXI2vRoaxeF8wPgspPm8+vKffVj2/w==}
     peerDependencies:
@@ -1175,6 +1183,27 @@ packages:
       '@milkdown/prose': 7.1.0
       '@milkdown/utils': 7.1.0_732s7te4rg2orop6g3xf7k4a4q
       refractor: 4.8.1
+      tslib: 2.5.0
+    transitivePeerDependencies:
+      - '@milkdown/transformer'
+    dev: false
+
+  /@milkdown/plugin-slash/7.1.1_732s7te4rg2orop6g3xf7k4a4q:
+    resolution: {integrity: sha512-giXdcdHIcOc7zcK8E38kAEZcMKMuzcc6nhEhhWAmTpwrRSxc39tg2fcMiyvQSFwQec0wIa8AAqW7jSdsndFpPg==}
+    peerDependencies:
+      '@milkdown/core': ^7.0.0-next.0
+      '@milkdown/ctx': ^7.0.0-next.0
+      '@milkdown/prose': ^7.0.0-next.0
+    dependencies:
+      '@milkdown/core': 7.1.0_c3r5dnopq2fkbj274fowd6pqe4
+      '@milkdown/ctx': 7.1.0
+      '@milkdown/exception': 7.1.1
+      '@milkdown/prose': 7.1.0
+      '@milkdown/utils': 7.1.1_732s7te4rg2orop6g3xf7k4a4q
+      '@types/lodash.debounce': 4.0.7
+      lodash.debounce: 4.0.8
+      smooth-scroll-into-view-if-needed: 1.1.33
+      tippy.js: 6.3.7
       tslib: 2.5.0
     transitivePeerDependencies:
       - '@milkdown/transformer'
@@ -1309,6 +1338,23 @@ packages:
       tslib: 2.5.0
     dev: false
 
+  /@milkdown/utils/7.1.1_732s7te4rg2orop6g3xf7k4a4q:
+    resolution: {integrity: sha512-JtHlPGcTRUHLNyvqMI2H20LnXSFkXWSXFNum1n4U2aL3XC5q+K3WH1CUEKyH7mL35DF8QHRz+zQpk9sNCQdkvQ==}
+    peerDependencies:
+      '@milkdown/core': ^7.0.0-next.0
+      '@milkdown/ctx': ^7.0.0-next.0
+      '@milkdown/prose': ^7.0.0-next.0
+      '@milkdown/transformer': ^7.0.0-next.0
+    dependencies:
+      '@milkdown/core': 7.1.0_c3r5dnopq2fkbj274fowd6pqe4
+      '@milkdown/ctx': 7.1.0
+      '@milkdown/exception': 7.1.1
+      '@milkdown/prose': 7.1.0
+      '@milkdown/transformer': 7.1.0_@milkdown+prose@7.1.0
+      nanoid: 4.0.1
+      tslib: 2.5.0
+    dev: false
+
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -1329,6 +1375,10 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
     dev: true
+
+  /@popperjs/core/2.11.7:
+    resolution: {integrity: sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==}
+    dev: false
 
   /@rc-component/context/1.3.0_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-6QdaCJ7Wn5UZLJs15IEfqy4Ru3OaL5ctqpQYWd5rlfV9wwzrzdt6+kgAQZV/qdB0MUPN4nhyBfRembQCIvBf+w==}
@@ -1796,9 +1846,14 @@ packages:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
 
+  /@types/lodash.debounce/4.0.7:
+    resolution: {integrity: sha512-X1T4wMZ+gT000M2/91SYj0d/7JfeNZ9PeeOldSNoE/lunLeQXKvkmIumI29IaKMotU/ln/McOIvgzZcQ/3TrSA==}
+    dependencies:
+      '@types/lodash': 4.14.191
+    dev: false
+
   /@types/lodash/4.14.191:
     resolution: {integrity: sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ==}
-    dev: true
 
   /@types/mdast/3.0.11:
     resolution: {integrity: sha512-Y/uImid8aAwrEA24/1tcRZwpxX3pIFTSilcNDKSPn+Y2iDywSEachzRuvgAYYLR3wpGXAsMbv5lvKLDZLeYPAw==}
@@ -2519,6 +2574,10 @@ packages:
     resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
     engines: {node: ^12.20.0 || >=14}
     dev: true
+
+  /compute-scroll-into-view/1.0.20:
+    resolution: {integrity: sha512-UCB0ioiyj8CRjtrvaceBLqqhZCVP+1B8+NWQhmdsm0VXOJtobBCf1dBQmebCCo34qZmUwZfIH2MZLqNHazrfjg==}
+    dev: false
 
   /compute-scroll-into-view/3.0.0:
     resolution: {integrity: sha512-Yk1An4qzo5++Cu6peT9PsmRKIU8tALpmdoE09n//AfGQFcPfx21/tMGMsmKYmLJWaBJrGOJ5Jz5hoU+7cZZUWQ==}
@@ -4318,6 +4377,10 @@ packages:
       p-locate: 5.0.0
     dev: true
 
+  /lodash.debounce/4.0.8:
+    resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
+    dev: false
+
   /lodash.memoize/4.1.2:
     resolution: {integrity: sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag==}
     dev: true
@@ -6100,6 +6163,12 @@ packages:
       loose-envify: 1.4.0
     dev: false
 
+  /scroll-into-view-if-needed/2.2.31:
+    resolution: {integrity: sha512-dGCXy99wZQivjmjIqihaBQNjryrz5rueJY7eHfTdyWEiR4ttYpsajb14rn9s5d4DY4EcY6+4+U/maARBXJedkA==}
+    dependencies:
+      compute-scroll-into-view: 1.0.20
+    dev: false
+
   /scroll-into-view-if-needed/3.0.6:
     resolution: {integrity: sha512-x+CW0kOzlFNOnseF0DBr0AJ5m+TgGmSOdEZwyiZW0gV87XBvxQKw5A8DvFFgabznA68XqLgVX+PwPX8OzsFvRA==}
     dependencies:
@@ -6155,6 +6224,12 @@ packages:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
     dev: true
+
+  /smooth-scroll-into-view-if-needed/1.1.33:
+    resolution: {integrity: sha512-crS8NfAaoPrtVYOCMSAnO2vHRgUp22NiiDgEQ7YiaAy5xe2jmR19Jm+QdL8+97gO8ENd7PUyQIAQojJyIiyRHw==}
+    dependencies:
+      scroll-into-view-if-needed: 2.2.31
+    dev: false
 
   /source-map-js/1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
@@ -6333,6 +6408,12 @@ packages:
   /throttle-debounce/5.0.0:
     resolution: {integrity: sha512-2iQTSgkkc1Zyk0MeVrt/3BvuOXYPl/R8Z0U2xxo9rjwNciaHDG3R+Lm6dh4EeUci49DanvBnuqI6jshoQQRGEg==}
     engines: {node: '>=12.22'}
+    dev: false
+
+  /tippy.js/6.3.7:
+    resolution: {integrity: sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==}
+    dependencies:
+      '@popperjs/core': 2.11.7
     dev: false
 
   /tmpl/1.0.5:

@@ -1,3 +1,39 @@
-.root{
-    
+.root {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+
+    :global {
+        [data-milkdown-root] {
+            width: 100%;
+            height: 100%;
+
+            .milkdown {
+                height: 100%;
+                width: 100%;
+            }
+
+            .ProseMirror {
+                width: 100%;
+                height: 100%;
+                padding: 15px;
+            }
+        }
+    }
+
+    pre[data-language] {
+        border-radius: 5px;
+        padding: 10px;
+        box-sizing: border-box;
+        background: #272822;
+        color: white;
+    }
+}
+
+.editor {
+    width: 100%;
+    flex: 1;
+    overflow: auto;
 }

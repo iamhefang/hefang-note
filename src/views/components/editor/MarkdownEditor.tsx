@@ -1,5 +1,6 @@
 import "@milkdown-lab/plugin-menu/style.css"
 import { defaultValueCtx, Editor, rootCtx } from "@milkdown/core"
+import { Ctx } from "@milkdown/ctx"
 import { clipboard } from "@milkdown/plugin-clipboard"
 import { listener, listenerCtx } from "@milkdown/plugin-listener"
 import { prism, prismConfig } from "@milkdown/plugin-prism"
@@ -8,9 +9,10 @@ import { gfm } from "@milkdown/preset-gfm"
 import { Milkdown, MilkdownProvider, useEditor } from "@milkdown/react"
 import { nord } from "@milkdown/theme-nord"
 import "@milkdown/theme-nord/style.css"
-import "prism-themes/themes/prism-nord.css"
 import { Switch } from "antd"
-import React, { forwardRef, Ref, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react"
+import "prism-themes/themes/prism-nord.css"
+import { useCallback, useEffect, useState } from "react"
+import cpp from "refractor/lang/cpp"
 import css from "refractor/lang/css"
 import javascript from "refractor/lang/javascript"
 import jsx from "refractor/lang/jsx"
@@ -20,9 +22,8 @@ import typescript from "refractor/lang/typescript"
 
 import { EditorComponent, IEditorProps } from "~/plugin/types"
 
-import MarkdownEditorToolbar, { defaultToolbarItems, toolbar } from "./MarkdownEditorToolbar"
-
-import { Ctx } from "@milkdown/ctx"
+import ss from "./MarkdownEditor.module.scss"
+import { useSettings } from "$hooks/useSelectors"
 
 function MilkdownEditor({ value, onChange, onBlur, onFocus, onEditorCreated }: IEditorProps & { onEditorCreated: (editor: Editor) => void }) {
   const { loading, get: getEditor } = useEditor((root) =>
@@ -33,7 +34,6 @@ function MilkdownEditor({ value, onChange, onBlur, onFocus, onEditorCreated }: I
         ctx.set(defaultValueCtx, value)
         const manager = ctx.get(listenerCtx)
         manager.markdownUpdated((_ctx, _pre, newMarkdown) => {
-          console.info("markdownUpdated", newMarkdown)
           onChange(newMarkdown || "")
         })
         manager.blur((_ctx) => onBlur?.())
@@ -46,6 +46,7 @@ function MilkdownEditor({ value, onChange, onBlur, onFocus, onEditorCreated }: I
             refractor.register(typescript)
             refractor.register(jsx)
             refractor.register(tsx)
+            refractor.register(cpp)
           },
         })
       })
@@ -64,7 +65,7 @@ function MilkdownEditor({ value, onChange, onBlur, onFocus, onEditorCreated }: I
   }, [getEditor, loading, onEditorCreated])
 
   return (
-    <div style={{ width: "100%", height: "100%", overflow: "auto", padding: 15, boxSizing: "border-box" }}>
+    <div className={ss.editor}>
       <Milkdown />
     </div>
   )
@@ -72,6 +73,7 @@ function MilkdownEditor({ value, onChange, onBlur, onFocus, onEditorCreated }: I
 
 const MarkdownEditor: EditorComponent = (props) => {
   const [ctx, setCtx] = useState<Ctx>()
+  const { editorStyle } = useSettings()
 
   const onEditorCreated = useCallback((editor: Editor) => {
     setCtx(editor.ctx)
@@ -79,8 +81,10 @@ const MarkdownEditor: EditorComponent = (props) => {
 
   return (
     <MilkdownProvider>
-      <MarkdownEditorToolbar items={defaultToolbarItems} ctx={ctx} />
-      <MilkdownEditor {...props} onEditorCreated={onEditorCreated} />
+      <div className={ss.root}>
+        {/* <MarkdownEditorToolbar items={defaultToolbarItems} ctx={ctx} /> */}
+        <MilkdownEditor {...props} onEditorCreated={onEditorCreated} />
+      </div>
     </MilkdownProvider>
   )
 }

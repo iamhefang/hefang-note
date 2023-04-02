@@ -189,7 +189,7 @@ export default function MarkdownEditorToolbar({ ctx, items }: MarkdownEditorTool
   }
 
   return (
-    <Space style={{ margin: 10 }}>
+    <Space style={{ padding: 10, boxSizing: "border-box", width: "100%" }}>
       {items.map((item, index) => {
         if (item.type === "button") {
           return <ButtonItem key={item.key} item={item} ctx={ctx} />
@@ -200,6 +200,8 @@ export default function MarkdownEditorToolbar({ ctx, items }: MarkdownEditorTool
         if (item.type === "select") {
           return <SelectItem key={item.key} item={item} ctx={ctx} />
         }
+
+        return undefined
       })}
     </Space>
   )
