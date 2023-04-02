@@ -18,7 +18,7 @@ export default function useEditorSettings(): Record<string, ReactNode> {
 
     return Object.fromEntries(
       editorComponent.options?.map(({ label, name, ...props }) => {
-        const itemName = name ? (Array.isArray(name) ? ["editorStyle", ...name] : ["editorStyle", name]) : undefined
+        const itemName = name ? (Array.isArray(name) ? ["editorOptions", ...name] : ["editorOptions", name]) : undefined
 
         if (editor && editor !== "default" && itemName) {
           itemName.unshift(editor)

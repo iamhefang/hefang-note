@@ -18,7 +18,7 @@ import { contentStore } from "$utils/database"
 
 export default function EditorArea() {
   const { entities, ids } = useNotes()
-  const { current, editorStyle, showTimeAboveEditor, editor } = useSettings()
+  const { current, editorOptions, showTimeAboveEditor, editor } = useSettings()
   const {
     token: { colorBgLayout, colorText },
   } = antTheme.useToken()
@@ -39,7 +39,9 @@ export default function EditorArea() {
       }
       refSaveTimer.current && clearTimeout(refSaveTimer.current)
       refSaveTimer.current = window.setTimeout(() => {
-        dispatch(updateContent({ id: item.id, content }))
+        const newContent = { id: item.id, content }
+        console.info("正在保存笔记", newContent)
+        dispatch(updateContent(newContent))
       }, CONTENT_SAVE_DELAY)
     },
     [item, dispatch],
@@ -84,8 +86,8 @@ export default function EditorArea() {
           修改时间：{dayjs(item.modifyTime).format("YYYY年MM月DD日 HH:mm")}
         </div>
       )}
-      <div className="editor" style={editorStyle}>
-        <Editor value={value} onChange={onValueChange} placeholder="尽情记录吧!" />
+      <div className="editor" style={editorOptions}>
+        <Editor noteId={current} value={value} onChange={onValueChange} placeholder="尽情记录吧!" />
       </div>
     </div>
   )

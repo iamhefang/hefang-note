@@ -17,15 +17,17 @@ export const defaultSettings: Settings = {
     showTimeAboveEditor: true,
     autoCheckUpdate: false,
     editor: "default",
-    editorStyle: {
+    editorOptions: {
+        showToolbar: true,
         fontFamily: "inherit",
-        fontSize: "inherit",
         lineHeight: 1.2,
+        highlightCodeBlock: true,
     },
     shortcut: { lock: "CmdOrCtrl+L", closeWindow: "CmdOrCtrl+W" },
     lockedContents: {},
     unlockContentByAppLockPassword: true,
 }
+
 const sliceName = "settings"
 
 export const loadSettings = createAsyncThunk(`${sliceName}/loadSettings`, async () => {
