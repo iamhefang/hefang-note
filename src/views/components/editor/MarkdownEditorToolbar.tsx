@@ -13,7 +13,7 @@ import { Ctx, MilkdownPlugin } from "@milkdown/ctx"
 import { EditorState, Plugin, PluginKey } from "@milkdown/prose/state"
 import { EditorView } from "@milkdown/prose/view"
 import { $ctx, $prose } from "@milkdown/utils"
-import { Button, Divider, Select, Space, Spin, Tooltip, TooltipProps } from "antd"
+import { Button, Divider, Select, Space, Spin, Tooltip, TooltipProps, theme } from "antd"
 import { OptionProps } from "antd/es/select"
 import _ from "lodash"
 import React, { ReactNode, useCallback } from "react"
@@ -184,12 +184,13 @@ function SelectItem({ item, ctx }: { item: IToolbarSelectItem; ctx: Ctx }) {
 }
 
 export default function MarkdownEditorToolbar({ ctx, items }: MarkdownEditorToolbarProps) {
+  const { token } = theme.useToken()
   if (!ctx) {
     return <Spin />
   }
 
   return (
-    <Space style={{ padding: 10, boxSizing: "border-box", width: "100%" }}>
+    <Space style={{ padding: 10, boxSizing: "border-box", width: "100%", borderBottom: `thin solid ${token.colorBorder}` }}>
       {items.map((item, index) => {
         if (item.type === "button") {
           return <ButtonItem key={item.key} item={item} ctx={ctx} />
@@ -221,18 +222,7 @@ const toolbarView = $prose((ctx) => {
 
       return {
         update: (view: EditorView, prevState: EditorState) => {
-          toolbarRoot.render(
-            <Space>
-              {defaultToolbarItems.map((item, index) => {
-                if (item.type === "button") {
-                  return <ButtonItem key={item.key} item={item} ctx={ctx} />
-                }
-                if (item.type === "divider") {
-                  return <Divider key={`divider-${index}`} type="vertical" />
-                }
-              })}
-            </Space>,
-          )
+          toolbarRoot.render(<MarkdownEditorToolbar ctx={ctx} items={defaultToolbarItems} />)
         },
         destroy: () => {
           toolbarRoot.unmount()

@@ -41,11 +41,11 @@ DefaultEditor.options = [
     label: "字体",
     children: (
       <Select style={{ width: 120 }}>
-        <Select.Option key={"setting-form-editorStyle-fontFamily"} value="inherit">
+        <Select.Option key={"setting-form-editorOptions-fontFamily"} value="inherit">
           自动字体
         </Select.Option>
         {Object.entries(fontFamilyMaps).map(([value, label]) => (
-          <Select.Option key={`settings-form-editorStyle-font-${value}`} value={value}>
+          <Select.Option key={`settings-form-editorOptions-font-${value}`} value={value}>
             <span style={{ fontFamily: value }}>{label}</span>
           </Select.Option>
         ))}
@@ -57,7 +57,7 @@ DefaultEditor.options = [
     label: "字体大小",
     children: (
       <Select>
-        <Select.Option key={"setting-form-editorStyle-fontSize"} value="inherit">
+        <Select.Option key={"setting-form-editorOptions-fontSize"} value="inherit">
           自动大小
         </Select.Option>
         {fontSizeItems.map((size) => (
