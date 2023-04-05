@@ -1,9 +1,12 @@
 import type { ThemeConfig } from "antd"
+import { type } from "os"
 import type { CSSProperties, ReactNode } from "react"
 
 declare global {
   function isContentEditable(electron: Element | null | EventTarget): boolean
 }
+
+export type ValueOrFactory<T, C = unknown> = T | ((c: C) => T)
 
 export const enum WorkerEventKeys {
   startExport = "startExport",
@@ -40,6 +43,7 @@ export type NoteItem = {
 export type ThemeType = "auto" | "light" | "dark" | "eyeshield" | "anti-blue-ray" | string
 export type Themes = Record<ThemeType, ThemeDefine>
 export type ThemeDefine = ThemeConfig & { label: ReactNode; tooltip?: string; icon?: ReactNode }
+export type DefaultEditorOptions = { showLineNumbers: boolean, fontSize: number, lineHeight: number, minimap: boolean }
 export type Settings = {
   theme: ThemeType
   /**
@@ -62,12 +66,12 @@ export type Settings = {
   editor: string
   showTimeAboveEditor: boolean
   autoCheckUpdate: boolean
-  editorStyle: CSSProperties
+  editorOptions: DefaultEditorOptions
   shortcut: { lock: string; closeWindow: string }
   // key: 笔记的id，value: 加密密码
   lockedContents: { [id: string]: string }
   unlockContentByAppLockPassword: boolean
-}
+} & { [pluginId: string]: unknown }
 
 export type NoteSort = Sort<keyof Omit<NoteItem, "id" | "parentId" | "isLeaf">>
 

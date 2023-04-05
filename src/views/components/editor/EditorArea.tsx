@@ -9,7 +9,8 @@ import { EditorComponent } from "~/plugin/types"
 import { useAppDispatch } from "~/redux"
 import { updateContent } from "~/redux/noteSlice"
 
-import DefaultEditor from "./DefaultEditor"
+import CodeEditor from "./CodeEditor"
+import MarkdownEditor from "./MarkdownEditor"
 
 import NoteUnlocker from "$components/locker/NoteUnlocker"
 import { usePluginMap } from "$hooks/usePlugins"
@@ -18,7 +19,7 @@ import { contentStore } from "$utils/database"
 
 export default function EditorArea() {
   const { entities, ids } = useNotes()
-  const { current, editorStyle, showTimeAboveEditor, editor } = useSettings()
+  const { current, editorOptions, showTimeAboveEditor, editor } = useSettings()
   const {
     token: { colorBgLayout, colorText },
   } = antTheme.useToken()
@@ -28,7 +29,7 @@ export default function EditorArea() {
   const item = useMemo(() => entities[current], [current, entities])
   const plugins = usePluginMap()
   const Editor: EditorComponent = useMemo(() => {
-    return editor && plugins[editor]?.Editor ? plugins[editor].Editor! : DefaultEditor
+    return editor && plugins[editor]?.Editor ? plugins[editor].Editor! : CodeEditor
   }, [editor, plugins])
 
   const refSaveTimer = useRef(0)
@@ -39,16 +40,18 @@ export default function EditorArea() {
       }
       refSaveTimer.current && clearTimeout(refSaveTimer.current)
       refSaveTimer.current = window.setTimeout(() => {
-        dispatch(updateContent({ id: item.id, content }))
+        const newContent = { id: item.id, content }
+        console.info("正在保存笔记", newContent)
+        dispatch(updateContent(newContent))
       }, CONTENT_SAVE_DELAY)
     },
     [item, dispatch],
   )
   const onValueChange = useCallback(
-    (newValue: string) => {
+    (newValue: string | undefined) => {
       changing || setChanging(true)
-      setValue(newValue)
-      saveContent(newValue)
+      setValue(newValue || "")
+      saveContent(newValue || "")
     },
     [changing, saveContent],
   )
@@ -84,8 +87,8 @@ export default function EditorArea() {
           修改时间：{dayjs(item.modifyTime).format("YYYY年MM月DD日 HH:mm")}
         </div>
       )}
-      <div className="editor" style={editorStyle}>
-        <Editor value={value} onChange={onValueChange} placeholder="尽情记录吧!" />
+      <div className="editor-wrapper" style={editorOptions}>
+        <Editor noteId={current} value={value} onChange={onValueChange} placeholder="尽情记录吧!" />
       </div>
     </div>
   )
