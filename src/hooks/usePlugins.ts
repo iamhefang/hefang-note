@@ -64,7 +64,6 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
         plugin.enable = plugins.includes(plugin.id)
         if (plugin.enable) {
           const pluginInstance = await require(pluginPath.current[plugin.id])
-          console.info("usePlugins", pluginPath.current, pluginInstance)
           infos[i] = { ...pluginInstance, description: "", license: "", ...plugin }
         }
       }

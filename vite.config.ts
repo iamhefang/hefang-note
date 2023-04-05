@@ -59,6 +59,16 @@ export default defineConfig(async () => {
         ],
       },
     },
+    optimizeDeps: {
+      esbuildOptions: {
+        plugins: [
+          esbuildPluginMonacoEditorNls({
+            locale: Languages.zh_hans,
+            localeData: zh_CN.contents,
+          }),
+        ],
+      },
+    },
     // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
     // prevent vite from obscuring rust errors
     clearScreen: true,
