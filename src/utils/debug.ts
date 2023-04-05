@@ -13,14 +13,16 @@ if (isInTauri) {
             await createDir("test", { dir: BaseDirectory.AppLog, recursive: true })
         }
 
-        for (const method of ["log", "info", "warn", "error"] as (keyof Console)[]) {
-            const origin = window.console[method]
-            // @ts-ignore
-            window.console[method] = function () {
+        if (import.meta.env.PROD) {
+            for (const method of ["log", "info", "warn", "error"] as (keyof Console)[]) {
+                const origin = window.console[method]
                 // @ts-ignore
-                origin(...arguments)
+                window.console[method] = function () {
+                    // @ts-ignore
+                    origin(...arguments)
 
-                void writeTextFile(`${method}.log`, JSON.stringify(arguments), { dir: BaseDirectory.AppLog })
+                    void writeTextFile(`${method}.log`, JSON.stringify(arguments), { dir: BaseDirectory.AppLog })
+                }
             }
         }
     })()

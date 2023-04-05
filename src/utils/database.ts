@@ -103,7 +103,6 @@ function createKeyValueDbStore<T extends object, K extends keyof T = keyof T>(st
       const db = await database
       const value = await db.get(storeName, name as string)
 
-
       return _.isUndefined(value) ? defaultValue : (shouldEncrypt(name) ? JSON.parse(decrypt(value)) : value)
     },
     async set(name: K, value: T[K]): Promise<void> {
