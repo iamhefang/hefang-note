@@ -87,6 +87,7 @@ export interface IPluginComponents {
   TopLeft: FooterTopComponent
   TopRight: FooterTopComponent
 }
+
 export interface IPluginAbility {
   theme: ThemeDefine
 }

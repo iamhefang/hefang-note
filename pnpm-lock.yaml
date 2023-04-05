@@ -215,7 +215,7 @@ devDependencies:
     version: 2.4.0(vite@4.1.1)
   vscode-loc.git:
     specifier: github:microsoft/vscode-loc
-    version: github.com/microsoft/vscode-loc/6363864e8ec491c8ff63513a24f74421480b00ba
+    version: github.com/microsoft/vscode-loc/2664ff0a9fc947c15d264a607cb43a973a34b6dc
 
 packages:
 
@@ -6266,7 +6266,6 @@ packages:
       react-dom: '>=16.9.0'
     dependencies:
       '@babel/runtime': 7.20.13
-      '@rc-component/trigger': 1.6.0_biqbaboplfbrettd7655fr4n2y
       classnames: 2.3.2
       rc-motion: 2.7.3(react-dom@18.2.0)(react@18.2.0)
       rc-overflow: 1.3.0(react-dom@18.2.0)(react@18.2.0)
@@ -6333,6 +6332,10 @@ packages:
   /rc-picker@3.7.4(dayjs@1.11.7)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-V7oztqbIDCLjgOTHZ8ke68VN9IeQIwOpCMGjrsxuOhlq76xe9C21lePe+H0H29Obc/8s0a3+plk3cRWq4g7InA==}
     engines: {node: '>=8.x'}
+    peerDependencies:
+      date-fns: '>= 2.x'
+      dayjs: '>= 1.x'
+      luxon: '>= 3.x'
       moment: '>= 2.x'
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
@@ -7719,8 +7722,8 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: false
 
-  github.com/microsoft/vscode-loc/6363864e8ec491c8ff63513a24f74421480b00ba:
-    resolution: {tarball: https://codeload.github.com/microsoft/vscode-loc/tar.gz/6363864e8ec491c8ff63513a24f74421480b00ba}
+  github.com/microsoft/vscode-loc/2664ff0a9fc947c15d264a607cb43a973a34b6dc:
+    resolution: {tarball: https://codeload.github.com/microsoft/vscode-loc/tar.gz/2664ff0a9fc947c15d264a607cb43a973a34b6dc}
     name: vscode-loc
     version: 0.0.0
     dev: true
