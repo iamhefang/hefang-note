@@ -21,7 +21,7 @@ export const placeholder: MilkdownPlugin = (ctx: Ctx) => {
 
             const isEmptyParagraph = view.dom.firstChild instanceof HTMLParagraphElement && view.dom.firstChild.innerHTML === "<br class=\"ProseMirror-trailingBreak\">"
 
-            if (view.editable && isEmptyParagraph) {
+            if (view.editable && view.state.doc.childCount === 1 && isEmptyParagraph) {
                 view.dom.setAttribute("data-placeholder", placeholderValue)
             } else {
                 view.dom.removeAttribute("data-placeholder")

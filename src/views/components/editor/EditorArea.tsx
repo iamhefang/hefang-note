@@ -1,4 +1,4 @@
-import { Divider, Empty, theme as antTheme } from "antd"
+import { theme as antTheme, Divider, Empty } from "antd"
 import dayjs from "dayjs"
 import _ from "lodash"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
@@ -9,6 +9,7 @@ import { EditorComponent } from "~/plugin/types"
 import { useAppDispatch } from "~/redux"
 import { updateContent } from "~/redux/noteSlice"
 
+import CodeEditor from "./CodeEditor"
 import MarkdownEditor from "./MarkdownEditor"
 
 import NoteUnlocker from "$components/locker/NoteUnlocker"
@@ -28,7 +29,7 @@ export default function EditorArea() {
   const item = useMemo(() => entities[current], [current, entities])
   const plugins = usePluginMap()
   const Editor: EditorComponent = useMemo(() => {
-    return editor && plugins[editor]?.Editor ? plugins[editor].Editor! : MarkdownEditor
+    return editor && plugins[editor]?.Editor ? plugins[editor].Editor! : CodeEditor
   }, [editor, plugins])
 
   const refSaveTimer = useRef(0)
@@ -47,7 +48,7 @@ export default function EditorArea() {
     [item, dispatch],
   )
   const onValueChange = useCallback(
-    (newValue: string) => {
+    (newValue: string | undefined) => {
       changing || setChanging(true)
       setValue(newValue || "")
       saveContent(newValue || "")
@@ -86,7 +87,7 @@ export default function EditorArea() {
           修改时间：{dayjs(item.modifyTime).format("YYYY年MM月DD日 HH:mm")}
         </div>
       )}
-      <div className="editor" style={editorOptions}>
+      <div className="editor-wrapper" style={editorOptions}>
         <Editor noteId={current} value={value} onChange={onValueChange} placeholder="尽情记录吧!" />
       </div>
     </div>

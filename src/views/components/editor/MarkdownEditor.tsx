@@ -10,16 +10,19 @@ import { commonmark, headingAttr, headingIdGenerator } from "@milkdown/preset-co
 import { gfm } from "@milkdown/preset-gfm"
 import { Milkdown, MilkdownProvider, useEditor } from "@milkdown/react"
 import { nord } from "@milkdown/theme-nord"
-import { replaceAll } from "@milkdown/utils"
 import "@milkdown/theme-nord/style.css"
+import { replaceAll } from "@milkdown/utils"
+import { ProsemirrorAdapterProvider } from "@prosemirror-adapter/react"
 import { Select, Switch } from "antd"
 import "prism-themes/themes/prism-nord.css"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import cpp from "refractor/lang/cpp"
 import css from "refractor/lang/css"
 import javascript from "refractor/lang/javascript"
 import jsx from "refractor/lang/jsx"
 import markdown from "refractor/lang/markdown"
+import matlab from "refractor/lang/matlab"
+import rust from "refractor/lang/rust"
 import tsx from "refractor/lang/tsx"
 import typescript from "refractor/lang/typescript"
 
@@ -44,10 +47,9 @@ function MilkdownEditor({
   noteId,
 }: IEditorProps & { onEditorCreated: (editor: Editor) => void }) {
   const options = useDefaultEditorOptions()
-  const [lastValue, setLastValue] = useState(value)
+  // const [lastNoteId, setLastNoteId] = useState<string>()
   const { loading, get: getEditor } = useEditor((root) => {
     const editor = Editor.make()
-
     editor
       .config(nord)
       .config((ctx) => {
@@ -57,9 +59,10 @@ function MilkdownEditor({
         ctx.set(katexOptionsCtx.key, { output: "mathml", throwOnError: false, colorIsTextColor: true, trust: true })
         const manager = ctx.get(listenerCtx)
         manager
-          .markdownUpdated((_ctx, _pre, newMarkdown) => {
-            onChange(newMarkdown || "")
-            setLastValue(newMarkdown || "")
+          .markdownUpdated((_ctx, _pre, val) => {
+            // if (noteId === lastNoteId) {
+            onChange(val || "")
+            // }
           })
           .blur((_ctx) => onBlur?.())
           .focus((_ctx) => onFocus?.())
@@ -73,6 +76,8 @@ function MilkdownEditor({
               refractor.register(jsx)
               refractor.register(tsx)
               refractor.register(cpp)
+              refractor.register(rust)
+              refractor.register(matlab)
             },
           })
       })
@@ -90,25 +95,30 @@ function MilkdownEditor({
     options.highlightCodeBlock && editor.use(prism)
 
     return editor
-  })
+  }, [])
 
   useEffect(() => {
     const editor = getEditor()
     editor && onEditorCreated(editor)
   }, [getEditor, loading, onEditorCreated])
 
-  useEffect(() => {
-    if (value === lastValue) {
-      return
-    }
-    const editor = getEditor()
-    editor?.action(replaceAll(value))
-  }, [value, lastValue, getEditor])
+  // useEffect(() => {
+  //   // if (lastNoteId === noteId) {
+  //   //   return
+  //   // }
+  //   const editor = getEditor()
+  //   // editor?.action(replaceAll(value))
+  //   // setLastNoteId(noteId)
+  //   editor?.ctx.set(defaultValueCtx, value)
+  // }, [value, getEditor, lastNoteId, noteId])
 
-  return (
-    <div className={ss.editor}>
-      <Milkdown />
-    </div>
+  return useMemo(
+    () => (
+      <div className={ss.editor}>
+        <Milkdown />
+      </div>
+    ),
+    [],
   )
 }
 
@@ -122,10 +132,12 @@ const MarkdownEditor: EditorComponent = (props) => {
 
   return (
     <MilkdownProvider>
-      <div className={ss.root}>
-        {editorOptions.showToolbar ? <MarkdownEditorToolbar items={defaultToolbarItems} ctx={ctx} /> : null}
-        <MilkdownEditor {...props} onEditorCreated={onEditorCreated} />
-      </div>
+      <ProsemirrorAdapterProvider>
+        <div className={ss.root}>
+          {editorOptions.showToolbar ? <MarkdownEditorToolbar items={defaultToolbarItems} ctx={ctx} /> : null}
+          <MilkdownEditor {...props} onEditorCreated={onEditorCreated} />
+        </div>
+      </ProsemirrorAdapterProvider>
     </MilkdownProvider>
   )
 }
@@ -161,7 +173,7 @@ MarkdownEditor.options = [
         <Select.Option value="inherit">自动行高</Select.Option>
         <Select.Option value={1}>1倍行高</Select.Option>
         <Select.Option value={1.2}>1.2倍行高</Select.Option>
-        <Select.Option value={1.5}>1.2倍行高</Select.Option>
+        <Select.Option value={1.5}>1.5倍行高</Select.Option>
         <Select.Option value={1.7}>1.7倍行高</Select.Option>
         <Select.Option value={2}>2倍行高</Select.Option>
       </Select>

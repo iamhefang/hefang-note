@@ -43,7 +43,7 @@ export type NoteItem = {
 export type ThemeType = "auto" | "light" | "dark" | "eyeshield" | "anti-blue-ray" | string
 export type Themes = Record<ThemeType, ThemeDefine>
 export type ThemeDefine = ThemeConfig & { label: ReactNode; tooltip?: string; icon?: ReactNode }
-export type DefaultEditorOptions = CSSProperties & { showToolbar: boolean, highlightCodeBlock: boolean }
+export type DefaultEditorOptions = { showLineNumbers: boolean, fontSize: number, lineHeight: number, minimap: boolean }
 export type Settings = {
   theme: ThemeType
   /**

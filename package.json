@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
+    "@basementuniverse/parsecolor": "^1.0.2",
     "@milkdown-lab/plugin-menu": "^1.0.1",
     "@milkdown/core": "^7.1.0",
     "@milkdown/ctx": "^7.1.0",
@@ -39,8 +40,11 @@
     "@milkdown/theme-nord": "^7.1.0",
     "@milkdown/transformer": "^7.1.0",
     "@milkdown/utils": "^7.1.0",
+    "@monaco-editor/react": "^4.4.6",
+    "@prosemirror-adapter/react": "^0.2.4",
     "@reduxjs/toolkit": "^1.9.2",
     "@tauri-apps/api": "1.2.0",
+    "@ubia/vite-plugin-monaco-editor-nls": "^2.0.5",
     "ajv": "^8.12.0",
     "antd": "^5.3.1",
     "dayjs": "^1.11.7",
@@ -49,6 +53,7 @@
     "katex": "^0.16.4",
     "lodash": "^4.17.21",
     "milkdown-plugin-placeholder": "^0.1.2",
+    "monaco-editor": "^0.37.0",
     "prism-themes": "^1.9.0",
     "prosemirror-view": "^1.30.2",
     "re-resizable": "^6.9.9",
@@ -87,6 +92,7 @@
     "vite-plugin-html-minifier": "^1.0.3",
     "vite-plugin-markdown": "^2.1.0",
     "vite-plugin-static-copy": "^0.13.1",
-    "vite-plugin-svgr": "^2.4.0"
+    "vite-plugin-svgr": "^2.4.0",
+    "vscode-loc.git": "github:microsoft/vscode-loc"
   }
 }

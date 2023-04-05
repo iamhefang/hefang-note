@@ -67,6 +67,7 @@ export default function NoteTreeItem({
 
   const onLockClick = useCallback(() => {
     dispatch(relockContent(item.id))
+    dispatch(setCurrent(item.id))
   }, [dispatch, item.id])
 
   const expandIcon = useMemo(() => {
@@ -144,7 +145,7 @@ export default function NoteTreeItem({
           <Button
             onClick={onLockClick}
             disabled={noteLocked}
-            icon={noteLocked ? <LockOutlined title={`该${item.isLeaf ? "笔记" : "目录"}已锁定`} /> : <UnlockOutlined title="立即锁定"/>}
+            icon={noteLocked ? <LockOutlined title={`该${item.isLeaf ? "笔记" : "目录"}已锁定`} /> : <UnlockOutlined title="立即锁定" />}
             size="small"
             type="text"
           />

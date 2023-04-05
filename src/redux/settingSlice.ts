@@ -18,10 +18,10 @@ export const defaultSettings: Settings = {
     autoCheckUpdate: false,
     editor: "default",
     editorOptions: {
-        showToolbar: true,
-        fontFamily: "inherit",
-        lineHeight: 1.2,
-        highlightCodeBlock: true,
+        minimap: true,
+        fontSize: 14,
+        lineHeight: 1.5,
+        showLineNumbers: false,
     },
     shortcut: { lock: "CmdOrCtrl+L", closeWindow: "CmdOrCtrl+W" },
     lockedContents: {},
@@ -46,6 +46,7 @@ export const settingSlice = createSlice<Settings, SliceCaseReducers<Settings>>({
         lockContent(state, action: PayloadAction<{ noteId: string, password: string }>) {
             const { noteId, password } = action.payload
             state.lockedContents[noteId] = password
+            state.current = noteId
         },
         cancelLockContent(state, action: PayloadAction<string>) {
             delete state.lockedContents[action.payload]

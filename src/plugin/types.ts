@@ -46,7 +46,7 @@ export interface IPlugin extends IPluginInfo, Partial<IPluginHooks>, Partial<IPl
 
 export interface IEditorProps {
     value: string
-    onChange: (value: string) => void
+    onChange: (value: string | undefined) => void
     placeholder?: string
     onFocus?: () => void
     onBlur?: () => void
