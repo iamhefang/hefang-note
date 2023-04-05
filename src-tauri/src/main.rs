@@ -159,11 +159,12 @@ fn on_window_event(event: GlobalWindowEvent) {
 }
 
 fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
-    if cfg!(not(target_os = "macos")) {
-        if let Some(window) = app.get_window("main") {
+    if let Some(window) = app.get_window("main") {
+        if cfg!(not(target_os = "macos")) {
             window.set_decorations(false).unwrap();
             window_shadows::set_shadow(&window, true).expect("Unsupported platform!");
         }
+        window.show().unwrap();
     }
     Ok(())
 }

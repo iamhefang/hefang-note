@@ -239,7 +239,7 @@ module.exports = {
     "import/no-internal-modules": [
       "warn",
       {
-        allow: ["react-dom/client", "@tauri-apps/api/**", "**/assets/*", "antd/locale/*"],
+        allow: ["react-dom/client", "@tauri-apps/api/**", "**/assets/*", "antd/locale/*", "refractor/lang/*", "**/*.css"],
       },
     ],
     "import/no-useless-path-segments": [

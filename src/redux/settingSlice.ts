@@ -17,15 +17,17 @@ export const defaultSettings: Settings = {
     showTimeAboveEditor: true,
     autoCheckUpdate: false,
     editor: "default",
-    editorStyle: {
-        fontFamily: "inherit",
-        fontSize: "inherit",
-        lineHeight: 1.2,
+    editorOptions: {
+        minimap: true,
+        fontSize: 14,
+        lineHeight: 1.5,
+        showLineNumbers: false,
     },
     shortcut: { lock: "CmdOrCtrl+L", closeWindow: "CmdOrCtrl+W" },
     lockedContents: {},
     unlockContentByAppLockPassword: true,
 }
+
 const sliceName = "settings"
 
 export const loadSettings = createAsyncThunk(`${sliceName}/loadSettings`, async () => {
@@ -44,6 +46,7 @@ export const settingSlice = createSlice<Settings, SliceCaseReducers<Settings>>({
         lockContent(state, action: PayloadAction<{ noteId: string, password: string }>) {
             const { noteId, password } = action.payload
             state.lockedContents[noteId] = password
+            state.current = noteId
         },
         cancelLockContent(state, action: PayloadAction<string>) {
             delete state.lockedContents[action.payload]

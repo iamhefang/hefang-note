@@ -1,7 +1,8 @@
 import { Form, Select, Switch } from "antd"
 import { ReactNode, useMemo } from "react"
 
-import DefaultEditor from "$components/editor/DefaultEditor"
+import CodeEditor from "$components/editor/CodeEditor"
+import MarkdownEditor from "$components/editor/MarkdownEditor"
 import usePlugins from "$hooks/usePlugins"
 import { useSettings } from "$hooks/useSelectors"
 
@@ -14,11 +15,11 @@ export default function useEditorSettings(): Record<string, ReactNode> {
   const { editor } = useSettings()
 
   const options = useMemo(() => {
-    const editorComponent = plugins.find((plugin) => plugin.id === editor)?.Editor || DefaultEditor
+    const editorComponent = plugins.find((plugin) => plugin.id === editor)?.Editor || CodeEditor
 
     return Object.fromEntries(
       editorComponent.options?.map(({ label, name, ...props }) => {
-        const itemName = name ? (Array.isArray(name) ? ["editorStyle", ...name] : ["editorStyle", name]) : undefined
+        const itemName = name ? (Array.isArray(name) ? ["editorOptions", ...name] : ["editorOptions", name]) : undefined
 
         if (editor && editor !== "default" && itemName) {
           itemName.unshift(editor)
