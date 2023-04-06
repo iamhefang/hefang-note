@@ -24,7 +24,6 @@ void navigator.locks.request("hefang-note", { ifAvailable: true }, async (lock) 
         <Application />
       </Provider>,
     )
-
     if (localStorage.getItem("firstRun") !== versionName) {
       Modal.info({
         title: "更新日志",
