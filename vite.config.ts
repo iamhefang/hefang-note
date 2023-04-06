@@ -29,6 +29,7 @@ export default defineConfig(async () => {
       viteStaticCopy({
         targets: [
           { src: "src-tauri/icons/icon.ico", dest: "./", rename: "favicon.ico" },
+          { src: "node_modules/monaco-editor/min/vs", dest: "./monaco-editor/" },
         ],
       }),
       htmlMinifier({ minify: true }),
@@ -102,6 +103,10 @@ export default defineConfig(async () => {
             utils: [
               "lodash",
               "dayjs",
+            ],
+            "monaco-editor": [
+              // "monaco-editor",
+              "@monaco-editor/react",
             ],
           },
         },

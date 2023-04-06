@@ -1,11 +1,6 @@
-import Editor, { EditorProps, loader } from "@monaco-editor/react"
-import { Select, Switch, theme as themeAntd } from "antd"
-import * as monaco from "monaco-editor"
-import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker"
-import cssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker"
-import htmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker"
-import jsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker"
-import tsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker"
+import Editor, { EditorProps, loader, useMonaco } from "@monaco-editor/react"
+import { Select, Spin, Switch, theme as themeAntd } from "antd"
+import type { editor } from "monaco-editor"
 import { useCallback, useEffect, useMemo } from "react"
 
 import { EditorComponent } from "~/plugin/types"
@@ -16,25 +11,34 @@ import { rgb2rrggbb } from "$utils/color"
 
 self.MonacoEnvironment = {
   getWorker(_, label) {
-    if (label === "json") {
-      return new jsonWorker()
+    const getWorkerModule = (moduleUrl: string) => {
+      return new Worker(self.MonacoEnvironment!.getWorkerUrl?.(moduleUrl, label) || moduleUrl, {
+        name: label,
+        type: "module",
+      })
     }
-    if (label === "css" || label === "scss" || label === "less") {
-      return new cssWorker()
+    switch (label) {
+      case "json":
+        return getWorkerModule("../monaco-editor/vs/language/json/json.worker?worker")
+      case "css":
+      case "scss":
+      case "less":
+        return getWorkerModule("../monaco-editor/vs/language/css/css.worker?worker")
+      case "html":
+      case "handlebars":
+      case "razor":
+        return getWorkerModule("../monaco-editor/vs/language/html/html.worker?worker")
+      case "typescript":
+      case "javascript":
+        return getWorkerModule("../monaco-editor/vs/language/typescript/ts.worker?worker")
+      default:
+        return getWorkerModule("../monaco-editor/vs/editor/editor.worker?worker")
     }
-    if (label === "html" || label === "handlebars" || label === "razor") {
-      return new htmlWorker()
-    }
-    if (label === "typescript" || label === "javascript") {
-      return new tsWorker()
-    }
-
-    return new editorWorker()
   },
 }
 
 loader.config({
-  monaco,
+  paths: { vs: "../monaco-editor/vs" },
   "vs/nls": {
     availableLanguages: { "*": "zh-cn" },
   },
@@ -42,11 +46,15 @@ loader.config({
 
 const CodeEditor: EditorComponent = ({ value, onChange, onBlur, onFocus }) => {
   const { token } = themeAntd.useToken()
+  const monaco = useMonaco()
   const editorOptions = useDefaultEditorOptions()
   const { theme } = useSettings()
   const { algorithm } = useThemeConfig()
 
   const setTheme = useCallback(() => {
+    if (!monaco) {
+      return
+    }
     monaco.editor.defineTheme(theme, {
       base: algorithm === themeAntd.darkAlgorithm ? "vs-dark" : "vs",
       inherit: true,
@@ -57,14 +65,13 @@ const CodeEditor: EditorComponent = ({ value, onChange, onBlur, onFocus }) => {
       },
     })
     monaco.editor.setTheme(theme)
-  }, [algorithm, theme, token.colorBgLayout, token.colorText])
+  }, [algorithm, monaco, theme, token.colorBgLayout, token.colorText])
 
   const onMount = useCallback(
-    (editor: monaco.editor.IStandaloneCodeEditor) => {
+    (editorInstance: editor.IStandaloneCodeEditor) => {
       setTheme()
-      onFocus && editor.onDidFocusEditorText(onFocus)
-      onBlur && editor.onDidBlurEditorText(onBlur)
-      //   console.log(editor.getSupportedActions())
+      onFocus && editorInstance.onDidFocusEditorText(onFocus)
+      onBlur && editorInstance.onDidBlurEditorText(onBlur)
     },
     [onBlur, onFocus, setTheme],
   )
@@ -83,13 +90,13 @@ const CodeEditor: EditorComponent = ({ value, onChange, onBlur, onFocus }) => {
   }, [editorOptions])
 
   const onValueChange: EditorProps["onChange"] = useCallback(
-    (newValue: string | undefined, ev: monaco.editor.IModelContentChangedEvent) => {
+    (newValue: string | undefined, ev: editor.IModelContentChangedEvent) => {
       value !== newValue && ev.changes.length && ev.changes[0].text !== newValue && onChange?.(newValue)
     },
     [onChange, value],
   )
 
-  return <Editor language="markdown" value={value} onChange={onValueChange} options={options} onMount={onMount} />
+  return <Editor language="markdown" value={value} onChange={onValueChange} options={options} onMount={onMount} loading={<Spin tip="编辑器加载中" />} />
 }
 
 const fontSize = [12, 14, 16, 18, 20, 22]
