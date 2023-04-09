@@ -8,7 +8,7 @@ import { toggleSettingsModal } from "~/redux/uiSlice"
 import CommonMenuItem from "$components/menus/CommonMenuItem"
 import { usePlatformType } from "$hooks/usePlatform"
 import { shortcuts } from "$utils/shortcuts"
-import { closeWindow } from "$utils/window"
+import { exitProcess } from "$utils/window"
 import pkg from "^/package.json"
 import logo from "^/src-tauri/icons/icon.png"
 
@@ -39,11 +39,11 @@ export default function AppLogo() {
     }
 
     shortcuts.register({ shortcut: "Ctrl+,", handler: toggleSettings })
-    shortcuts.register({ shortcut: "Ctrl+Q", handler: closeWindow })
+    shortcuts.register({ shortcut: "Ctrl+Q", handler: exitProcess })
 
     return () => {
       shortcuts.remove({ shortcut: "Ctrl+,", handler: toggleSettings })
-      shortcuts.remove({ shortcut: "Ctrl+Q", handler: closeWindow })
+      shortcuts.remove({ shortcut: "Ctrl+Q", handler: exitProcess })
     }
   }, [toggleSettings])
 
@@ -64,7 +64,7 @@ export default function AppLogo() {
                 { type: "divider" },
                 { key: "menu-settings", label: <CommonMenuItem title="设置" shortcut="Ctrl+," />, onClick: toggleSettings },
                 { type: "divider" },
-                { key: "menu-quit", label: <CommonMenuItem title="退出" shortcut="Ctrl+Q" />, onClick: closeWindow },
+                { key: "menu-quit", label: <CommonMenuItem title="退出" shortcut="Ctrl+Q" />, onClick: exitProcess },
               ]
             : [
                 {
