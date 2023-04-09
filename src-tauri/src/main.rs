@@ -81,10 +81,10 @@ fn on_menu_event(event: WindowMenuEvent) {
     match event.menu_item_id() {
         "settings" => {
             println!("Setting menu clicked: {}", event.window().label());
-            event
-                .window()
-                .emit(EVENT_TOGGLE_SETTINGS, Payload {})
-                .unwrap();
+            let window = event.window();
+            window.unminimize().unwrap();
+            window.show().unwrap();
+            window.emit(EVENT_TOGGLE_SETTINGS, Payload {}).unwrap();
         }
         _ => {}
     }
@@ -111,6 +111,7 @@ fn on_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
     match event {
         SystemTrayEvent::LeftClick { .. } => {
             if let Some(window) = app.get_window("main") {
+                window.unminimize().unwrap();
                 window.show().unwrap();
                 window.set_focus().unwrap();
             }
@@ -123,17 +124,21 @@ fn on_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
                 MENU_ID_TOGGLE_VISIBLE => {
                     if window.is_visible().unwrap() {
                         window.minimize().unwrap();
+                        window.hide().unwrap();
                     } else {
+                        window.unminimize().unwrap();
                         window.show().unwrap();
                         window.current_monitor().unwrap();
                         window.set_focus().unwrap();
                     }
                 }
                 MENU_ID_TOGGLE_LOCK => {
+                    window.unminimize().unwrap();
                     window.show().unwrap();
                     window.emit(EVENT_TOGGLE_LOCK, Payload {}).unwrap();
                 }
                 MENU_ID_TOGGLE_SETTINGS => {
+                    window.unminimize().unwrap();
                     window.show().unwrap();
                     window.emit(EVENT_TOGGLE_SETTINGS, Payload {}).unwrap();
                 }
