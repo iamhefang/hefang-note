@@ -11,6 +11,7 @@ import { NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
 import NoteTree from "$components/tree/NoteTree"
 import useNewModal from "$hooks/modals/useNewModal"
 import { useNotes, useSettings } from "$hooks/useSelectors"
+import { useTranslate } from "$hooks/useTranslate"
 import { sortItems } from "$utils/sort"
 
 export default function SiderBar() {
@@ -21,32 +22,33 @@ export default function SiderBar() {
   const dispatch = useAppDispatch()
   const showModal = useNewModal()
   const createOnSortChange = useCallback((newSort: Partial<NoteSort>) => () => dispatch(setSort(newSort)), [dispatch])
+  const t = useTranslate()
 
   const menuItems: MenuProps["items"] = useMemo(
     () => [
-      { key: NoteTreeMenuKeys.newDir, label: "新建目录", onClick: showModal as never },
-      { key: NoteTreeMenuKeys.newNote, label: "新建笔记", onClick: showModal as never },
+      { key: NoteTreeMenuKeys.newDir, label: t("新建目录"), onClick: showModal as never },
+      { key: NoteTreeMenuKeys.newNote, label: t("新建笔记"), onClick: showModal as never },
       { type: "divider" },
       {
         key: "sort-type",
-        label: "排序方式",
+        label: t("排序方式"),
         children: [
           ...sortItems.map(({ field, label }) => ({
             key: field,
-            label,
+            label: t(label),
             onClick: createOnSortChange({ field }),
             icon: sort.field === field ? <CheckOutlined /> : iconPlacehodler,
           })),
           { type: "divider" },
           {
             key: "desc",
-            label: "最新的排在上面",
+            label: t("最新的排在上面"),
             icon: sort.type === "desc" ? <CheckOutlined /> : iconPlacehodler,
             onClick: createOnSortChange({ type: "desc" }),
           },
           {
             key: "asc",
-            label: "最旧的排在上面",
+            label: t("最旧的排在上面"),
             icon: sort.type === "asc" ? <CheckOutlined /> : iconPlacehodler,
             onClick: createOnSortChange({ type: "asc" }),
           },
@@ -55,7 +57,7 @@ export default function SiderBar() {
       { type: "divider" },
       {
         key: "export",
-        label: "导出全部笔记",
+        label: t("导出全部笔记"),
         onClick: async () =>
           import("$utils/plugin").then((res) => {
             void res.hefang.contens.export()
@@ -63,23 +65,23 @@ export default function SiderBar() {
       },
       {
         key: "import",
-        label: "导入笔记",
+        label: t("导入笔记"),
         onClick: async () =>
           import("$utils/plugin").then((res) => {
             void res.hefang.contens.import().then((count) => {
-              modal.info({ title: `共导入${count}条数据` })
+              modal.info({ title: t("共导入{count}条数据", { count }) })
             })
           }),
       },
     ],
-    [createOnSortChange, modal, showModal, sort.field, sort.type],
+    [createOnSortChange, modal, showModal, sort.field, sort.type, t],
   )
 
   return (
     <>
       <Row style={{ margin: 10 }} gutter={10} wrap={false}>
         <Col flex={1}>
-          <Input.Search name="search" placeholder="搜索目录和标题" onSearch={setSearch} allowClear={true} disabled={initializing} />
+          <Input.Search name="search" placeholder={t("搜索目录和标题")} onSearch={setSearch} allowClear={true} disabled={initializing} />
         </Col>
         <Col>
           <Dropdown trigger={["click"]} menu={{ items: menuItems }} disabled={initializing}>

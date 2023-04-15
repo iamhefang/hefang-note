@@ -6,14 +6,16 @@ import { changeTheme } from "~/redux/settingSlice"
 
 import { useSettings } from "$hooks/useSelectors"
 import useThemes from "$hooks/useThemes"
+import { useTranslate } from "$hooks/useTranslate"
 
 export default function ThemeSelector() {
   const { theme } = useSettings()
+  const t = useTranslate()
   const dispatch = useAppDispatch()
   const themes = useThemes()
   const items = useMemo(
     () => [
-      { label: "选择主题", disabled: true, key: "select-theme" },
+      { label: t("选择主题"), disabled: true, key: "select-theme" },
       ...Object.entries(themes).map(([key, { label, tooltip, icon }]) => ({
         label: tooltip ? (
           <Tooltip placement="left" title={tooltip}>
@@ -29,7 +31,7 @@ export default function ThemeSelector() {
         },
       })),
     ],
-    [themes, dispatch],
+    [t, themes, dispatch],
   )
 
   const themeConfig = useMemo(() => {

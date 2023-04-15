@@ -7,6 +7,7 @@ import { clientUrls, isInTauri, versionCode } from "~/consts"
 
 import { useArch, useOsTypr as useOsType } from "$hooks/usePlatform"
 import { useSettings } from "$hooks/useSelectors"
+import { useTranslate } from "$hooks/useTranslate"
 import pkg from "^/package.json"
 
 const enum UpdateStatus {
@@ -19,6 +20,7 @@ const enum UpdateStatus {
 let needCheckUpdate = true
 
 export default function VersionView() {
+  const t = useTranslate()
   const { autoCheckUpdate } = useSettings()
   const { message, modal } = App.useApp()
   const checkedVersion = Number((localStorage?.getItem("version") || pkg.version).replace(/\./g, ""))
@@ -42,7 +44,7 @@ export default function VersionView() {
         if (res.shouldUpdate) {
           res.manifest?.version && localStorage.setItem("version", res.manifest?.version)
           modal.confirm({
-            title: "有新版本可用",
+            title: t("有新版本可用"),
             content: (
               <div style={{ maxHeight: "80vh", overflow: "auto" }}>
                 <p>
@@ -50,27 +52,27 @@ export default function VersionView() {
                 </p>
                 {res.manifest?.date && (
                   <>
-                    <b style={{ marginTop: 10, display: "block" }}>发布日期</b>
+                    <b style={{ marginTop: 10, display: "block" }}>{t("发布日期")}</b>
                     <p>{res.manifest.date.split(" ")[0]}</p>
                   </>
                 )}
-                <b style={{ marginTop: 10, display: "block" }}>更新日志</b>
+                <b style={{ marginTop: 10, display: "block" }}>{t("更新日志")}</b>
                 <p>{res.manifest?.body}</p>
               </div>
             ),
-            okText: "升级",
+            okText: t("升级"),
             async onOk() {
               return doInstallUpdate()
             },
           })
         } else {
-          void message.success("当前版本已是最新")
+          void message.success(t("当前版本已是最新"))
         }
       })
       .catch((error) => {
         console.error(error)
       })
-  }, [doInstallUpdate, message, modal])
+  }, [doInstallUpdate, message, modal, t])
 
   useEffect(() => {
     if (autoCheckUpdate && needCheckUpdate) {
@@ -85,25 +87,25 @@ export default function VersionView() {
         return (
           <Space>
             <Spin size="small" />
-            正在检查更新
+            {t("正在检查更新")}
           </Space>
         )
       case UpdateStatus.downloading:
         return (
           <Space>
             <Spin size="small" />
-            正在下载新版本
+            {t("正在下载新版本")}
           </Space>
         )
       case UpdateStatus.hasUpgrade:
         return (
           <Space>
             <span>v{pkg.version}</span>
-            <a onClick={doCheckUpdate}>有新版本可用</a>
+            <a onClick={doCheckUpdate}>{t("有新版本可用")}</a>
           </Space>
         )
       default:
         return <span onClick={doCheckUpdate}>v{pkg.version}</span>
     }
-  }, [status, doCheckUpdate])
+  }, [status, t, doCheckUpdate])
 }

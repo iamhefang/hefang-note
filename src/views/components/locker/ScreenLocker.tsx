@@ -11,6 +11,7 @@ import { lockScreen } from "~/redux/settingSlice"
 import ss from "./ScreenLocker.module.scss"
 
 import { useSettings } from "$hooks/useSelectors"
+import { useTranslate } from "$hooks/useTranslate"
 import { shortcuts } from "$utils/shortcuts"
 
 export default function ScreenLocker() {
@@ -18,6 +19,7 @@ export default function ScreenLocker() {
     lock: { locked, password, immediately },
     shortcut,
   } = useSettings()
+  const t = useTranslate()
   const dispatch = useAppDispatch()
   const { modal, message } = App.useApp()
   const {
@@ -35,13 +37,13 @@ export default function ScreenLocker() {
     }
     lockForm.setFieldsValue({ password })
     modal.confirm({
-      title: "锁定屏幕",
+      title: t("锁定屏幕"),
       icon: <UnlockOutlined />,
       style: { top: 40 },
       content: (
         <Form form={lockForm} layout="vertical" initialValues={{ password }}>
-          <Form.Item name="password" label="请输入解锁密码" rules={[{ required: true, message: "请输入解锁密码" }]}>
-            <Input.Password placeholder="请输入解锁密码" maxLength={6} />
+          <Form.Item name="password" label={t("请输入解锁密码")} rules={[{ required: true, message: t("请输入解锁密码") }]}>
+            <Input.Password placeholder={t("请输入解锁密码")} maxLength={6} />
           </Form.Item>
         </Form>
       ),
@@ -53,7 +55,7 @@ export default function ScreenLocker() {
         })
       },
     })
-  }, [immediately, password, lockForm, modal, dispatch])
+  }, [immediately, password, lockForm, modal, t, dispatch])
 
   const onUnlockClick = useCallback(
     ({ password: pwd }: { password: string }) => {
@@ -103,7 +105,7 @@ export default function ScreenLocker() {
       >
         <Form layout="inline" onFinish={onUnlockClick} form={unlockForm} initialValues={{ password: "" }}>
           <Form.Item name="password" style={{ width: 228 }}>
-            <Input.Password placeholder="输入解锁密码" size="large" maxLength={6} />
+            <Input.Password placeholder={t("请输入解锁密码")} size="large" maxLength={6} />
           </Form.Item>
           <Form.Item>
             <Button htmlType="submit" icon={<UnlockOutlined />} size="large" />

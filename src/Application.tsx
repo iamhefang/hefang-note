@@ -1,5 +1,4 @@
 import { App as Antd, theme as antdTheme, ConfigProvider } from "antd"
-import zhCN from "antd/locale/zh_CN"
 import React, { Suspense, useEffect } from "react"
 
 import { uiSlice } from "~/redux/uiSlice"
@@ -14,11 +13,12 @@ import usePlugins from "$hooks/usePlugins"
 import { useSettings, useStates } from "$hooks/useSelectors"
 import useSettingsLoader from "$hooks/useSettingsLoader"
 import { useThemeConfig } from "$hooks/useThemeConfig"
+import { useLocaleDefine } from "$hooks/useTranslate"
 
 const LazySettings = React.lazy(async () => import("~/views/settings"))
 
 export default function Application() {
-  const { theme } = useSettings()
+  const { theme, language } = useSettings()
   const { launching } = useStates()
   const plugins = usePlugins()
   const { token } = antdTheme.useToken()
@@ -40,11 +40,12 @@ export default function Application() {
   }, [theme, plugins, token])
 
   const themeConfig = useThemeConfig()
+  const locale = useLocaleDefine()
 
   return launching ? (
     <Loading />
   ) : (
-    <ConfigProvider autoInsertSpaceInButton={false} locale={zhCN} theme={themeConfig}>
+    <ConfigProvider autoInsertSpaceInButton={false} locale={locale.antd} theme={themeConfig}>
       <Antd message={{ top: 40 }} notification={{ top: 40 }}>
         <View />
         <ShowInPlatform platforms={["Linux", "Darwin", "Windows_NT", "Browser"]}>
