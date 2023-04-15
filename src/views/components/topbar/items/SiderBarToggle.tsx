@@ -6,9 +6,11 @@ import { useAppDispatch } from "~/redux"
 import { toggleSidebar } from "~/redux/settingSlice"
 
 import { useSettings } from "$hooks/useSelectors"
+import { useTranslate } from "$hooks/useTranslate"
 
 export default function SiderBarToggle() {
   const { showSideBar } = useSettings()
+  const t = useTranslate()
   const dispatch = useAppDispatch()
   const onClick = useCallback(() => {
     dispatch(toggleSidebar(null))
@@ -21,9 +23,9 @@ export default function SiderBarToggle() {
         size="small"
         type="text"
         onClick={onClick}
-        title={showSideBar ? "关闭侧边栏" : "打开侧边栏"}
+        title={t(showSideBar ? "关闭侧边栏" : "打开侧边栏")}
       />
     ),
-    [onClick, showSideBar],
+    [onClick, showSideBar, t],
   )
 }

@@ -12,11 +12,13 @@ import TopBarLeft from "$components/topbar/TopBarLeft"
 import TopBarRight from "$components/topbar/TopBarRight"
 import VersionView from "$components/version/VersionView"
 import { useNotes, useSettings } from "$hooks/useSelectors"
+import { useTranslate } from "$hooks/useTranslate"
 import { shortcuts } from "$utils/shortcuts"
 import { closeWindow } from "$utils/window"
 
 const { Sider, Content, Header, Footer } = Layout
 export default function View() {
+  const t = useTranslate()
   const {
     showSideBar,
     theme,
@@ -41,9 +43,11 @@ export default function View() {
   const footer = useMemo(() => {
     const values = Object.values(entities)
     const notes = values.filter((item) => item.isLeaf)
+    const dirCount = values.length - notes.length
+    const noteCount = notes.length
 
-    return `共${values.length - notes.length}个目录,${notes.length}篇笔记`
-  }, [entities])
+    return t("共{dirCount}个目录,{noteCount}篇笔记", { dirCount, noteCount })
+  }, [entities, t])
 
   const loadStatus = useMemo(() => {
     if (status === "failed") {
@@ -54,11 +58,11 @@ export default function View() {
     }
 
     return (
-      <span title="数据量大，正在加载，请稍候">
+      <span title={t("数据量大，正在加载，请稍候")}>
         <Spin size="small" />
       </span>
     )
-  }, [status])
+  }, [status, t])
 
   useEffect(() => {
     if (!shortcut?.closeWindow) {
@@ -78,12 +82,12 @@ export default function View() {
 
   const title = useMemo(() => {
     if (locked) {
-      return "已锁定"
+      return t("已锁定")
     }
     const item = entities[current]
 
     return `${item?.isLeaf ? `${item.title} - ` : ""}${productName} v${versionName}`
-  }, [current, entities, locked])
+  }, [current, entities, locked, t])
 
   return (
     <Layout>

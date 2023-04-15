@@ -7,7 +7,7 @@ import { sortItems } from "$utils/sort"
 export default function useGeneralSettings(): Record<string, ReactNode> {
   const t = useTranslate()
   const languageOptions = useMemo<SelectProps["options"]>(
-    () => [{ label: "跟随系统", value: "auto" }, ...Locales.map(({ name, keys: [key] }) => ({ label: name, value: key }))],
+    () => [{ label: "跟随系统 / Auto", value: "auto" }, ...Locales.map(({ name, keys: [key] }) => ({ label: name, value: key }))],
     [],
   )
 

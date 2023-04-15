@@ -1,5 +1,5 @@
 {
-  "name": "English",
+  "name": "🇺🇸 English",
   "keys": ["en", "en-US"],
   "map": {
     "新建目录": "Create Directory",
@@ -39,6 +39,32 @@
     "创建时间": "Creation Time",
     "修改时间": "Modification Time",
     "标题": "Title",
-    "尽情记录吧": "Record Freely"
+    "尽情记录吧": "Record Freely",
+    "请输入解锁密码": "Please enter the unlock password",
+    "锁定屏幕": "Lock Screen",
+    "数据量大，正在加载，请稍候": "Large amount of data, loading please wait",
+    "已锁定": "Locked",
+    "共{dirCount}个目录,{noteCount}篇笔记": "Total {dirCount} directories, {noteCount} notes",
+    "查看源码": "View Source Code",
+    "有新版本可用": "New version available",
+    "发布日期": "Release Date",
+    "更新日志": "Change Log",
+    "升级": "Upgrade",
+    "当前版本已是最新": "Current version is up to date",
+    "正在检查更新": "Checking for updates",
+    "正在下载新版本": "Downloading new version",
+    "编辑器加载中": "Editor Loading",
+    "取消置顶": "Unpin",
+    "置顶": "Pin to Top",
+    "关闭侧边栏": "Close Sidebar",
+    "打开侧边栏": "Open Sidebar",
+    "选择主题": "Select Theme",
+    "名称不为能空": "Name cannot be blank",
+    "该笔记已锁定": "This note is locked",
+    "该目录已锁定": "This directory is locked",
+    "立即锁定": "Lock Now",
+    "版本号": "Version Number",
+    "源码版本": "Source Code Version",
+    "平台": "Platform"
   }
 }

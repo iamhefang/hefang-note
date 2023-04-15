@@ -5,10 +5,11 @@ import React, { useCallback } from "react"
 
 import { isInTauri } from "~/consts"
 
+import { useTranslate } from "$hooks/useTranslate"
 import { repository } from "^/package.json"
 
-
 export default function Github() {
+  const t = useTranslate()
   const onClick = useCallback((e: React.MouseEvent) => {
     if (!isInTauri) {
       return
@@ -18,7 +19,7 @@ export default function Github() {
   }, [])
 
   return (
-    <Tooltip title="查看源码">
+    <Tooltip title={t("查看源码")}>
       <Button title={import.meta.env.VITE_COMMIT} icon={<GithubOutlined />} onClick={onClick} href={repository.url} size="small" type="text" target="__blank" />
     </Tooltip>
   )

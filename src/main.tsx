@@ -26,16 +26,17 @@ void navigator.locks.request("hefang-note", { ifAvailable: true }, async (lock) 
     )
     if (localStorage.getItem("firstRun") !== versionName) {
       Modal.info({
-        title: "更新日志",
+        title: "更新日志/Changelog",
         content: <Html className="changelog-container">{html}</Html>,
-        okText: "知道了",
+        okText: "知道了/OK",
+        width: "90vw",
         onOk() {
           localStorage.setItem("firstRun", versionName)
         },
       })
     }
   } else {
-    root.render(<Empty description={`${pkg.productName}已在其他窗口打开`} />)
+    root.render(<Empty description={<span style={{ color: "yellow" }}>{pkg.productName}已在其他窗口打开 / Application is running in other window</span>} />)
   }
 
   return new Promise(() => {})
