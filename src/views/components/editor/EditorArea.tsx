@@ -10,14 +10,15 @@ import { useAppDispatch } from "~/redux"
 import { updateContent } from "~/redux/noteSlice"
 
 import CodeEditor from "./CodeEditor"
-import MarkdownEditor from "./MarkdownEditor"
 
 import NoteUnlocker from "$components/locker/NoteUnlocker"
 import { usePluginMap } from "$hooks/usePlugins"
 import { useNotes, useSettings } from "$hooks/useSelectors"
+import { useTranslate } from "$hooks/useTranslate"
 import { contentStore } from "$utils/database"
 
 export default function EditorArea() {
+  const t = useTranslate()
   const { entities, ids } = useNotes()
   const { current, editorOptions, showTimeAboveEditor, editor } = useSettings()
   const {
@@ -69,7 +70,7 @@ export default function EditorArea() {
   }
 
   if ((item && !item.isLeaf) || _.isEmpty(ids) || !item) {
-    return <Empty description="尽情记录吧" />
+    return <Empty description={t("尽情记录吧")} />
   }
 
   return (
@@ -82,13 +83,13 @@ export default function EditorArea() {
     >
       {showTimeAboveEditor && (
         <div className="note-info">
-          创建时间：{dayjs(item.createTime).format("YYYY年MM月DD日 HH:mm")}
+          {t("创建时间")}：{dayjs(item.createTime).format("YYYY年MM月DD日 HH:mm")}
           <Divider type="vertical" />
-          修改时间：{dayjs(item.modifyTime).format("YYYY年MM月DD日 HH:mm")}
+          {t("修改时间")}：{dayjs(item.modifyTime).format("YYYY年MM月DD日 HH:mm")}
         </div>
       )}
       <div className="editor-wrapper" style={editorOptions}>
-        <Editor noteId={current} value={value} onChange={onValueChange} placeholder="尽情记录吧!" />
+        <Editor noteId={current} value={value} onChange={onValueChange} placeholder={t("尽情记录吧")} />
       </div>
     </div>
   )

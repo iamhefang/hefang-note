@@ -12,6 +12,7 @@ import useSafeSettings from "./useSafeSettings"
 import useShortcutSettings from "./useShortcutSettings"
 
 import { useSettings } from "$hooks/useSelectors"
+import { useTranslate } from "$hooks/useTranslate"
 
 type SettingTypes = "general" | "editor" | "shortcut" | string | number
 
@@ -31,6 +32,7 @@ export default function SettingForm() {
   const editorSettings = useEditorSettings()
   const shortcutSettings = useShortcutSettings()
   const safeSettings = useSafeSettings()
+  const t = useTranslate()
 
   const formItems: Record<SettingTypes, Record<string, ReactNode>> = useMemo(
     () => ({
@@ -48,10 +50,10 @@ export default function SettingForm() {
         value={active}
         onChange={setActive}
         options={[
-          { label: "通用", value: "general", icon: <HomeOutlined /> },
-          { label: "安全", value: "safe", icon: <SafetyOutlined /> },
-          { label: "编辑器", value: "editor", icon: <EditOutlined /> },
-          { label: "快捷键", value: "shortcut", icon: <KeyOutlined /> },
+          { label: t("通用"), value: "general", icon: <HomeOutlined /> },
+          { label: t("安全"), value: "safe", icon: <SafetyOutlined /> },
+          { label: t("编辑器"), value: "editor", icon: <EditOutlined /> },
+          { label: t("快捷键"), value: "shortcut", icon: <KeyOutlined /> },
         ]}
       />
       <List style={{ width: "100%" }}>

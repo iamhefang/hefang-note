@@ -2,12 +2,13 @@ import { Form, Select, Switch } from "antd"
 import { ReactNode, useMemo } from "react"
 
 import CodeEditor from "$components/editor/CodeEditor"
-import MarkdownEditor from "$components/editor/MarkdownEditor"
 import usePlugins from "$hooks/usePlugins"
 import { useSettings } from "$hooks/useSelectors"
+import { useTranslate } from "$hooks/useTranslate"
 
 export default function useEditorSettings(): Record<string, ReactNode> {
   const allPlugins = usePlugins()
+  const t = useTranslate()
   const plugins = useMemo(() => {
     return allPlugins.filter((item) => item.components?.includes("Editor"))
   }, [allPlugins])
@@ -32,10 +33,10 @@ export default function useEditorSettings(): Record<string, ReactNode> {
 
   return useMemo(
     () => ({
-      要使用的编辑器: (
+      [t("要使用的编辑器")]: (
         <Form.Item name="editor" noStyle>
           <Select style={{ minWidth: 100 }}>
-            <Select.Option value="default">默认编辑器</Select.Option>
+            <Select.Option value="default">{t("默认编辑器")}</Select.Option>
             {plugins.map((p) => (
               <Select.Option key={`setting-form-editor-${p.id}`} value={p.id}>
                 {p.Editor?.editorName || "未命名编辑器"} - {p.name}
@@ -44,13 +45,13 @@ export default function useEditorSettings(): Record<string, ReactNode> {
           </Select>
         </Form.Item>
       ),
-      编辑器上方显示时间: (
+      [t("编辑器上方显示时间")]: (
         <Form.Item name="showTimeAboveEditor" noStyle valuePropName="checked">
           <Switch />
         </Form.Item>
       ),
       ...options,
     }),
-    [options, plugins],
+    [options, plugins, t],
   )
 }

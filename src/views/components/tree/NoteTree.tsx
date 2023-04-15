@@ -15,6 +15,7 @@ import NoteTreeItemMenu, { MenuInfo, NoteTreeMenuKeys } from "$components/menus/
 import useNewModal from "$hooks/modals/useNewModal"
 import useItemsTree from "$hooks/useItemsTree"
 import { useSettings } from "$hooks/useSelectors"
+import { useTranslate } from "$hooks/useTranslate"
 
 export type NoteTreeProps = {
   search: string
@@ -22,6 +23,7 @@ export type NoteTreeProps = {
 
 export default function NoteTree({ search }: NoteTreeProps) {
   const { current, expandItems } = useSettings()
+  const t = useTranslate()
   const data = useItemsTree(search)
   const [rightClickItem, setRightClickItem] = useState<NoteIndentItem>()
   const dispatch = useAppDispatch()
@@ -133,11 +135,11 @@ export default function NoteTree({ search }: NoteTreeProps) {
             rangeChanged={setRange}
           />
         ) : (
-          <Empty description="没有笔记" />
+          <Empty description={t("没有笔记")} />
         )}
       </NoteTreeItemMenu>
     ),
-    [data, menuOpened, onListRightClick, onMenuClick, rightClickItem],
+    [data, menuOpened, onListRightClick, onMenuClick, rightClickItem, t],
   )
 }
 

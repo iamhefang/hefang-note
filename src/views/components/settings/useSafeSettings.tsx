@@ -3,13 +3,16 @@ import { ReactNode, useMemo, useState } from "react"
 
 import { useSettings } from "~/hooks/useSelectors"
 
+import { useTranslate } from "$hooks/useTranslate"
+
 export default function useSafeSettings(): Record<string, ReactNode> {
   const { lock } = useSettings()
   const [immediately, setImmediately] = useState(lock.immediately)
+  const t = useTranslate()
 
   return useMemo(
     () => ({
-      锁定时不再弹窗提示: (
+      [t("锁定时不再弹窗提示")]: (
         <Space>
           {immediately && (
             <Form.Item name={["lock", "password"]} label="解锁密码" dependencies={["lockImmediately"]}>
@@ -22,6 +25,6 @@ export default function useSafeSettings(): Record<string, ReactNode> {
         </Space>
       ),
     }),
-    [immediately],
+    [immediately, t],
   )
 }
