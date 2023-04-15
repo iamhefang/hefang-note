@@ -10,11 +10,13 @@ import { toggleSettingsModal } from "~/redux/uiSlice"
 import { PluginManager } from "$components/plugins"
 import SettingForm from "$components/settings/SettingForm"
 import { useSettings, useStates } from "$hooks/useSelectors"
+import { useTranslate } from "$hooks/useTranslate"
 
 export default function SettingsModal() {
   const {
     lock: { locked },
   } = useSettings()
+  const t = useTranslate()
   const { showSettingsModal } = useStates()
   const dispatch = useAppDispatch()
   const onCancel = useCallback(() => {
@@ -40,7 +42,7 @@ export default function SettingsModal() {
       title={
         <Space>
           <SettingOutlined />
-          <span>设置</span>
+          <span>{t("设置")}</span>
         </Space>
       }
       keyboard={false}
@@ -61,12 +63,12 @@ export default function SettingsModal() {
         items={[
           {
             key: "settings",
-            label: "设置",
+            label: t("设置"),
             children: <SettingForm />,
           },
           {
             key: "plugins",
-            label: "插件",
+            label: t("插件"),
             children: <PluginManager />,
           },
         ]}

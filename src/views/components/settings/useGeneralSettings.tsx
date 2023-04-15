@@ -1,12 +1,24 @@
-import { Form, List, Select, Space, Switch } from "antd"
+import { Form, Select, SelectProps, Space, Switch } from "antd"
 import { ReactNode, useMemo } from "react"
 
+import { Locales, useTranslate } from "$hooks/useTranslate"
 import { sortItems } from "$utils/sort"
 
 export default function useGeneralSettings(): Record<string, ReactNode> {
+  const t = useTranslate()
+  const languageOptions = useMemo<SelectProps["options"]>(
+    () => [{ label: "跟随系统", value: "auto" }, ...Locales.map(({ name, keys: [key] }) => ({ label: name, value: key }))],
+    [],
+  )
+
   return useMemo(
     () => ({
-      排序方式: (
+      "多语言/Language": (
+        <Form.Item noStyle name="language">
+          <Select options={languageOptions} style={{ minWidth: 150 }} />
+        </Form.Item>
+      ),
+      [t("排序方式")]: (
         <Space>
           <Form.Item name={["sort", "field"]} noStyle>
             <Select style={{ width: 120 }}>
@@ -29,12 +41,12 @@ export default function useGeneralSettings(): Record<string, ReactNode> {
           </Form.Item>
         </Space>
       ),
-      启动时自动检查更新: (
+      [t("启动时自动检查更新")]: (
         <Form.Item noStyle name="autoCheckUpdate" valuePropName="checked">
           <Switch />
         </Form.Item>
       ),
     }),
-    [],
+    [languageOptions, t],
   )
 }

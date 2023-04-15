@@ -4,7 +4,7 @@ import React, { useCallback, useMemo } from "react"
 import { NoteIndentItem } from "~/types"
 
 import { useSettings } from "$hooks/useSelectors"
-
+import { useTranslate } from "$hooks/useTranslate"
 
 export type MenuInfo = {
   key: NoteTreeMenuKeys
@@ -30,28 +30,29 @@ export const enum NoteTreeMenuKeys {
 
 export default function NoteTreeItemMenu({ children, onClick, item, onOpenChange }: NoteTreeItemMenuProps) {
   const onMenuClick = useCallback((info: MenuInfo) => onClick?.(info, item), [item, onClick])
+  const t = useTranslate()
   const { lockedContents } = useSettings()
   const items: MenuProps["items"] = useMemo(() => {
     const _items: MenuProps["items"] = []
     if (!item) {
       return [
-        { key: NoteTreeMenuKeys.newDir, label: "新建目录" },
-        { key: NoteTreeMenuKeys.newNote, label: "新建笔记" },
+        { key: NoteTreeMenuKeys.newDir, label: t("新建目录") },
+        { key: NoteTreeMenuKeys.newNote, label: t("新建笔记") },
       ]
     }
     if (!item.isLeaf) {
-      item.indent < 2 && _items.push({ key: NoteTreeMenuKeys.newDir, label: "新建目录" })
-      _items.push({ key: NoteTreeMenuKeys.newNote, label: "新建笔记" })
+      item.indent < 2 && _items.push({ key: NoteTreeMenuKeys.newDir, label: t("新建目录") })
+      _items.push({ key: NoteTreeMenuKeys.newNote, label: t("新建笔记") })
     }
 
-    _items.push({ type: "divider" }, { key: NoteTreeMenuKeys.rename, label: "重命名" }, { key: NoteTreeMenuKeys.delete, label: "删除" })
+    _items.push({ type: "divider" }, { key: NoteTreeMenuKeys.rename, label: t("重命名") }, { key: NoteTreeMenuKeys.delete, label: t("删除") })
 
     if (!item.indent) {
-      _items.push({ type: "divider" }, { key: NoteTreeMenuKeys.lock, label: lockedContents[item.id] ? "取消锁定" : "锁定" })
+      _items.push({ type: "divider" }, { key: NoteTreeMenuKeys.lock, label: lockedContents[item.id] ? t("取消锁定") : t("锁定") })
     }
 
     return _items
-  }, [item, lockedContents])
+  }, [item, lockedContents, t])
 
   return (
     <Dropdown trigger={["contextMenu"]} menu={{ items, onClick: onMenuClick as never }} onOpenChange={onOpenChange}>

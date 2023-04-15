@@ -1,10 +1,7 @@
 import { readFileSync } from "fs"
 import path from "path"
 
-import MonacoEditorNlsPlugin, {
-  esbuildPluginMonacoEditorNls,
-  Languages,
-} from "@ubia/vite-plugin-monaco-editor-nls"
+import MonacoEditorNlsPlugin, { esbuildPluginMonacoEditorNls, Languages } from "@ubia/vite-plugin-monaco-editor-nls"
 import react from "@vitejs/plugin-react"
 import { internalIpV4 } from "internal-ip"
 import { defineConfig } from "vite"
@@ -15,7 +12,9 @@ import svgr from "vite-plugin-svgr"
 // eslint-disable-next-line import/no-internal-modules
 // import zh_CN from "vscode-loc.git/i18n/vscode-language-pack-zh-hans/translations/main.i18n.json" assert { type: "json" }
 
-const zh_CN = JSON.parse(readFileSync(path.resolve(__dirname, "./node_modules/vscode-loc.git/i18n/vscode-language-pack-zh-hans/translations/main.i18n.json"), "utf-8"))
+const zh_CN = JSON.parse(
+  readFileSync(path.resolve(__dirname, "./node_modules/vscode-loc.git/i18n/vscode-language-pack-zh-hans/translations/main.i18n.json"), "utf-8"),
+)
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => {
@@ -44,9 +43,10 @@ export default defineConfig(async () => {
       alias: {
         "~": path.resolve(__dirname, "src"),
         "^": __dirname,
-        "$hooks": path.resolve(__dirname, "src/hooks"),
-        "$components": path.resolve(__dirname, "src/views/components"),
-        "$utils": path.resolve(__dirname, "src/utils"),
+        $hooks: path.resolve(__dirname, "src/hooks"),
+        $components: path.resolve(__dirname, "src/views/components"),
+        $utils: path.resolve(__dirname, "src/utils"),
+        $locales: path.resolve(__dirname, "src/locales"),
       },
     },
     optimizeDeps: {
@@ -89,21 +89,10 @@ export default defineConfig(async () => {
         // external: ["antd", "react", "react-dom", "lodash"],
         output: {
           manualChunks: {
-            react: [
-              "react",
-              "react-dom",
-              "react-dom/client",
-            ],
-            antd: [
-              "antd",
-            ],
-            icons: [
-              "@ant-design/icons",
-            ],
-            utils: [
-              "lodash",
-              "dayjs",
-            ],
+            react: ["react", "react-dom", "react-dom/client"],
+            antd: ["antd"],
+            icons: ["@ant-design/icons"],
+            utils: ["lodash", "dayjs"],
             "monaco-editor": [
               // "monaco-editor",
               "@monaco-editor/react",
