@@ -4,8 +4,10 @@ import { ChangeEvent, useCallback, useMemo, useState } from "react"
 
 import { PluginInstalled } from "./PluginInstalled"
 import { PluginStore } from "./PluginStore"
+import { useTranslate } from "$hooks/useTranslate"
 
 export function PluginManager() {
+  const t = useTranslate()
   const [search, setSearch] = useState<Record<string, string>>({ installed: "", store: "" })
   const [searchCache, setSearchCache] = useState<Record<string, string>>({ installed: "", store: "" })
   const [activeKey, setActiveKey] = useState<string>("installed")
@@ -23,8 +25,8 @@ export function PluginManager() {
     [activeKey, searchCache],
   )
   const tabBarExtraContent = useMemo(
-    () => <Input.Search placeholder="搜索插件" value={searchCache[activeKey]} onChange={onChange} onSearch={onSearch} allowClear key={activeKey} />,
-    [activeKey, onChange, onSearch, searchCache],
+    () => <Input.Search placeholder={t("搜索插件")} value={searchCache[activeKey]} onChange={onChange} onSearch={onSearch} allowClear key={activeKey} />,
+    [activeKey, onChange, onSearch, searchCache, t],
   )
 
   return (
@@ -38,7 +40,7 @@ export function PluginManager() {
           label: (
             <div>
               <AppstoreOutlined />
-              已安装插件
+              {t("已安装插件")}
             </div>
           ),
           children: <PluginInstalled search={search.installed} />,
@@ -48,7 +50,7 @@ export function PluginManager() {
           label: (
             <div>
               <AppstoreAddOutlined />
-              插件商店
+              {t("插件商店")}
             </div>
           ),
           children: <PluginStore search={search.store} />,

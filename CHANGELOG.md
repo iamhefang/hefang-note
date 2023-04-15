@@ -1,3 +1,19 @@
+The interface and menus of the software already support multilingual (machine translation), and the update log does not plan to do multilingual. If you don’t know Chinese, then come on, Chinese is actually not difficult to learn.
+
+----
+
+ソフトウェアのインターフェイスとメニューは既に多言語 (機械翻訳) をサポートしており、更新ログでは多言語をサポートする予定はありません.
+
+----
+
+Die Oberfläche und Menüs der Software unterstützen bereits Mehrsprachigkeit (maschinelle Übersetzung), und das Update-Protokoll sieht keine Mehrsprachigkeit vor. Wenn Sie kein Chinesisch können, dann komm schon, Chinesisch ist eigentlich nicht schwer zu lernen.
+
+----
+
+## v0.4.0
+
+1. `新增` 软件支持多语言
+
 ## v0.3.1
 
 1. `优化` Monaco编辑器加载速度

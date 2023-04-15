@@ -7,6 +7,7 @@ import { EditorComponent } from "~/plugin/types"
 
 import { useDefaultEditorOptions, useSettings } from "$hooks/useSelectors"
 import { useThemeConfig } from "$hooks/useThemeConfig"
+import { useTranslate } from "$hooks/useTranslate"
 import { rgb2rrggbb } from "$utils/color"
 
 self.MonacoEnvironment = {
@@ -46,6 +47,7 @@ loader.config({
 
 const CodeEditor: EditorComponent = ({ value, onChange, onBlur, onFocus }) => {
   const { token } = themeAntd.useToken()
+  const t = useTranslate()
   const monaco = useMonaco()
   const editorOptions = useDefaultEditorOptions()
   const { theme } = useSettings()
@@ -96,7 +98,7 @@ const CodeEditor: EditorComponent = ({ value, onChange, onBlur, onFocus }) => {
     [onChange, value],
   )
 
-  return <Editor language="markdown" value={value} onChange={onValueChange} options={options} onMount={onMount} loading={<Spin tip="编辑器加载中" />} />
+  return <Editor language="markdown" value={value} onChange={onValueChange} options={options} onMount={onMount} loading={<Spin tip={t("编辑器加载中")} />} />
 }
 
 const fontSize = [12, 14, 16, 18, 20, 22]

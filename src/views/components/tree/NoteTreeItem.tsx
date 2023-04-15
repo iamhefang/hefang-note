@@ -15,6 +15,7 @@ import ss from "./NoteTree.module.scss"
 
 import { iconPlacehodler } from "$components/icons/IconPlaceholder"
 import { useNotes, useSettings } from "$hooks/useSelectors"
+import { useTranslate } from "$hooks/useTranslate"
 
 export default function NoteTreeItem({
   item,
@@ -25,6 +26,7 @@ export default function NoteTreeItem({
   const { current, expandItems, lockedContents } = useSettings()
   const { renamingId } = useNotes()
   const { token } = theme.useToken()
+  const t = useTranslate()
   const { message } = App.useApp()
   const noteLocked = useNoteLocked(item.id)
   const dispatch = useAppDispatch()
@@ -51,12 +53,12 @@ export default function NoteTreeItem({
     (e: React.FocusEvent<HTMLInputElement>) => {
       const newName = e.currentTarget.value
       if (!newName.trim()) {
-        void message.warning("名称不为能空")
+        void message.warning(t("名称不为能空"))
       } else {
         dispatch(stopRenaming({ id: item.id, newName }))
       }
     },
-    [dispatch, item, message],
+    [dispatch, item.id, message, t],
   )
 
   const onRenameKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -145,7 +147,7 @@ export default function NoteTreeItem({
           <Button
             onClick={onLockClick}
             disabled={noteLocked}
-            icon={noteLocked ? <LockOutlined title={`该${item.isLeaf ? "笔记" : "目录"}已锁定`} /> : <UnlockOutlined title="立即锁定" />}
+            icon={noteLocked ? <LockOutlined title={t(item.isLeaf ? "该笔记已锁定" : "该目录已锁定")} /> : <UnlockOutlined title={t("立即锁定")} />}
             size="small"
             type="text"
           />

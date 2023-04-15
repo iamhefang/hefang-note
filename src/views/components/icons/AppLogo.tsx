@@ -7,6 +7,7 @@ import { toggleSettingsModal } from "~/redux/uiSlice"
 
 import CommonMenuItem from "$components/menus/CommonMenuItem"
 import { usePlatformType } from "$hooks/usePlatform"
+import { useTranslate } from "$hooks/useTranslate"
 import { shortcuts } from "$utils/shortcuts"
 import { exitProcess } from "$utils/window"
 import pkg from "^/package.json"
@@ -14,6 +15,7 @@ import logo from "^/src-tauri/icons/icon.png"
 
 export default function AppLogo() {
   const dispatch = useAppDispatch()
+  const t = useTranslate()
   const toggleSettings = useCallback(() => {
     dispatch(toggleSettingsModal(null))
   }, [dispatch])
@@ -26,13 +28,13 @@ export default function AppLogo() {
       width: 500,
       content: (
         <Descriptions column={1} size="small">
-          <Descriptions.Item label="版本号">v{pkg.version}</Descriptions.Item>
-          <Descriptions.Item label="源码版本">{import.meta.env.VITE_COMMIT}</Descriptions.Item>
-          <Descriptions.Item label="平台">{osType}</Descriptions.Item>
+          <Descriptions.Item label={t("版本号")}>v{pkg.version}</Descriptions.Item>
+          <Descriptions.Item label={t("源码版本")}>{import.meta.env.VITE_COMMIT}</Descriptions.Item>
+          <Descriptions.Item label={t("平台")}>{osType}</Descriptions.Item>
         </Descriptions>
       ),
     })
-  }, [modal, osType])
+  }, [modal, osType, t])
   useEffect(() => {
     if (!isInTauri) {
       return
