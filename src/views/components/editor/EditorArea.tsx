@@ -10,6 +10,7 @@ import { useAppDispatch } from "~/redux"
 import { updateContent } from "~/redux/noteSlice"
 
 import CodeEditor from "./CodeEditor"
+import MarkdownEditor from "./MarkdownEditor"
 
 import NoteUnlocker from "$components/locker/NoteUnlocker"
 import { usePluginMap } from "$hooks/usePlugins"
@@ -30,7 +31,7 @@ export default function EditorArea() {
   const item = useMemo(() => entities[current], [current, entities])
   const plugins = usePluginMap()
   const Editor: EditorComponent = useMemo(() => {
-    return editor && plugins[editor]?.Editor ? plugins[editor].Editor! : CodeEditor
+    return editor && plugins[editor]?.Editor ? plugins[editor].Editor! : MarkdownEditor
   }, [editor, plugins])
 
   const refSaveTimer = useRef(0)
