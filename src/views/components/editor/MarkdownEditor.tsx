@@ -33,9 +33,10 @@ import ss from "./MarkdownEditor.module.scss"
 import { placeholder, placeholderCtx } from "./MarkdownEditorPlaceholder"
 import MarkdownEditorToolbar, { defaultToolbarItems } from "./MarkdownEditorToolbar"
 
-import { useDefaultEditorOptions, useEditorOptions } from "$hooks/useSelectors"
+import { useEditorOptions } from "$hooks/useSelectors"
 
 import "katex/dist/katex.min.css"
+import _ from "lodash"
 
 function MilkdownEditor({
   value,
@@ -46,8 +47,16 @@ function MilkdownEditor({
   placeholder: placeholderContent,
   noteId,
 }: IEditorProps & { onEditorCreated: (editor: Editor) => void }) {
-  const options = useDefaultEditorOptions()
-  // const [lastNoteId, setLastNoteId] = useState<string>()
+  const [lastNoteId, setLastNoteId] = useState<string>()
+  const onMarkdownUpdated = useCallback(
+    (ctx: Ctx, markdownValue: string, prevMarkdown: string | null) => {
+      console.info("markdown变化", markdownValue.length, prevMarkdown?.length)
+      if (markdownValue !== prevMarkdown && markdownValue !== value && lastNoteId === noteId) {
+        onChange?.(markdownValue)
+      }
+    },
+    [lastNoteId, noteId, onChange, value],
+  )
   const { loading, get: getEditor } = useEditor((root) => {
     const editor = Editor.make()
     editor
@@ -59,27 +68,23 @@ function MilkdownEditor({
         ctx.set(katexOptionsCtx.key, { output: "mathml", throwOnError: false, colorIsTextColor: true, trust: true })
         const manager = ctx.get(listenerCtx)
         manager
-          .markdownUpdated((_ctx, _pre, val) => {
-            // if (noteId === lastNoteId) {
-            onChange(val || "")
-            // }
-          })
+          .markdownUpdated(onMarkdownUpdated)
           .blur((_ctx) => onBlur?.())
           .focus((_ctx) => onFocus?.())
-        options.highlightCodeBlock &&
-          ctx.set(prismConfig.key, {
-            configureRefractor: (refractor) => {
-              refractor.register(markdown)
-              refractor.register(css)
-              refractor.register(javascript)
-              refractor.register(typescript)
-              refractor.register(jsx)
-              refractor.register(tsx)
-              refractor.register(cpp)
-              refractor.register(rust)
-              refractor.register(matlab)
-            },
-          })
+        // options.highlightCodeBlock &&
+        ctx.set(prismConfig.key, {
+          configureRefractor: (refractor) => {
+            refractor.register(markdown)
+            refractor.register(css)
+            refractor.register(javascript)
+            refractor.register(typescript)
+            refractor.register(jsx)
+            refractor.register(tsx)
+            refractor.register(cpp)
+            refractor.register(rust)
+            refractor.register(matlab)
+          },
+        })
       })
       .use(commonmark)
       .use(gfm)
@@ -91,8 +96,8 @@ function MilkdownEditor({
       .use(diagram)
       .use(math)
       .use(placeholder)
-
-    options.highlightCodeBlock && editor.use(prism)
+      .use(prism)
+    // options.highlightCodeBlock &&
 
     return editor
   }, [])
@@ -102,15 +107,15 @@ function MilkdownEditor({
     editor && onEditorCreated(editor)
   }, [getEditor, loading, onEditorCreated])
 
-  // useEffect(() => {
-  //   // if (lastNoteId === noteId) {
-  //   //   return
-  //   // }
-  //   const editor = getEditor()
-  //   // editor?.action(replaceAll(value))
-  //   // setLastNoteId(noteId)
-  //   editor?.ctx.set(defaultValueCtx, value)
-  // }, [value, getEditor, lastNoteId, noteId])
+  useEffect(() => {
+    if (lastNoteId === noteId) {
+      return
+    }
+    const editor = getEditor()
+    editor?.action(replaceAll(value))
+    setLastNoteId(noteId)
+    editor?.ctx.set(defaultValueCtx, value)
+  }, [value, getEditor, lastNoteId, noteId])
 
   return useMemo(
     () => (
@@ -134,7 +139,7 @@ const MarkdownEditor: EditorComponent = (props) => {
     <MilkdownProvider>
       <ProsemirrorAdapterProvider>
         <div className={ss.root}>
-          {editorOptions.showToolbar ? <MarkdownEditorToolbar items={defaultToolbarItems} ctx={ctx} /> : null}
+          <MarkdownEditorToolbar items={defaultToolbarItems} ctx={ctx} />
           <MilkdownEditor {...props} onEditorCreated={onEditorCreated} />
         </div>
       </ProsemirrorAdapterProvider>

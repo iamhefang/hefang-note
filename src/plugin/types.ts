@@ -5,7 +5,7 @@ import store from "~/redux"
 import { noteSlice } from "~/redux/noteSlice"
 import { settingSlice } from "~/redux/settingSlice"
 import { uiSlice } from "~/redux/uiSlice"
-import { ThemeDefine, ThemeType } from "~/types"
+import { NoteItem, ThemeDefine, ThemeType } from "~/types"
 
 import { PlatformType } from "$hooks/usePlatform"
 
@@ -52,7 +52,18 @@ export interface IEditorProps {
 }
 
 export interface IPluginHooks {
+  /**
+   * 主题变动后回调
+   * @param theme 变化后的主题
+   * @param token  变化后的主题颜色定义
+   */
   onThemeChange(theme: ThemeType, token: GlobalToken): void
+  /**
+   * 笔记保存到数据库后回调
+   * @param note 保存的笔记信息
+   * @param content 保存的笔记内容
+   */
+  onContentSave(note: NoteItem, content: string): void
 }
 
 export interface IPluginLifecycle {
