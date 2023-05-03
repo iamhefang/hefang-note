@@ -1,5 +1,5 @@
 import { InfoCircleOutlined } from "@ant-design/icons"
-import { theme as antdTheme, Col, Layout, Row, Spin } from "antd"
+import { theme as antdTheme, Col, Layout, Row, Space, Spin } from "antd"
 import { Resizable, ResizeCallback } from "re-resizable"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
@@ -13,6 +13,7 @@ import TopBarRight from "$components/topbar/TopBarRight"
 import VersionView from "$components/version/VersionView"
 import { useNotes, useSettings } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
+import usePluginFooterTopComponents from "$plugin/hooks/usePluginFooterTopComponents"
 import { shortcuts } from "$utils/shortcuts"
 import { closeWindow } from "$utils/window"
 
@@ -79,6 +80,8 @@ export default function View() {
   useEffect(() => {
     localStorage.setItem("bgColor", colorBgBase)
   }, [colorBgBase, theme])
+  const left = usePluginFooterTopComponents("FooterLeft")
+  const right = usePluginFooterTopComponents("FooterRight")
 
   const title = useMemo(() => {
     if (locked) {
@@ -116,14 +119,20 @@ export default function View() {
       </Layout>
       <Footer style={{ borderColor: colorBorder }}>
         <Row gutter={10}>
-          <Col>{footer}</Col>
-          {loadStatus && <Col>{loadStatus}</Col>}
+          <Col>
+            <Space>
+              {footer}
+              {loadStatus}
+              {...left}
+            </Space>
+          </Col>
           <Col flex={1} />
           <Col>
-            <Github />
-          </Col>
-          <Col>
-            <VersionView />
+            <Space>
+              {...right}
+              <Github />
+              <VersionView />
+            </Space>
           </Col>
         </Row>
       </Footer>

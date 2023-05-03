@@ -47,6 +47,7 @@ export default defineConfig(async () => {
         $components: path.resolve(__dirname, "src/views/components"),
         $utils: path.resolve(__dirname, "src/utils"),
         $locales: path.resolve(__dirname, "src/locales"),
+        $plugin: path.resolve(__dirname, "src/plugin"),
       },
     },
     optimizeDeps: {

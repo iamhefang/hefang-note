@@ -1,6 +1,5 @@
 import type { ThemeConfig } from "antd"
-import { type } from "os"
-import type { CSSProperties, ReactNode } from "react"
+import type { ReactNode } from "react"
 
 declare global {
   function isContentEditable(electron: Element | null | EventTarget): boolean

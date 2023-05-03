@@ -9,17 +9,21 @@ import { NoteItem, ThemeDefine, ThemeType } from "~/types"
 
 import { PlatformType } from "$hooks/usePlatform"
 
+/**
+ * 插件信息
+ * 在插件目录下的 index.json 里面定义这些信息
+ */
 export interface IPluginInfo {
   id: string
   name: string
   version: string
-  logo?: string
-  description?: string
-  author?: string
-  license?: string
-  homepage?: string
-  repository?: string
-  dependencies?: string[]
+  logo?: string | null
+  description?: string | null
+  author?: string | null
+  license?: string | null
+  homepage?: string | null
+  repository?: string | null
+  dependencies?: string[] | null
   /**
    * 插件支持的平台和版本
    */
@@ -36,11 +40,16 @@ export interface IPluginInfo {
   enable?: boolean
 }
 export type PluginSupport = { platform: PlatformType[]; version: string }
-
 export type PluginAbility = keyof IPluginAbility
 export type PluginComponents = keyof IPluginComponents
 export type PluginHookKeys = keyof IPluginHooks
-export interface IPlugin extends IPluginInfo, Partial<IPluginHooks>, Partial<IPluginComponents>, Partial<IPluginAbility>, Partial<IPluginLifecycle> {}
+
+/**
+ * 插件代码导出的信息
+ */
+export interface IPluginObject extends Partial<IPluginHooks>, Partial<IPluginComponents>, Partial<IPluginAbility>, Partial<IPluginLifecycle> {}
+
+export interface IPlugin extends IPluginInfo, IPluginObject {}
 
 export interface IEditorProps {
   value: string
@@ -67,10 +76,24 @@ export interface IPluginHooks {
 }
 
 export interface IPluginLifecycle {
+  /**
+   * 插件安装时回调
+   */
   onInstall(): void
+  /**
+   * 插件卸载时回调
+   */
   onUninstall(): void
+  /**
+   */
   onEnable(): void
+  /**
+   * 插件禁用时回调
+   */
   onDisable(): void
+  /**
+   * 插件升级时回调
+   */
   onUpdate(): void
 }
 
@@ -91,6 +114,9 @@ export type FooterTopComponent = (ComponentClass<IFooterTopComponentProps> | FC<
   order?: number
 }
 
+/**
+ * 插件提供的组件
+ */
 export interface IPluginComponents {
   Editor: EditorComponent
   FooterLeft: FooterTopComponent
@@ -99,6 +125,9 @@ export interface IPluginComponents {
   TopRight: FooterTopComponent
 }
 
+/**
+ * 插件提供的能力
+ */
 export interface IPluginAbility {
   theme: ThemeDefine
 }

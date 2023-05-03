@@ -4,8 +4,9 @@ import { Button } from "antd"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { useTranslate } from "$hooks/useTranslate"
+import { FooterTopComponent } from "$plugin/types"
 
-export default function AlwaysOnTop() {
+const AlwaysOnTop: FooterTopComponent = () => {
   const t = useTranslate()
   const [enable, setEnable] = useState(false)
   const onClick = useCallback(() => {
@@ -19,3 +20,7 @@ export default function AlwaysOnTop() {
 
   return <Button type="text" icon={enable ? <PushpinFilled /> : <PushpinOutlined />} size="small" onClick={onClick} title={title} />
 }
+
+AlwaysOnTop.order = 8
+
+export default AlwaysOnTop
