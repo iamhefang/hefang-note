@@ -8,7 +8,7 @@ import IconSun from "~/views/icons/sun.svg"
 import IconSunglasses from "~/views/icons/sunglasses.svg"
 
 import useIsDarkScheme from "./useIsDarkScheme"
-import usePlugins from "./usePlugins"
+import usePlugins from "../plugin/hooks/usePlugins"
 
 export default function useThemes(): Themes {
   const isDark = useIsDarkScheme()

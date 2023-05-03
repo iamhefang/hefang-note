@@ -2,7 +2,7 @@ import { Form, Select, Switch } from "antd"
 import { ReactNode, useMemo } from "react"
 
 import CodeEditor from "$components/editor/CodeEditor"
-import usePlugins from "$hooks/usePlugins"
+import usePlugins from "~/plugin/hooks/usePlugins"
 import { useSettings } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
 

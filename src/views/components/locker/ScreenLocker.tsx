@@ -1,7 +1,6 @@
 import { LockOutlined, UnlockOutlined } from "@ant-design/icons"
 import { appWindow } from "@tauri-apps/api/window"
 import { App, Button, Form, Input, Modal, theme } from "antd"
-import _ from "lodash"
 import { useCallback, useEffect } from "react"
 
 import { isInTauri } from "~/consts"
@@ -12,9 +11,10 @@ import ss from "./ScreenLocker.module.scss"
 
 import { useSettings } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
+import { FooterTopComponent } from "$plugin/types"
 import { shortcuts } from "$utils/shortcuts"
 
-export default function ScreenLocker() {
+const ScreenLocker: FooterTopComponent = () => {
   const {
     lock: { locked, password, immediately },
     shortcut,
@@ -115,3 +115,6 @@ export default function ScreenLocker() {
     </>
   )
 }
+
+ScreenLocker.order = 5
+export default ScreenLocker

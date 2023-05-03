@@ -1,3 +1,10 @@
+/*
+ * @Author: iamhefang he@hefang.link
+ * @LastEditors: iamhefang he@hefang.link
+ * @LastEditTime: 2023-05-03 10:23:00
+ * @Date: 2023-05-03 08:46:29
+ * @Description:
+ */
 import { shell } from "@tauri-apps/api"
 import { Col, Row, Space, Tag } from "antd"
 import React, { useMemo } from "react"
@@ -16,10 +23,10 @@ function pluginAbilities(value: PluginAbility) {
 
 const components: Record<PluginComponents, string> = {
   Editor: "编辑器",
-  FooterLeft: "",
-  FooterRight: "",
-  TopLeft: "",
-  TopRight: "",
+  FooterLeft: "状态栏左",
+  FooterRight: "状态栏右",
+  TopLeft: "标题栏左",
+  TopRight: "标题栏右",
 }
 
 function pluginComponents(value: PluginComponents) {

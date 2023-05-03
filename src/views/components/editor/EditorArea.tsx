@@ -13,7 +13,7 @@ import CodeEditor from "./CodeEditor"
 import MarkdownEditor from "./MarkdownEditor"
 
 import NoteUnlocker from "$components/locker/NoteUnlocker"
-import { usePluginMap } from "$hooks/usePlugins"
+import { usePluginMap } from "~/plugin/hooks/usePlugins"
 import { useNotes, useSettings } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
 import { contentStore } from "$utils/database"
