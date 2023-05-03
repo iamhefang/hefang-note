@@ -2,12 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext",
-      "WebWorker"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ESNext", "WebWorker"],
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": false,
@@ -22,29 +17,16 @@
     "jsx": "react-jsx",
     "baseUrl": "./",
     "paths": {
-      "$hooks/*": [
-        "src/hooks/*"
-      ],
-      "$utils/*": [
-        "src/utils/*"
-      ],
-      "$components/*": [
-        "src/views/components/*"
-      ],
-      "$locales/*": [
-        "src/locales/*"
-      ],
-      "~/*": [
-        "src/*"
-      ],
-      "^/*": [
-        "*"
-      ]
+      "$hooks/*": ["src/hooks/*"],
+      "$plugin/*": ["src/plugin/*"],
+      "$utils/*": ["src/utils/*"],
+      "$components/*": ["src/views/components/*"],
+      "$locales/*": ["src/locales/*"],
+      "~/*": ["src/*"],
+      "^/*": ["*"]
     }
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "references": [
     {
       "path": "./tsconfig.node.json"

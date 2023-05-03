@@ -1,7 +1,13 @@
+/*
+ * @Author: iamhefang he@hefang.link
+ * @LastEditors: iamhefang he@hefang.link
+ * @LastEditTime: 2023-05-03 10:25:53
+ * @Date: 2023-05-03 08:46:29
+ * @Description:
+ */
 import { Avatar, List, Space, Switch, Tag } from "antd"
 import { useCallback, useMemo } from "react"
 
-import { IPlugin } from "~/plugin/types"
 import { useAppDispatch } from "~/redux"
 import { switchPlugin } from "~/redux/settingSlice"
 
@@ -9,8 +15,9 @@ import { PluginDescription } from "./PluginDescription"
 import { PluginProps } from "./types"
 
 import useAntdConfirm from "$hooks/useAntdConfirm"
-import usePlugins from "$hooks/usePlugins"
 import { useSettings } from "$hooks/useSelectors"
+import usePlugins from "$plugin/hooks/usePlugins"
+import { IPlugin } from "$plugin/types"
 
 export function PluginInstalled({ search }: PluginProps) {
   const { editor, theme } = useSettings()
@@ -21,7 +28,7 @@ export function PluginInstalled({ search }: PluginProps) {
     (plugin: IPlugin) => {
       return async (checked: boolean) => {
         checked ? plugin.onEnable?.() : plugin.onDisable?.()
-        let sureClose = true
+        let confirmed = true
         if (!checked) {
           const items = []
           if (plugin.id === editor) {
@@ -30,7 +37,7 @@ export function PluginInstalled({ search }: PluginProps) {
           if (plugin.id === theme) {
             items.push("主题")
           }
-          sureClose =
+          confirmed =
             items.length === 0 ||
             (await showConfirm({
               title: `正在使用插件提供的${items.join("、")}`,
@@ -38,7 +45,8 @@ export function PluginInstalled({ search }: PluginProps) {
               okText: "关闭",
             }))
         }
-        if (sureClose) {
+        if (confirmed) {
+          checked ? plugin.onEnable?.() : plugin.onDisable?.()
           dispatch(switchPlugin(plugin.id))
         }
       }
