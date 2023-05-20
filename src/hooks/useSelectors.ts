@@ -9,7 +9,6 @@ export function useSettings(): Settings {
 export function useStates(): UIState {
     return useSelector<StoreState, UIState>(s => s.states)
 }
-
 export function usePluginState(): PluginState {
     return useSelector<StoreState, PluginState>(s => s.plugins)
 }
