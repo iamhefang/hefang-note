@@ -1,7 +1,7 @@
 {
   "name": "hefang-note",
   "productName": "何方笔记",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "license": "GPL3",
   "type": "module",
   "repository": {
@@ -46,7 +46,7 @@
     "@tauri-apps/api": "1.2.0",
     "@ubia/vite-plugin-monaco-editor-nls": "^2.0.5",
     "ajv": "^8.12.0",
-    "antd": "^5.3.1",
+    "antd": "^5.5.0",
     "dayjs": "^1.11.7",
     "idb": "^7.1.1",
     "jssm4": "^1.0.3",

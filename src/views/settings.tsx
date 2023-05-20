@@ -45,7 +45,6 @@ export default function SettingsModal() {
           <span>{t("设置")}</span>
         </Space>
       }
-      keyboard={false}
       destroyOnClose
       footer={null}
       maskClosable={false}
@@ -53,7 +52,6 @@ export default function SettingsModal() {
       onCancel={onCancel}
       width="90%"
       style={{
-        maxHeight: "90%",
         maxWidth: 1000,
         top: "calc(var(--top-bar-height) + 10px)",
       }}

@@ -7,14 +7,14 @@ import useLockContentModal from "~/hooks/modals/useLockContentModal"
 import { useAppDispatch } from "~/redux"
 import { startRenaming } from "~/redux/noteSlice"
 import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
-import type { NoteIndentItem } from "~/types"
+import { setRightClickItem } from "~/redux/uiSlice"
 
+import useNewNoteDispatcher from "./hooks/useNewNoteDispatcher"
 import { MemodNoteTreeItem } from "./NoteTreeItem"
 
 import NoteTreeItemMenu, { MenuInfo, NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
-import useNewModal from "$hooks/modals/useNewModal"
 import useItemsTree from "$hooks/useItemsTree"
-import { useSettings } from "$hooks/useSelectors"
+import { useSettings, useStates } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
 
 export type NoteTreeProps = {
@@ -25,15 +25,14 @@ export default function NoteTree({ search }: NoteTreeProps) {
   const { current, expandItems } = useSettings()
   const t = useTranslate()
   const data = useItemsTree(search)
-  const [rightClickItem, setRightClickItem] = useState<NoteIndentItem>()
   const dispatch = useAppDispatch()
   const [range, setRange] = useState<ListRange>({ startIndex: 0, endIndex: data.length })
-  const showNewModal = useNewModal()
   const showLockModal = useLockContentModal()
   const showDeleteModal = useDeleteModal()
   const refVirtuoso = useRef<VirtuosoHandle>(null)
   const [menuOpened, setMenuOpened] = useState(false)
-
+  const { rightClickedItem } = useStates()
+  const newNoteDispatch = useNewNoteDispatcher(rightClickedItem?.id)
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (!current || isContentEditable(document.activeElement)) {
@@ -86,42 +85,44 @@ export default function NoteTree({ search }: NoteTreeProps) {
       window.removeEventListener("keydown", onKeyDown)
     }
   }, [current, data, dispatch, expandItems, range, range.endIndex, range.startIndex])
-
+  useEffect(() => {
+    menuOpened || dispatch(setRightClickItem(undefined))
+  }, [dispatch, menuOpened])
   const onMenuClick = useCallback(
     (info: MenuInfo) => {
       switch (info.key) {
         case NoteTreeMenuKeys.rename:
-          rightClickItem && dispatch(startRenaming(rightClickItem.id))
+          rightClickedItem && dispatch(startRenaming(rightClickedItem.id))
           break
         case NoteTreeMenuKeys.delete:
-          rightClickItem && showDeleteModal(rightClickItem)
+          rightClickedItem && showDeleteModal(rightClickedItem)
           break
         case NoteTreeMenuKeys.newDir:
         case NoteTreeMenuKeys.newNote:
-          showNewModal(info, rightClickItem?.id)
+          newNoteDispatch(info.key === NoteTreeMenuKeys.newNote)
           break
         case NoteTreeMenuKeys.lock:
-          showLockModal(rightClickItem)
+          showLockModal(rightClickedItem)
           break
         default:
           console.warn("未生效的菜单")
       }
     },
-    [rightClickItem, dispatch, showDeleteModal, showNewModal, showLockModal],
+    [rightClickedItem, dispatch, showDeleteModal, newNoteDispatch, showLockModal],
   )
 
   const onListRightClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       const pathes = e.nativeEvent.composedPath()
       const itemId = (pathes.find((path) => path instanceof HTMLDivElement && path.getAttribute("data-id")) as HTMLDivElement)?.getAttribute("data-id")
-      setRightClickItem(data.find((item) => item.id === itemId))
+      dispatch(setRightClickItem(data.find((item) => item.id === itemId)))
     },
-    [data],
+    [data, dispatch],
   )
 
   return useMemo(
     () => (
-      <NoteTreeItemMenu item={rightClickItem} onClick={onMenuClick} onOpenChange={setMenuOpened}>
+      <NoteTreeItemMenu onClick={onMenuClick} onOpenChange={setMenuOpened}>
         {data.length ? (
           <Virtuoso
             style={{ overflowY: menuOpened ? "hidden" : "auto" }}
@@ -139,7 +140,7 @@ export default function NoteTree({ search }: NoteTreeProps) {
         )}
       </NoteTreeItemMenu>
     ),
-    [data, menuOpened, onListRightClick, onMenuClick, rightClickItem, t],
+    [data, menuOpened, onListRightClick, onMenuClick, t],
   )
 }
 

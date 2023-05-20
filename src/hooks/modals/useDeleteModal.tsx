@@ -3,8 +3,10 @@ import { useCallback } from "react"
 
 import { useAppDispatch } from "~/redux"
 import { deleteNote } from "~/redux/noteSlice"
+import { setCurrent } from "~/redux/settingSlice"
 import { NoteItem } from "~/types"
 
+import useCurrent from "$hooks/useCurrent"
 import useItemArray from "$hooks/useItemArray"
 import { useSettings } from "$hooks/useSelectors"
 
@@ -14,6 +16,7 @@ export default function useDeleteModal() {
   const { modal } = App.useApp()
   const { lockedContents } = useSettings()
   const [form] = Form.useForm()
+  const [current] = useCurrent()
 
   return useCallback(
     (note: NoteItem) => {
@@ -47,10 +50,11 @@ export default function useDeleteModal() {
                 </Form.Item>
               </Space>
             )}
-            {!note.isLeaf && children.length && (
+            {!note.isLeaf && children.length ? (
               <Form.Item
                 name="deleteChildren"
                 label="同时删除目录下所有子目录和笔记"
+                valuePropName="checked"
                 tooltip={
                   <Space direction="vertical">
                     <span>是：该目录下所有的笔记和子目录都将被删除</span>
@@ -60,21 +64,25 @@ export default function useDeleteModal() {
               >
                 <Switch checkedChildren="是" unCheckedChildren="否" />
               </Form.Item>
-            )}
+            ) : null}
           </Form>
         ),
         onOk(closeModal) {
           void form.validateFields().then(({ deleteChildren }) => {
             dispatch(deleteNote({ noteId: note.id, deleteChildren }))
+            if (current === note.id) {
+              dispatch(setCurrent(undefined))
+            }
             form.resetFields()
             closeModal()
           })
         },
+        okButtonProps: { danger: true },
         onCancel() {
           form.resetFields()
         },
       })
     },
-    [dispatch, form, itemArray, lockedContents, modal],
+    [current, dispatch, form, itemArray, lockedContents, modal],
   )
 }
