@@ -91,6 +91,7 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
             void notesStore.set({ ...state.entities[id] })
         },
         newNote(state, action: PayloadAction<NoteItem>) {
+            console.info("新笔记", action.payload)
             state.ids.push(action.payload.id)
             state.entities[action.payload.id] = action.payload
             void notesStore.set(action.payload)

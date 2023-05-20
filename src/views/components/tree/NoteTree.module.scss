@@ -14,10 +14,16 @@
   border-radius: 4px;
   user-select: none;
   box-sizing: border-box;
-  border: thin solid transparent;
-  transition: border-color .3s;
+  transition: background-color .2s ease-in-out;
 
-  &:not(:hover) {
-    border-color: transparent !important;
+  border: 1.5px solid transparent;
+
+  &[data-active=true] {
+    background-color: var(--active-bg-color);
+    color: var(--active-text-color);
+  }
+
+  &[data-menu-open=true] {
+    border-color: var(--hover-bg-color);
   }
 }

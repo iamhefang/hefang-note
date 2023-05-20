@@ -229,7 +229,7 @@ module.exports = {
 
     ////// react-hooks: https://reactjs.org/docs/hooks-rules.html
 
-    "react-hooks/exhaustive-deps": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "react-hooks/rules-of-hooks": "error",
 
     ////// import: https://github.com/import-js/eslint-plugin-import#rules

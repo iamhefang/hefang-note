@@ -3,7 +3,7 @@ import React, { useCallback, useMemo } from "react"
 
 import { NoteIndentItem } from "~/types"
 
-import { useSettings } from "$hooks/useSelectors"
+import { useSettings, useStates } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
 
 export type MenuInfo = {
@@ -16,7 +16,6 @@ export type MenuInfo = {
 export type NoteTreeMenuOnClick = (info: MenuInfo, item?: NoteIndentItem) => void
 export type NoteTreeItemMenuProps = React.PropsWithChildren<{
   onClick?: NoteTreeMenuOnClick
-  item?: NoteIndentItem
   onOpenChange: DropdownProps["onOpenChange"]
 }>
 
@@ -28,11 +27,18 @@ export const enum NoteTreeMenuKeys {
   lock = "lock",
 }
 
-export default function NoteTreeItemMenu({ children, onClick, item, onOpenChange }: NoteTreeItemMenuProps) {
-  const onMenuClick = useCallback((info: MenuInfo) => onClick?.(info, item), [item, onClick])
+export default function NoteTreeItemMenu({ children, onClick, onOpenChange }: NoteTreeItemMenuProps) {
+  const { rightClickedItem: item } = useStates()
+  const onMenuClick = useCallback(
+    (info: MenuInfo) => {
+      onClick?.(info, item)
+      onOpenChange?.(false)
+    },
+    [onClick, onOpenChange, item],
+  )
   const t = useTranslate()
   const { lockedContents } = useSettings()
-  const items: MenuProps["items"] = useMemo(() => {
+  const items = useMemo<MenuProps["items"]>(() => {
     const _items: MenuProps["items"] = []
     if (!item) {
       return [
@@ -44,11 +50,16 @@ export default function NoteTreeItemMenu({ children, onClick, item, onOpenChange
       item.indent < 2 && _items.push({ key: NoteTreeMenuKeys.newDir, label: t("新建目录") })
       _items.push({ key: NoteTreeMenuKeys.newNote, label: t("新建笔记") })
     }
-
-    _items.push({ type: "divider" }, { key: NoteTreeMenuKeys.rename, label: t("重命名") }, { key: NoteTreeMenuKeys.delete, label: t("删除") })
+    if (_items.length) {
+      _items.push({ type: "divider" })
+    }
+    _items.push({ key: NoteTreeMenuKeys.rename, label: t("重命名") }, { key: NoteTreeMenuKeys.delete, label: t("删除") })
 
     if (!item.indent) {
-      _items.push({ type: "divider" }, { key: NoteTreeMenuKeys.lock, label: lockedContents[item.id] ? t("取消锁定") : t("锁定") })
+      if (_items.length) {
+        _items.push({ type: "divider" })
+      }
+      _items.push({ key: NoteTreeMenuKeys.lock, label: lockedContents[item.id] ? t("取消锁定") : t("锁定") })
     }
 
     return _items

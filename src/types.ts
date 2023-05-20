@@ -82,6 +82,7 @@ export type UIState = {
   exporting: boolean
   // key: 笔记的id，value: 解锁有效期
   unlockedContents: { [id: string]: number }
+  rightClickedItem?: NoteIndentItem
 }
 export type StoreState = {
   settings: Settings
@@ -95,7 +96,7 @@ export type NoteState = {
   entities: { [id: string]: NoteItem }
   initializing: boolean
   status: "loading" | "idle" | "failed"
-  renamingId?: string
+  renamingId?: string | "new-note" | "new-dir"
 }
 export type PluginState = {
   entities: string[]

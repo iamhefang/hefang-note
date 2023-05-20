@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, SliceCaseReducers } from "@reduxjs/toolkit"
 
-import { UIState } from "~/types"
+import { NoteIndentItem, UIState } from "~/types"
 
 const sliceName = "states"
 
@@ -27,7 +27,10 @@ export const uiSlice = createSlice<UIState, SliceCaseReducers<UIState>>({
         ready(state) {
             state.launching = false
         },
+        setRightClickItem(state, action: PayloadAction<NoteIndentItem>) {
+            state.rightClickedItem = action.payload
+        },
     },
 })
 
-export const { toggleSettingsModal, startRenaming, stopRenaming, ready, unlockContent, relockContent } = uiSlice.actions
+export const { toggleSettingsModal, ready, unlockContent, relockContent, setRightClickItem } = uiSlice.actions
