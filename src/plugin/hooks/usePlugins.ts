@@ -13,6 +13,7 @@ import { isInTauri } from "~/consts"
 import { IPlugin, IPluginInfo } from "~/plugin/types"
 
 import { createObjectURL } from "$utils/url"
+import { useSettings } from "$hooks/useSelectors"
 
 async function require(path: string): Promise<IPlugin> {
   const js = await readTextFile(path)
