@@ -15,10 +15,11 @@ tauri-build = { version = "1.2.1", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.2.4", features = ["dialog-all", "fs-all", "global-shortcut-all", "http-all", "notification-all", "os-all", "path-all", "process-exit", "process-relaunch", "reqwest-native-tls-vendored", "shell-open", "system-tray", "updater", "window-maximize", "window-minimize", "window-set-always-on-top", "window-start-dragging", "window-unmaximize", "window-unminimize"] }
+tauri = { version = "1.3.0", features = ["dialog-all", "fs-all", "global-shortcut-all", "http-all", "notification-all", "os-all", "path-all", "process-exit", "process-relaunch", "reqwest-native-tls-vendored", "shell-open", "system-tray", "updater", "window-maximize", "window-minimize", "window-set-always-on-top", "window-start-dragging", "window-unmaximize", "window-unminimize"] }
 path-filetype = "0.1.1"
 git2 = "0.16.1"
 window-shadows = "0.2.1"
+libloading = "0.8.0"
 
 [features]
 # by default Tauri runs in production mode
