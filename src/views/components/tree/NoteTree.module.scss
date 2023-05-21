@@ -24,6 +24,6 @@
   }
 
   &[data-menu-open=true] {
-    border-color: var(--hover-bg-color);
+    border-color: var(--active-text-color);
   }
 }
