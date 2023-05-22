@@ -1,5 +1,6 @@
 import { InfoCircleOutlined } from "@ant-design/icons"
-import { theme as antdTheme, Col, Layout, Row, Space, Spin } from "antd"
+import { theme as antdTheme, Col, Layout, Row, Spin } from "antd"
+import dayjs from "dayjs"
 import { Resizable, ResizeCallback } from "re-resizable"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
@@ -11,9 +12,9 @@ import Github from "$components/topbar/items/Github"
 import TopBarLeft from "$components/topbar/TopBarLeft"
 import TopBarRight from "$components/topbar/TopBarRight"
 import VersionView from "$components/version/VersionView"
+import useCurrent from "$hooks/useCurrent"
 import { useNotes, useSettings } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
-import usePluginFooterTopComponents from "$plugin/hooks/usePluginFooterTopComponents"
 import { shortcuts } from "$utils/shortcuts"
 import { closeWindow } from "$utils/window"
 
@@ -24,8 +25,8 @@ export default function View() {
     showSideBar,
     theme,
     lock: { locked },
-    current,
     shortcut,
+    showEditTime,
   } = useSettings()
   const { entities, status } = useNotes()
   const {
@@ -65,6 +66,8 @@ export default function View() {
     )
   }, [status, t])
 
+  const current = useCurrent()
+
   useEffect(() => {
     if (!shortcut?.closeWindow) {
       return
@@ -80,17 +83,14 @@ export default function View() {
   useEffect(() => {
     localStorage.setItem("bgColor", colorBgBase)
   }, [colorBgBase, theme])
-  const left = usePluginFooterTopComponents("FooterLeft")
-  const right = usePluginFooterTopComponents("FooterRight")
 
   const title = useMemo(() => {
     if (locked) {
       return t("已锁定")
     }
-    const item = entities[current]
 
-    return `${item?.isLeaf ? `${item.title} - ` : ""}${productName} v${versionName}`
-  }, [current, entities, locked, t])
+    return `${current?.isLeaf ? `${current.title} - ` : ""}${productName} v${versionName}`
+  }, [current?.isLeaf, current?.title, locked, t])
 
   return (
     <Layout>
@@ -119,20 +119,19 @@ export default function View() {
       </Layout>
       <Footer style={{ borderColor: colorBorder }}>
         <Row gutter={10}>
-          <Col>
-            <Space>
-              {footer}
-              {loadStatus}
-              {...left}
-            </Space>
-          </Col>
+          <Col>{footer}</Col>
+          {showEditTime && current?.modifyTime ? (
+            <Col>
+              最近编辑: <span title={dayjs(current?.modifyTime).format("YYYY-M-D H:m:s")}>{dayjs(current?.modifyTime).fromNow()}</span>
+            </Col>
+          ) : null}
+          {loadStatus && <Col>{loadStatus}</Col>}
           <Col flex={1} />
           <Col>
-            <Space>
-              {...right}
-              <Github />
-              <VersionView />
-            </Space>
+            <Github />
+          </Col>
+          <Col>
+            <VersionView />
           </Col>
         </Row>
       </Footer>

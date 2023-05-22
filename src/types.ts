@@ -63,7 +63,7 @@ export type Settings = {
   expandItems: Record<string, boolean>
   sort: NoteSort
   editor: string
-  showTimeAboveEditor: boolean
+  showEditTime: boolean
   autoCheckUpdate: boolean
   editorOptions: DefaultEditorOptions
   shortcut: { lock: string; closeWindow: string }

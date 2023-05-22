@@ -18,9 +18,5 @@ export default function Github() {
     void shell.open(repository.url)
   }, [])
 
-  return (
-    <Tooltip title={t("查看源码")}>
-      <Button title={import.meta.env.VITE_COMMIT} icon={<GithubOutlined />} onClick={onClick} href={repository.url} size="small" type="text" target="__blank" />
-    </Tooltip>
-  )
+  return <Button title={t("查看源码")} icon={<GithubOutlined />} onClick={onClick} href={repository.url} size="small" type="text" target="__blank" />
 }

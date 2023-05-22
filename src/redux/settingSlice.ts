@@ -14,7 +14,7 @@ export const defaultSettings: Settings = {
   current: "",
   expandItems: {},
   sort: { field: "modifyTime", type: "desc" },
-  showTimeAboveEditor: true,
+  showEditTime: true,
   autoCheckUpdate: false,
   editor: "default",
   editorOptions: {
