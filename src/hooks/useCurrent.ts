@@ -4,9 +4,9 @@ import { NoteItem } from "~/types"
 
 import { useNotes, useSettings } from "./useSelectors"
 
-export default function useCurrent(): [string?, NoteItem?] {
+export default function useCurrent(): NoteItem | undefined {
     const { current } = useSettings()
     const { entities } = useNotes()
 
-    return useMemo(() => [current, entities[current]], [current, entities])
+    return useMemo(() => entities[current], [current, entities])
 }

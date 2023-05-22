@@ -16,7 +16,7 @@ export default function useDeleteModal() {
   const { modal } = App.useApp()
   const { lockedContents } = useSettings()
   const [form] = Form.useForm()
-  const [current] = useCurrent()
+  const current = useCurrent()
 
   return useCallback(
     (note: NoteItem) => {
@@ -70,7 +70,7 @@ export default function useDeleteModal() {
         onOk(closeModal) {
           void form.validateFields().then(({ deleteChildren }) => {
             dispatch(deleteNote({ noteId: note.id, deleteChildren }))
-            if (current === note.id) {
+            if (current?.id === note.id) {
               dispatch(setCurrent(undefined))
             }
             form.resetFields()
@@ -83,6 +83,6 @@ export default function useDeleteModal() {
         },
       })
     },
-    [current, dispatch, form, itemArray, lockedContents, modal],
+    [current?.id, dispatch, form, itemArray, lockedContents, modal],
   )
 }

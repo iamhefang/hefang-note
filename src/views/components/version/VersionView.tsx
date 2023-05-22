@@ -105,7 +105,11 @@ export default function VersionView() {
           </Space>
         )
       default:
-        return <span onClick={doCheckUpdate}>v{pkg.version}</span>
+        return (
+          <span onClick={doCheckUpdate} title={import.meta.env.VITE_COMMIT}>
+            v{pkg.version}
+          </span>
+        )
     }
   }, [status, t, doCheckUpdate])
 }

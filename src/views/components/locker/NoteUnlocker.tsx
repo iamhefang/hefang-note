@@ -6,11 +6,14 @@ import { useSettings } from "~/hooks/useSelectors"
 import { useAppDispatch } from "~/redux"
 import { unlockContent } from "~/redux/uiSlice"
 import { NoteItem } from "~/types"
+
+import { useTranslate } from "$hooks/useTranslate"
 export type NoteUnlockerProps = {
   item: NoteItem
 }
 export default function NoteUnlocker({ item }: NoteUnlockerProps) {
   const { lockedContents } = useSettings()
+  const t = useTranslate()
   const dispatch = useAppDispatch()
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,11 +28,11 @@ export default function NoteUnlocker({ item }: NoteUnlockerProps) {
     <Result
       style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}
       title={item.title}
-      subTitle={`该${item.isLeaf ? "笔记" : "目录"}已锁定，请输入解锁密码`}
+      subTitle={t(`该${item.isLeaf ? "笔记" : "目录"}已锁定，请输入解锁密码`)}
       icon={<LockOutlined />}
       extra={
         <Space>
-          <Input.Password placeholder="请输入解锁密码" allowClear maxLength={6} onChange={onChange} style={{ maxWidth: 180 }} />
+          <Input.Password placeholder={t("请输入解锁密码")} allowClear maxLength={6} onChange={onChange} style={{ maxWidth: 180 }} />
         </Space>
       }
     />

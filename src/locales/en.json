@@ -1,6 +1,9 @@
 {
   "name": "🇺🇸 English",
-  "keys": ["en", "en-US"],
+  "keys": [
+    "en",
+    "en-US"
+  ],
   "map": {
     "新建目录": "Create Directory",
     "新建笔记": "Create Note",
@@ -17,7 +20,7 @@
     "插件": "Plugins",
     "锁定时不再弹窗提示": "Do not show pop-up windows when locked",
     "要使用的编辑器": "Editor to use",
-    "编辑器上方显示时间": "Show time above editor",
+    "显示当前笔记编辑时间": "Show time above editor",
     "显示行号": "Show line numbers",
     "显示内容地图": "Show content map",
     "字体大小": "Font size",
@@ -44,6 +47,8 @@
     "锁定屏幕": "Lock Screen",
     "数据量大，正在加载，请稍候": "Large amount of data, loading please wait",
     "已锁定": "Locked",
+    "该目录已锁定，请输入解锁密码": "This directory is locked, please enter the unlock password",
+    "该笔记已锁定，请输入解锁密码": "This note is locked, please enter the unlock password",
     "共{dirCount}个目录,{noteCount}篇笔记": "Total {dirCount} directories, {noteCount} notes",
     "查看源码": "View Source Code",
     "有新版本可用": "New version available",
