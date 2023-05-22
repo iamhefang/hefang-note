@@ -17,13 +17,13 @@ import { sortItems } from "$utils/sort"
 
 export default function useSiderBarTopMenuItems() {
   const dispatch = useAppDispatch()
-  const [current, currentItem] = useCurrent()
+  const current = useCurrent()
   const { modal } = App.useApp()
   const t = useTranslate()
   const { sort } = useSettings()
   const createOnSortChange = useCallback((newSort: Partial<NoteSort>) => () => dispatch(setSort(newSort)), [dispatch])
-  const newNoteDispatch = useNewNoteDispatcher(currentItem?.isLeaf ? currentItem?.parentId : current)
-  const parents = useNoteParents(current)
+  const newNoteDispatch = useNewNoteDispatcher(current?.isLeaf ? current?.parentId : current?.id)
+  const parents = useNoteParents(current?.id)
 
   return useMemo<MenuProps["items"]>(() => {
     const items: MenuProps["items"] = [

@@ -1,6 +1,8 @@
 {
   "name": "🇩🇪 Deutsch",
-  "keys": ["de"],
+  "keys": [
+    "de"
+  ],
   "map": {
     "新建目录": "Neues Verzeichnis erstellen",
     "新建笔记": "Neue Notiz erstellen",
@@ -17,7 +19,7 @@
     "插件": "Plugins",
     "锁定时不再弹窗提示": "Keine Pop-up-Benachrichtigung bei Sperrung",
     "要使用的编辑器": "Zu verwendender Editor",
-    "编辑器上方显示时间": "Zeit oben im Editor anzeigen",
+    "显示当前笔记编辑时间": "Zeit oben im Editor anzeigen",
     "显示行号": "Zeilennummer anzeigen",
     "显示内容地图": "Inhaltsverzeichnis anzeigen",
     "字体大小": "Schriftgröße",
@@ -44,6 +46,8 @@
     "锁定屏幕": "Bildschirm sperren",
     "数据量大，正在加载，请稍候": "Große Datenmenge wird geladen, bitte warten",
     "已锁定": "Gesperrt",
+    "该目录已锁定，请输入解锁密码": "Dieses Verzeichnis ist gesperrt, bitte geben Sie das Entsperrpasswort ein",
+    "该笔记已锁定，请输入解锁密码": "Diese Notiz ist gesperrt, bitte geben Sie das Entsperrpasswort ein",
     "共{dirCount}个目录,{noteCount}篇笔记": "{dirCount} Verzeichnisse, {noteCount} Notizen insgesamt",
     "查看源码": "Quellcode anzeigen",
     "有新版本可用": "Neue Version verfügbar",

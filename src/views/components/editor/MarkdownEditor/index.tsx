@@ -15,7 +15,7 @@ import { replaceAll } from "@milkdown/utils"
 import { ProsemirrorAdapterProvider } from "@prosemirror-adapter/react"
 import { Select, Switch } from "antd"
 import "prism-themes/themes/prism-nord.css"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import cpp from "refractor/lang/cpp"
 import css from "refractor/lang/css"
 import javascript from "refractor/lang/javascript"
@@ -33,10 +33,11 @@ import ss from "./MarkdownEditor.module.scss"
 import { placeholder, placeholderCtx } from "./MarkdownEditorPlaceholder"
 import MarkdownEditorToolbar, { defaultToolbarItems } from "./MarkdownEditorToolbar"
 
-import { useEditorOptions } from "$hooks/useSelectors"
+import { useDefaultEditorOptions, useEditorOptions } from "$hooks/useSelectors"
 
 import "katex/dist/katex.min.css"
-import _ from "lodash"
+import { debounce, throttle } from "lodash"
+import { CONTENT_SAVE_DELAY } from "~/config"
 
 function MilkdownEditor({
   value,
@@ -45,33 +46,31 @@ function MilkdownEditor({
   onFocus,
   onEditorCreated,
   placeholder: placeholderContent,
-  noteId,
+  note,
 }: IEditorProps & { onEditorCreated: (editor: Editor) => void }) {
-  const [lastNoteId, setLastNoteId] = useState<string>()
-  const onMarkdownUpdated = useCallback(
-    (ctx: Ctx, markdownValue: string, prevMarkdown: string | null) => {
-      console.info("markdown变化", markdownValue.length, prevMarkdown?.length)
-      if (markdownValue !== prevMarkdown && markdownValue !== value && lastNoteId === noteId) {
-        onChange?.(markdownValue)
-      }
-    },
-    [lastNoteId, noteId, onChange, value],
-  )
-  const { loading, get: getEditor } = useEditor((root) => {
-    const editor = Editor.make()
-    editor
+  const options = useDefaultEditorOptions()
+  const refDivEditor = useRef<HTMLDivElement>(null)
+  const refEditor = useRef<Editor>()
+  const refReplaceing = useRef(false)
+  useLayoutEffect(() => {
+    if (refEditor.current) {
+      return
+    }
+    // console.log("正在初始化编辑器")
+    Editor.make()
       .config(nord)
       .config((ctx) => {
-        ctx.set(rootCtx, root)
-        ctx.set(defaultValueCtx, value)
-        ctx.set(placeholderCtx, placeholderContent || "尽情记录吧")
+        ctx.set(rootCtx, refDivEditor.current)
         ctx.set(katexOptionsCtx.key, { output: "mathml", throwOnError: false, colorIsTextColor: true, trust: true })
-        const manager = ctx.get(listenerCtx)
-        manager
-          .markdownUpdated(onMarkdownUpdated)
+        ctx
+          .get(listenerCtx)
+          .markdownUpdated((_ctx, newVal, preVal) => {
+            if (!refReplaceing.current && newVal !== preVal) {
+              onChange(newVal ?? "")
+            }
+          })
           .blur((_ctx) => onBlur?.())
           .focus((_ctx) => onFocus?.())
-        // options.highlightCodeBlock &&
         ctx.set(prismConfig.key, {
           configureRefractor: (refractor) => {
             refractor.register(markdown)
@@ -97,34 +96,28 @@ function MilkdownEditor({
       .use(math)
       .use(placeholder)
       .use(prism)
-    // options.highlightCodeBlock &&
-
-    return editor
-  }, [])
-
-  useEffect(() => {
-    const editor = getEditor()
-    editor && onEditorCreated(editor)
-  }, [getEditor, loading, onEditorCreated])
+      .create()
+      .then((editor) => {
+        onEditorCreated(editor)
+        refEditor.current = editor
+      })
+      .catch(console.error)
+  }, [onBlur, onChange, onEditorCreated, onFocus])
 
   useEffect(() => {
-    if (lastNoteId === noteId) {
-      return
-    }
-    const editor = getEditor()
-    editor?.action(replaceAll(value))
-    setLastNoteId(noteId)
-    editor?.ctx.set(defaultValueCtx, value)
-  }, [value, getEditor, lastNoteId, noteId])
+    refEditor.current?.config((ctx) => {
+      ctx.set(placeholderCtx, placeholderContent || "尽情记录吧")
+    })
+  }, [placeholderContent])
 
-  return useMemo(
-    () => (
-      <div className={ss.editor}>
-        <Milkdown />
-      </div>
-    ),
-    [],
-  )
+  useEffect(() => {
+    console.log("收到新内容", value)
+    refReplaceing.current = true
+    refEditor.current?.action(replaceAll(value ?? "", true))
+    refReplaceing.current = false
+  }, [value])
+
+  return useMemo(() => <div className={ss.editor} ref={refDivEditor} />, [])
 }
 
 const MarkdownEditor: EditorComponent = (props) => {
@@ -136,14 +129,10 @@ const MarkdownEditor: EditorComponent = (props) => {
   }, [])
 
   return (
-    <MilkdownProvider>
-      <ProsemirrorAdapterProvider>
-        <div className={ss.root}>
-          <MarkdownEditorToolbar items={defaultToolbarItems} ctx={ctx} />
-          <MilkdownEditor {...props} onEditorCreated={onEditorCreated} />
-        </div>
-      </ProsemirrorAdapterProvider>
-    </MilkdownProvider>
+    <div className={ss.root}>
+      <MarkdownEditorToolbar items={defaultToolbarItems} ctx={ctx} />
+      <MilkdownEditor {...props} onEditorCreated={onEditorCreated} />
+    </div>
   )
 }
 

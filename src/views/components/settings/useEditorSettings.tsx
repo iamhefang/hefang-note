@@ -1,8 +1,8 @@
 import { Form, Select, Switch } from "antd"
 import { ReactNode, useMemo } from "react"
 
-import CodeEditor from "$components/editor/CodeEditor"
-import usePlugins from "~/plugin/hooks/usePlugins"
+import MarkdownEditor from "$components/editor/MarkdownEditor"
+import usePlugins from "$hooks/usePlugins"
 import { useSettings } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
 
@@ -16,7 +16,7 @@ export default function useEditorSettings(): Record<string, ReactNode> {
   const { editor } = useSettings()
 
   const options = useMemo(() => {
-    const editorComponent = plugins.find((plugin) => plugin.id === editor)?.Editor || CodeEditor
+    const editorComponent = plugins.find((plugin) => plugin.id === editor)?.Editor || MarkdownEditor
 
     return Object.fromEntries(
       editorComponent.options?.map(({ label, name, ...props }) => {
@@ -45,8 +45,8 @@ export default function useEditorSettings(): Record<string, ReactNode> {
           </Select>
         </Form.Item>
       ),
-      [t("编辑器上方显示时间")]: (
-        <Form.Item name="showTimeAboveEditor" noStyle valuePropName="checked">
+      [t("显示当前笔记编辑时间")]: (
+        <Form.Item name="showEditTime" noStyle valuePropName="checked">
           <Switch />
         </Form.Item>
       ),

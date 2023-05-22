@@ -1,4 +1,7 @@
 import { Empty, message, Modal } from "antd"
+import dayjs from "dayjs"
+import "dayjs/locale/zh-cn"
+import relativeTime from "dayjs/plugin/relativeTime"
 import ReactDOMClient from "react-dom/client"
 import { Provider } from "react-redux"
 
@@ -13,7 +16,11 @@ import { html } from "^/CHANGELOG.md"
 import pkg from "^/package.json"
 
 import "$utils/worker"
+
 import "./style.scss"
+
+dayjs.locale("zh-cn")
+dayjs.extend(relativeTime)
 
 message.config({ top: 40 })
 const root = ReactDOMClient.createRoot(document.getElementById("root") as HTMLElement)

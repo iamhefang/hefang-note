@@ -56,11 +56,11 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
                 .map((me) => ({ ...me, modifyTime }))
                 .concat({ ...state.entities[id], modifyTime })
             const item = _.last(notes)!
+            void notesStore.set(...notes)
+            void contentStore.set(item.id, content)
             for (const note of notes) {
                 state.entities[note.id] = note
             }
-            void notesStore.set(...notes)
-            void contentStore.set(item.id, content)
         },
         deleteNote(state, action: PayloadAction<DeleteNotePayload>) {
             const { noteId, deleteChildren } = action.payload
@@ -91,7 +91,6 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
             void notesStore.set({ ...state.entities[id] })
         },
         newNote(state, action: PayloadAction<NoteItem>) {
-            console.info("新笔记", action.payload)
             state.ids.push(action.payload.id)
             state.entities[action.payload.id] = action.payload
             void notesStore.set(action.payload)
