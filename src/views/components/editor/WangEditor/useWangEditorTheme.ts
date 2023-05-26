@@ -1,9 +1,9 @@
-import {theme} from "antd"
-import {useMemo} from "react"
+import { theme } from "antd"
+import { useMemo } from "react"
 
 
 export default function useWangEditorTheme(): Record<string, string | number> {
-    const {token} = theme.useToken()
+    const { token } = theme.useToken()
 
     return useMemo(() => ({
         // textarea - css vars
@@ -12,7 +12,7 @@ export default function useWangEditorTheme(): Record<string, string | number> {
         "--w-e-textarea-border-color": "#ccc",
         "--w-e-textarea-slight-border-color": "#e8e8e8",
         "--w-e-textarea-slight-color": "#d4d4d4",
-        "--w-e-textarea-slight-bg-color": token.colorBgElevated,
+        "--w-e-textarea-slight-bg-color": "#f5f2f0",
         "--w-e-textarea-selected-border-color": "#B4D5FF", // 选中的元素，如选中了分割线
         "--w-e-textarea-handler-bg-color": "#4290f7", // 工具，如图片拖拽按钮
         "--w-e-text-placeholder-color": token.colorTextPlaceholder,
@@ -30,8 +30,7 @@ export default function useWangEditorTheme(): Record<string, string | number> {
         "--w-e-modal-button-bg-color": "#fafafa",
         "--w-e-modal-button-border-color": "#d9d9d9",
     }), [
-        token.borderRadius, token.colorBgElevated,
-        token.colorBgLayout, token.colorBorder, token.colorPrimaryBg,
+        token.borderRadius, token.colorBgLayout, token.colorBorder, token.colorPrimaryBg,
         token.colorPrimaryTextActive, token.colorTextBase, token.colorTextPlaceholder,
     ])
 }

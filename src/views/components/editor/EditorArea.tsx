@@ -1,5 +1,5 @@
 import { theme as antTheme, Empty } from "antd"
-import { debounce, throttle } from "lodash"
+import { throttle } from "lodash"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { CONTENT_SAVE_DELAY } from "~/config"
@@ -8,7 +8,7 @@ import { EditorComponent } from "~/plugin/types"
 import { useAppDispatch } from "~/redux"
 import { updateContent } from "~/redux/noteSlice"
 
-import MarkdownEditor from "./MarkdownEditor"
+import WangEditor from "./WangEditor"
 
 import NoteUnlocker from "$components/locker/NoteUnlocker"
 import useCurrent from "$hooks/useCurrent"
@@ -30,34 +30,31 @@ export default function EditorArea() {
   const current = useCurrent()
   const plugins = usePluginMap()
   const Editor: EditorComponent = useMemo(() => {
-    return editor && plugins[editor]?.Editor ? plugins[editor].Editor! : MarkdownEditor
+    return editor && plugins[editor]?.Editor ? plugins[editor].Editor! : WangEditor
   }, [editor, plugins])
 
   const refSaveTimer = useRef(0)
-  const saveContent = useCallback(
-    throttle((content: string) => {
+  const onValueChange = useCallback((newValue: string | undefined) => {
+    setChanging(true)
+    setValue(newValue || "")
+  }, [])
+
+  useEffect(() => {
+    window.setTimeout(() => {
       if (!current?.isLeaf || !current?.id) {
         return
       }
-      const newContent = { id: current.id, content }
+      const newContent = { id: current.id, content: value }
       console.info("正在保存笔记", newContent)
+      setChanging(false)
       dispatch(updateContent(newContent))
-    }, CONTENT_SAVE_DELAY),
-    [current?.id, current?.isLeaf, dispatch],
-  )
-  const onValueChange = useCallback(
-    (newValue: string | undefined) => {
-      // setChanging(true)
-      // setValue(newValue || "")
-      // saveContent(newValue || "")
-      if (!current?.isLeaf || !current?.id) {
-        return
-      }
-      console.info("正在保存笔记", current.id, newValue)
-      dispatch(updateContent({ id: current.id, content: newValue || "" }))
-    },
-    [current?.id, current?.isLeaf, dispatch],
-  )
+    }, CONTENT_SAVE_DELAY)
+
+    return () => {
+      refSaveTimer.current && window.clearTimeout(refSaveTimer.current)
+    }
+  }, [current?.id, current?.isLeaf, dispatch, value])
+
   const noteLocked = useNoteLocked(current?.id)
   useEffect(() => {
     if (!current?.isLeaf || !current?.id) {
@@ -67,6 +64,8 @@ export default function EditorArea() {
     }
     contentStore.get(current?.id, "").then(setValue).catch(console.error)
   }, [current?.id, current?.isLeaf])
+
+  console.log(current)
 
   if (noteLocked) {
     // FIXME: 从加锁笔记切换到非加锁笔记时内容区会闪一下
