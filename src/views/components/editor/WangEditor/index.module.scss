@@ -1,0 +1,13 @@
+.editor {
+    :global {
+        .w-e-bar-item {
+            button {
+                border-radius: var(--w-e-toolbar-border-radius);
+            }
+        }
+
+        .w-e-text-placeholder {
+            color: var(--w-e-text-placeholder-color);
+        }
+    }
+}
