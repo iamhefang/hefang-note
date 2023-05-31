@@ -113,3 +113,22 @@ kbd {
     border-radius: 4px;
   }
 }
+
+::-webkit-scrollbar {
+  background: transparent;
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-button {
+  background: rgba(128, 128, 128, 0.511);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.511);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-track-piece {
+  background: transparent;
+}
