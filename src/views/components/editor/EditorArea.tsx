@@ -65,8 +65,6 @@ export default function EditorArea() {
     contentStore.get(current?.id, "").then(setValue).catch(console.error)
   }, [current?.id, current?.isLeaf])
 
-  console.log(current)
-
   if (noteLocked) {
     // FIXME: 从加锁笔记切换到非加锁笔记时内容区会闪一下
     return <NoteUnlocker item={current!} />

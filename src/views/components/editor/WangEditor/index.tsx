@@ -1,5 +1,6 @@
 import { DomEditor, IDomEditor, IEditorConfig, IToolbarConfig } from "@wangeditor/editor"
 import { Editor, Toolbar } from "@wangeditor/editor-for-react"
+import { App } from "antd"
 import { useEffect, useMemo, useState } from "react"
 
 import { EditorComponent } from "~/plugin/types"
@@ -10,8 +11,10 @@ import useWangEditorTheme from "./useWangEditorTheme"
 
 const WangEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placeholder }) => {
   const [editor, setEditor] = useState<IDomEditor | null>(null)
+  const { message } = App.useApp()
   const [text, setText] = useState("")
   // const [innerValue, setInnerValue] = useState(value)
+  const [defaultValue, setDefaultValue] = useState(value)
   const toolbarConfig = useMemo<Partial<IToolbarConfig>>(
     () => ({
       toolbarKeys: [
@@ -39,13 +42,23 @@ const WangEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placeho
       },
       onFocus: () => onFocus?.(),
       onBlur: () => onBlur?.(),
+      customAlert: (info, type) => {
+        void message.open({ type, content: info })
+      },
     }),
-    [onBlur, onFocus, placeholder],
+    [message, onBlur, onFocus, placeholder],
   )
 
   useEffect(() => {
-    editor && onChange?.(editor.getHtml())
-  }, [editor, onChange, text])
+    if (!editor) {
+      return
+    }
+    const newValue = editor.isEmpty() ? "" : editor.getHtml()
+    if (newValue === value) {
+      return
+    }
+    onChange?.(newValue)
+  }, [editor, onChange, text, value])
 
   const theme = useWangEditorTheme()
   useEffect(() => {
@@ -58,15 +71,19 @@ const WangEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placeho
       setEditor(null)
     }
   }, [editor])
-  // useEffect(() => {
-  //   console.info("收到新内容", value)
-  //   setInnerValue(value)
-  // }, [value])
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", ...theme }} className={ss.editor}>
       <Toolbar editor={editor} defaultConfig={toolbarConfig} mode="default" style={{ borderBottom: "1px solid var(--w-e-toolbar-border-color)" }} />
-      <Editor defaultConfig={editorConfig} value={value} onCreated={setEditor} mode="default" style={{ flex: 1 }} />
+      <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
+        <Editor
+          defaultConfig={editorConfig}
+          value={value}
+          onCreated={setEditor}
+          mode="simple"
+          style={{ position: "absolute", left: 0, top: 0, right: 0, bottom: 0 }}
+        />
+      </div>
     </div>
   )
 }
