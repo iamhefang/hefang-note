@@ -48,19 +48,25 @@ export default function NoteTreeItem({
     dispatch(relockContent(item.id))
     dispatch(setCurrent(item.id))
   }, [dispatch, item.id])
+
   const onDragStart = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       console.log("onDragStart", e, item.id)
       e.dataTransfer.effectAllowed = "move"
+      e.dataTransfer.dropEffect = "move"
       e.dataTransfer.setData("text/plain", item.id)
       setDragging(true)
     },
     [item.id],
   )
+  // TODO: 在tauri里面不会触相关事件
   const onDragEnter = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
+        console.log("onDragEnter",e)
       e.preventDefault()
       e.stopPropagation()
+      e.dataTransfer.effectAllowed = "move"
+      e.dataTransfer.dropEffect = "move"
       setDragover(!item.isLeaf)
     },
     [item.isLeaf],
@@ -74,6 +80,7 @@ export default function NoteTreeItem({
     e.stopPropagation()
     console.log("onDragOver", e)
     e.dataTransfer.dropEffect = "move"
+    e.dataTransfer.effectAllowed = "move"
   }, [])
   const onDragEnd = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     console.log("onDragEnd", e)
