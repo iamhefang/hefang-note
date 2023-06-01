@@ -12,9 +12,6 @@ import useWangEditorTheme from "./useWangEditorTheme"
 const WangEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placeholder }) => {
   const [editor, setEditor] = useState<IDomEditor | null>(null)
   const { message } = App.useApp()
-  const [text, setText] = useState("")
-  // const [innerValue, setInnerValue] = useState(value)
-  const [defaultValue, setDefaultValue] = useState(value)
   const toolbarConfig = useMemo<Partial<IToolbarConfig>>(
     () => ({
       toolbarKeys: [
@@ -38,7 +35,7 @@ const WangEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placeho
     () => ({
       placeholder,
       onChange: (domEditor) => {
-        setText(domEditor.getText())
+        onChange?.(domEditor.isEmpty() ? "" : domEditor.getHtml())
       },
       onFocus: () => onFocus?.(),
       onBlur: () => onBlur?.(),
@@ -46,19 +43,8 @@ const WangEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placeho
         void message.open({ type, content: info })
       },
     }),
-    [message, onBlur, onFocus, placeholder],
+    [message, onBlur, onChange, onFocus, placeholder],
   )
-
-  useEffect(() => {
-    if (!editor) {
-      return
-    }
-    const newValue = editor.isEmpty() ? "" : editor.getHtml()
-    if (newValue === value) {
-      return
-    }
-    onChange?.(newValue)
-  }, [editor, onChange, text, value])
 
   const theme = useWangEditorTheme()
   useEffect(() => {
@@ -74,7 +60,7 @@ const WangEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placeho
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", ...theme }} className={ss.editor}>
-      <Toolbar editor={editor} defaultConfig={toolbarConfig} mode="default" style={{ borderBottom: "1px solid var(--w-e-toolbar-border-color)" }} />
+      <Toolbar editor={editor} defaultConfig={toolbarConfig} mode="simple" style={{ borderBottom: "1px solid var(--w-e-toolbar-border-color)" }} />
       <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
         <Editor
           defaultConfig={editorConfig}
