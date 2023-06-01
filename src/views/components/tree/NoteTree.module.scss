@@ -1,38 +1,38 @@
 .root {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 
-    li {
-        border-radius: 4px;
-        overflow: hidden;
-    }
+  li {
+    border-radius: 4px;
+    overflow: hidden;
+  }
 }
 
 .item {
-    padding: 3px;
-    border-radius: 4px;
-    user-select: none;
-    box-sizing: border-box;
-    transition: background-color .2s ease-in-out;
-    background-color: var(--bg-color);
-    border: 1px solid transparent;
+  padding: 3px;
+  border-radius: 4px;
+  user-select: none;
+  box-sizing: border-box;
+  transition: background-color .2s ease-in-out;
+  background-color: var(--bg-color);
+  border: 1px solid transparent;
 
-    &[data-active=true] {
-        background-color: var(--active-bg-color);
-        color: var(--active-text-color);
-    }
+  &[data-active=true] {
+    background-color: var(--active-bg-color);
+    color: var(--active-text-color);
+  }
 
-    &[data-menu-open=true],
-    &[data-dragover=true] {
-        border-color: var(--active-text-color);
-    }
+  &[data-menu-open=true],
+  &[data-dragover=true] {
+    border-color: var(--active-text-color);
+  }
 
-    &[data-dragover=true] * {
-        pointer-events: none;
-    }
+  &[data-dragover=true] * {
+    pointer-events: none;
+  }
 
-    &[data-dragging=true] {
-        opacity: .3;
-    }
+  &[data-dragging=true] {
+    opacity: .3;
+  }
 }
