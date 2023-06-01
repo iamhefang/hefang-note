@@ -1,4 +1,3 @@
-import useSearchValue from "$hooks/useSearchValue"
 import {LockOutlined, UnlockOutlined} from "@ant-design/icons"
 import {Button, Col, Row} from "antd"
 import React, {useCallback, useMemo, useState} from "react"
@@ -11,13 +10,13 @@ import {setCurrent, setItemsExpanded} from "~/redux/settingSlice"
 import {relockContent} from "~/redux/uiSlice"
 import {NoteIndentItem} from "~/types"
 
-import useExpandIcon from "./hooks/useExpandIcon"
-import useOnItemClick from "./hooks/useOnItemClick"
-import useTreeItemIcon from "./hooks/useTreeItemIcon"
-import useTreeItemStyle from "./hooks/useTreeItemStyle"
-import useTreeItemTitle from "./hooks/useTreeItemTitle"
 import ss from "./NoteTree.module.scss"
 
+import useExpandIcon from "$hooks/noteTreeItem/useExpandIcon"
+import useOnItemClick from "$hooks/noteTreeItem/useOnItemClick"
+import useTreeItemIcon from "$hooks/noteTreeItem/useTreeItemIcon"
+import useTreeItemStyle from "$hooks/noteTreeItem/useTreeItemStyle"
+import useTreeItemTitle from "$hooks/noteTreeItem/useTreeItemTitle"
 import {useSettings, useStates} from "$hooks/useSelectors"
 import {useTranslate} from "$hooks/useTranslate"
 
@@ -53,7 +52,6 @@ export default function NoteTreeItem(
 
     const onDragStart = useCallback(
         (e: React.DragEvent<HTMLDivElement>) => {
-            console.log("onDragStart", e, item.id)
             e.dataTransfer.effectAllowed = "move"
             e.dataTransfer.dropEffect = "move"
             e.dataTransfer.setData("text/plain", item.id)
@@ -64,7 +62,6 @@ export default function NoteTreeItem(
     // TODO: 在tauri里面不会触相关事件
     const onDragEnter = useCallback(
         (e: React.DragEvent<HTMLDivElement>) => {
-            console.log("onDragEnter", e)
             e.preventDefault()
             e.stopPropagation()
             e.dataTransfer.effectAllowed = "move"
@@ -74,24 +71,21 @@ export default function NoteTreeItem(
         [item.isLeaf],
     )
 
-    const onDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    const onDragLeave = useCallback(() => {
         setDragover(false)
     }, [])
     const onDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault()
         e.stopPropagation()
-        console.log("onDragOver", e)
         e.dataTransfer.dropEffect = "move"
         e.dataTransfer.effectAllowed = "move"
     }, [])
-    const onDragEnd = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-        console.log("onDragEnd", e)
+    const onDragEnd = useCallback(() => {
         setDragging(false)
         setDragover(false)
     }, [])
     const onDrop = useCallback(
         (e: React.DragEvent<HTMLDivElement>) => {
-            console.log("onDrop", e)
             if (item.isLeaf) {
                 return
             }
@@ -103,7 +97,6 @@ export default function NoteTreeItem(
 
             try {
                 const sourceId = e.dataTransfer.getData("text/plain")
-                console.log("onDrop", sourceId, item.id)
                 dispatch(moveNote({targetId: item.id, sourceId}))
                 dispatch(setItemsExpanded({[item.id]: true}))
             } catch (error) {

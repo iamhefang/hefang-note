@@ -8,7 +8,7 @@ import { NoteSort } from "~/types"
 
 import { iconPlacehodler } from "$components/icons/IconPlaceholder"
 import { NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
-import useNewNoteDispatcher from "$components/tree/hooks/useNewNoteDispatcher"
+import useNewNoteDispatcher from "$hooks/noteTreeItem/useNewNoteDispatcher"
 import useCurrent from "$hooks/useCurrent"
 import useNoteParents from "$hooks/useNoteParents"
 import { useSettings } from "$hooks/useSelectors"
