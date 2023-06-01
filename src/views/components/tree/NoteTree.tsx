@@ -2,19 +2,16 @@ import { Empty } from "antd"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ListRange, Virtuoso, VirtuosoHandle } from "react-virtuoso"
 
-import useDeleteModal from "~/hooks/modals/useDeleteModal"
-import useLockContentModal from "~/hooks/modals/useLockContentModal"
 import { useAppDispatch } from "~/redux"
-import { startRenaming } from "~/redux/noteSlice"
 import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
 import { setRightClickItem } from "~/redux/uiSlice"
 
-import useNewNoteDispatcher from "./hooks/useNewNoteDispatcher"
+import useOnNoteTreeMenuClick from "./hooks/useOnNoteTreeMenuClick"
 import { MemodNoteTreeItem } from "./NoteTreeItem"
 
-import NoteTreeItemMenu, { MenuInfo, NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
+import NoteTreeItemMenu from "$components/menus/NoteTreeItemMenu"
 import useItemsTree from "$hooks/useItemsTree"
-import { useSettings, useStates } from "$hooks/useSelectors"
+import { useSettings } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
 
 export type NoteTreeProps = {
@@ -27,12 +24,8 @@ export default function NoteTree({ search }: NoteTreeProps) {
   const data = useItemsTree(search)
   const dispatch = useAppDispatch()
   const [range, setRange] = useState<ListRange>({ startIndex: 0, endIndex: data.length })
-  const showLockModal = useLockContentModal()
-  const showDeleteModal = useDeleteModal()
   const refVirtuoso = useRef<VirtuosoHandle>(null)
   const [menuOpened, setMenuOpened] = useState(false)
-  const { rightClickedItem } = useStates()
-  const newNoteDispatch = useNewNoteDispatcher(rightClickedItem?.id)
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (!current || isContentEditable(document.activeElement)) {
@@ -88,28 +81,7 @@ export default function NoteTree({ search }: NoteTreeProps) {
   useEffect(() => {
     menuOpened || dispatch(setRightClickItem(undefined))
   }, [dispatch, menuOpened])
-  const onMenuClick = useCallback(
-    (info: MenuInfo) => {
-      switch (info.key) {
-        case NoteTreeMenuKeys.rename:
-          rightClickedItem && dispatch(startRenaming(rightClickedItem.id))
-          break
-        case NoteTreeMenuKeys.delete:
-          rightClickedItem && showDeleteModal(rightClickedItem)
-          break
-        case NoteTreeMenuKeys.newDir:
-        case NoteTreeMenuKeys.newNote:
-          newNoteDispatch(info.key === NoteTreeMenuKeys.newNote)
-          break
-        case NoteTreeMenuKeys.lock:
-          showLockModal(rightClickedItem)
-          break
-        default:
-          console.warn("未生效的菜单")
-      }
-    },
-    [rightClickedItem, dispatch, showDeleteModal, newNoteDispatch, showLockModal],
-  )
+  const onMenuClick = useOnNoteTreeMenuClick()
 
   const onListRightClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {

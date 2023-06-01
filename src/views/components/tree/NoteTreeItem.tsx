@@ -1,11 +1,12 @@
 import { LockOutlined, UnlockOutlined } from "@ant-design/icons"
 import { Button, Col, Row } from "antd"
-import React, { useCallback, useMemo } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import { ItemProps } from "react-virtuoso"
 
 import useNoteLocked from "~/hooks/useNoteLocked"
 import { useAppDispatch } from "~/redux"
-import { setCurrent } from "~/redux/settingSlice"
+import { moveNote } from "~/redux/noteSlice"
+import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
 import { relockContent } from "~/redux/uiSlice"
 import { NoteIndentItem } from "~/types"
 
@@ -28,6 +29,8 @@ export default function NoteTreeItem({
   const { current, lockedContents } = useSettings()
   const t = useTranslate()
   const { rightClickedItem } = useStates()
+  const [dragging, setDragging] = useState(false)
+  const [dragover, setDragover] = useState(false)
   const noteLocked = useNoteLocked(item.id)
   const dispatch = useAppDispatch()
 
@@ -45,6 +48,61 @@ export default function NoteTreeItem({
     dispatch(relockContent(item.id))
     dispatch(setCurrent(item.id))
   }, [dispatch, item.id])
+  const onDragStart = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      console.log("onDragStart", e, item.id)
+      e.dataTransfer.effectAllowed = "move"
+      e.dataTransfer.setData("text/plain", item.id)
+      setDragging(true)
+    },
+    [item.id],
+  )
+  const onDragEnter = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setDragover(!item.isLeaf)
+    },
+    [item.isLeaf],
+  )
+
+  const onDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    setDragover(false)
+  }, [])
+  const onDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log("onDragOver", e)
+    e.dataTransfer.dropEffect = "move"
+  }, [])
+  const onDragEnd = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    console.log("onDragEnd", e)
+    setDragging(false)
+    setDragover(false)
+  }, [])
+  const onDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      console.log("onDrop", e)
+      if (item.isLeaf) {
+        return
+      }
+      setDragging(false)
+      setDragover(false)
+      if (item.isLeaf) {
+        return
+      }
+
+      try {
+        const sourceId = e.dataTransfer.getData("text/plain")
+        console.log("onDrop", sourceId, item.id)
+        dispatch(moveNote({ targetId: item.id, sourceId }))
+        dispatch(setItemsExpanded({ [item.id]: true }))
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    [dispatch, item.id, item.isLeaf],
+  )
 
   return (
     <Row
@@ -55,9 +113,19 @@ export default function NoteTreeItem({
       style={style}
       data-active={current === item.id}
       data-id={item.id}
+      data-leaf={item.isLeaf}
       data-index={dataIndex}
       data-item-index={dataItemIndex}
+      data-dragging={dragging}
+      data-dragover={dragover}
       data-menu-open={rightClickedItem?.id === item.id}
+      draggable={item.isLeaf}
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDragEnd={onDragEnd}
+      onDragEnter={onDragEnter}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
     >
       <Col style={{ width, textAlign: "right", flexShrink: 0 }}>{expandIcon}</Col>
       <Col>{icon}</Col>
