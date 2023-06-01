@@ -157,6 +157,9 @@ fn on_window_event(event: GlobalWindowEvent) {
             api.prevent_close();
             event.window().minimize().unwrap();
         }
+        tauri::WindowEvent::FileDrop(files) => {
+            println!("文件拖拽事件: {:?}", files);
+        }
         _others => {
             println!("未监听的窗口事件: {:?}", _others)
         }

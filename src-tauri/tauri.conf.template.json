@@ -1,121 +1,136 @@
 {
-  "build": {
-    "beforeDevCommand": "pnpm dev",
-    "beforeBuildCommand": "pnpm build",
-    "devPath": "http://localhost:8888",
-    "distDir": "../dist",
-    "withGlobalTauri": false
-  },
-  "package": {
-    "productName": "何方笔记",
-    "version": "0.2.1"
-  },
-  "tauri": {
-    "systemTray": {
-      "iconPath": "icons/32x32.png",
-      "iconAsTemplate": false,
-      "menuOnLeftClick": false
+    "build": {
+        "beforeDevCommand": "pnpm dev",
+        "beforeBuildCommand": "pnpm build",
+        "devPath": "http://localhost:8888",
+        "distDir": "../dist",
+        "withGlobalTauri": false
     },
-    "allowlist": {
-      "all": false,
-      "notification": {
-        "all": true
-      },
-      "shell": {
-        "all": false,
-        "open": true
-      },
-      "fs": {
-        "all": true,
-        "scope": ["$APPDATA/**/*", "$APPLOG/**/*"]
-      },
-      "window": {
-        "startDragging": true,
-        "maximize": true,
-        "unmaximize": true,
-        "minimize": true,
-        "unminimize": true,
-        "setAlwaysOnTop": true
-      },
-      "os": {
-        "all": true
-      },
-      "path": {
-        "all": true
-      },
-      "http": {
-        "all": true,
-        "request": true,
-        "scope": ["https://gitee.com/iamhefang/*", "https://iamhefang.cn/*"]
-      },
-      "globalShortcut": {
-        "all": true
-      },  
-      "dialog": {
-        "all": true,
-        "open": true,
-        "save": true
-      },
-      "process": {
-        "all": false,
-        "relaunch": true,
-        "exit": true
-      }
+    "package": {
+        "productName": "何方笔记",
+        "version": "0.2.1"
     },
-    "bundle": {
-      "active": true,
-      "category": "DeveloperTool",
-      "copyright": "何方软件©2023",
-      "deb": {
-        "depends": []
-      },
-      "externalBin": [],
-      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
-      "identifier": "link.hefang.notes",
-      "longDescription": "使用 Git 仓库做为数据源的开源笔记软件",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null
-      },
-      "resources": [],
-      "shortDescription": "Git 开源笔记",
-      "targets": "all",
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": "",
-        "wix": {
-          "language": "zh-CN"
-        }
-      }
-    },
-    "security": {
-      "csp": null
-    },
-    "updater": {
-      "active": true,
-      "endpoints": ["https://iamhefang.cn/tools/notebook/index.json"],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDE4RUU0QzVDN0Y1QTI2QjMKUldTekpscC9YRXp1R091dDlWRFZBSW8xTkUrc25tbDcyNVJKcDZzUmpLQXdkOUFaVmZzUExuVHUK",
-      "dialog": false
-    },
-    "windows": [
-      {
-        "fullscreen": false,
-        "height": 768,
-        "resizable": true,
-        "title": "何方笔记",
-        "hiddenTitle": true,
-        "decorations": true,
-        "width": 1024,
-        "minWidth": 800,
-        "minHeight": 600,
-        "titleBarStyle": "Overlay",
-        "center": true,
-        "visible": false
-      }
-    ]
-  }
+    "tauri": {
+        "systemTray": {
+            "iconPath": "icons/32x32.png",
+            "iconAsTemplate": false,
+            "menuOnLeftClick": false
+        },
+        "allowlist": {
+            "all": false,
+            "notification": {
+                "all": true
+            },
+            "shell": {
+                "all": false,
+                "open": true
+            },
+            "fs": {
+                "all": true,
+                "scope": [
+                    "$APPDATA/**/*",
+                    "$APPLOG/**/*"
+                ]
+            },
+            "window": {
+                "startDragging": true,
+                "maximize": true,
+                "unmaximize": true,
+                "minimize": true,
+                "unminimize": true,
+                "setAlwaysOnTop": true
+            },
+            "os": {
+                "all": true
+            },
+            "path": {
+                "all": true
+            },
+            "http": {
+                "all": true,
+                "request": true,
+                "scope": [
+                    "https://gitee.com/iamhefang/*",
+                    "https://iamhefang.cn/*"
+                ]
+            },
+            "globalShortcut": {
+                "all": true
+            },
+            "dialog": {
+                "all": true,
+                "open": true,
+                "save": true
+            },
+            "process": {
+                "all": false,
+                "relaunch": true,
+                "exit": true
+            }
+        },
+        "bundle": {
+            "active": true,
+            "category": "DeveloperTool",
+            "copyright": "何方软件©2023",
+            "deb": {
+                "depends": []
+            },
+            "externalBin": [],
+            "icon": [
+                "icons/32x32.png",
+                "icons/128x128.png",
+                "icons/128x128@2x.png",
+                "icons/icon.icns",
+                "icons/icon.ico"
+            ],
+            "identifier": "link.hefang.notes",
+            "longDescription": "使用 Git 仓库做为数据源的开源笔记软件",
+            "macOS": {
+                "entitlements": null,
+                "exceptionDomain": "",
+                "frameworks": [],
+                "providerShortName": null,
+                "signingIdentity": null
+            },
+            "resources": [],
+            "shortDescription": "Git 开源笔记",
+            "targets": "all",
+            "windows": {
+                "certificateThumbprint": null,
+                "digestAlgorithm": "sha256",
+                "timestampUrl": "",
+                "wix": {
+                    "language": "zh-CN"
+                }
+            }
+        },
+        "security": {
+            "csp": null
+        },
+        "updater": {
+            "active": true,
+            "endpoints": [
+                "https://iamhefang.cn/tools/notebook/index.json"
+            ],
+            "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDE4RUU0QzVDN0Y1QTI2QjMKUldTekpscC9YRXp1R091dDlWRFZBSW8xTkUrc25tbDcyNVJKcDZzUmpLQXdkOUFaVmZzUExuVHUK",
+            "dialog": false
+        },
+        "windows": [
+            {
+                "fullscreen": false,
+                "height": 768,
+                "resizable": true,
+                "title": "何方笔记",
+                "hiddenTitle": true,
+                "decorations": true,
+                "width": 1024,
+                "minWidth": 800,
+                "minHeight": 600,
+                "titleBarStyle": "Overlay",
+                "center": true,
+                "visible": false,
+                "fileDropEnabled": false
+            }
+        ]
+    }
 }
