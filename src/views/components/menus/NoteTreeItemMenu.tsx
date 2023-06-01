@@ -25,6 +25,10 @@ export const enum NoteTreeMenuKeys {
   newNote = "newNote",
   newDir = "newDir",
   lock = "lock",
+  export = "export",
+  exportPDF = "exportPDF",
+  exportHTML = "exportHTML",
+  exportMarkdown = "exportMarkdown",
 }
 
 export default function NoteTreeItemMenu({ children, onClick, onOpenChange }: NoteTreeItemMenuProps) {
@@ -39,30 +43,40 @@ export default function NoteTreeItemMenu({ children, onClick, onOpenChange }: No
   const t = useTranslate()
   const { lockedContents } = useSettings()
   const items = useMemo<MenuProps["items"]>(() => {
-    const _items: MenuProps["items"] = []
+    const menus: MenuProps["items"] = []
     if (!item) {
       return [
         { key: NoteTreeMenuKeys.newDir, label: t("新建目录") },
         { key: NoteTreeMenuKeys.newNote, label: t("新建笔记") },
       ]
     }
-    if (!item.isLeaf) {
-      item.indent < 2 && _items.push({ key: NoteTreeMenuKeys.newDir, label: t("新建目录") })
-      _items.push({ key: NoteTreeMenuKeys.newNote, label: t("新建笔记") })
+    if (item.isLeaf) {
+      menus.push({
+        key: NoteTreeMenuKeys.export,
+        label: t("导出"),
+        children: [
+          { key: NoteTreeMenuKeys.exportPDF, label: "PDF" },
+          { key: NoteTreeMenuKeys.exportHTML, label: "HTML" },
+          { key: NoteTreeMenuKeys.exportMarkdown, label: "Markdown" },
+        ],
+      })
+    } else {
+      item.indent < 2 && menus.push({ key: NoteTreeMenuKeys.newDir, label: t("新建目录") })
+      menus.push({ key: NoteTreeMenuKeys.newNote, label: t("新建笔记") })
     }
-    if (_items.length) {
-      _items.push({ type: "divider" })
+    if (menus.length) {
+      menus.push({ type: "divider" })
     }
-    _items.push({ key: NoteTreeMenuKeys.rename, label: t("重命名") }, { key: NoteTreeMenuKeys.delete, label: t("删除") })
+    menus.push({ key: NoteTreeMenuKeys.rename, label: t("重命名") }, { key: NoteTreeMenuKeys.delete, label: t("删除") })
 
     if (!item.indent) {
-      if (_items.length) {
-        _items.push({ type: "divider" })
+      if (menus.length) {
+        menus.push({ type: "divider" })
       }
-      _items.push({ key: NoteTreeMenuKeys.lock, label: lockedContents[item.id] ? t("取消锁定") : t("锁定") })
+      menus.push({ key: NoteTreeMenuKeys.lock, label: lockedContents[item.id] ? t("取消锁定") : t("锁定") })
     }
 
-    return _items
+    return menus
   }, [item, lockedContents, t])
 
   return (

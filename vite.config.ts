@@ -1,7 +1,5 @@
-import { readFileSync } from "fs"
 import path from "path"
 
-import MonacoEditorNlsPlugin, { esbuildPluginMonacoEditorNls, Languages } from "@ubia/vite-plugin-monaco-editor-nls"
 import react from "@vitejs/plugin-react"
 import { internalIpV4 } from "internal-ip"
 import { defineConfig } from "vite"
@@ -9,12 +7,6 @@ import htmlMinifier from "vite-plugin-html-minifier"
 import { plugin as markdown, Mode } from "vite-plugin-markdown"
 import { viteStaticCopy } from "vite-plugin-static-copy"
 import svgr from "vite-plugin-svgr"
-// eslint-disable-next-line import/no-internal-modules
-// import zh_CN from "vscode-loc.git/i18n/vscode-language-pack-zh-hans/translations/main.i18n.json" assert { type: "json" }
-
-const zh_CN = JSON.parse(
-  readFileSync(path.resolve(__dirname, "./node_modules/vscode-loc.git/i18n/vscode-language-pack-zh-hans/translations/main.i18n.json"), "utf-8"),
-)
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => {
@@ -28,16 +20,10 @@ export default defineConfig(async () => {
       viteStaticCopy({
         targets: [
           { src: "src-tauri/icons/icon.ico", dest: "./", rename: "favicon.ico" },
-          { src: "node_modules/monaco-editor/min/vs", dest: "./monaco-editor/" },
         ],
       }),
       htmlMinifier({ minify: true }),
       markdown({ mode: [Mode.HTML] }),
-      // @ts-ignore
-      MonacoEditorNlsPlugin.default({
-        locale: Languages.zh_hans,
-        localeData: zh_CN.contents,
-      }),
     ],
     resolve: {
       alias: {
@@ -48,16 +34,6 @@ export default defineConfig(async () => {
         $utils: path.resolve(__dirname, "src/utils"),
         $locales: path.resolve(__dirname, "src/locales"),
         $plugin: path.resolve(__dirname, "src/plugin"),
-      },
-    },
-    optimizeDeps: {
-      esbuildOptions: {
-        plugins: [
-          esbuildPluginMonacoEditorNls({
-            locale: Languages.zh_hans,
-            localeData: zh_CN.contents,
-          }),
-        ],
       },
     },
     optimizeDeps: {
@@ -104,10 +80,6 @@ export default defineConfig(async () => {
             antd: ["antd"],
             icons: ["@ant-design/icons"],
             utils: ["lodash", "dayjs"],
-            "monaco-editor": [
-              // "monaco-editor",
-              "@monaco-editor/react",
-            ],
           },
         },
       },

@@ -14,7 +14,11 @@ export default function useTreeItemStyle(item: NoteIndentItem, dataSize: string 
             "--active-bg-color": token.colorPrimaryBg,
             "--hover-text-color": token.colorBgTextHover,
             "--active-text-color": token.colorPrimaryTextActive,
+            "--bg-color": token.colorBgContainer,
         }),
-        [dataSize, token.colorBgTextHover, token.colorPrimaryBg, token.colorPrimaryBgHover, token.colorPrimaryTextActive],
+        [
+            dataSize, token.colorBgContainer, token.colorBgTextHover,
+            token.colorPrimaryBg, token.colorPrimaryBgHover, token.colorPrimaryTextActive,
+        ],
     )
 }
