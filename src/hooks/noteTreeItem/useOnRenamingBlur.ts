@@ -1,16 +1,16 @@
-import { App } from "antd"
-import { useCallback } from "react"
+import {App} from "antd"
+import React, {useCallback} from "react"
 
-import { useAppDispatch } from "~/redux"
-import { startRenaming, stopRenaming } from "~/redux/noteSlice"
-import { NoteItem } from "~/types"
+import {useAppDispatch} from "~/redux"
+import {startRenaming, stopRenaming} from "~/redux/noteSlice"
+import {NoteItem} from "~/types"
 
-import { useTranslate } from "$hooks/useTranslate"
+import {useTranslate} from "$hooks/useTranslate"
 
 
 export default function useOnRenamingBlur(item: NoteItem) {
     const t = useTranslate()
-    const { message } = App.useApp()
+    const {message} = App.useApp()
     const dispatch = useAppDispatch()
 
     return useCallback(
@@ -21,7 +21,7 @@ export default function useOnRenamingBlur(item: NoteItem) {
             } else if (newName === item.title) {
                 dispatch(startRenaming(undefined))
             } else {
-                dispatch(stopRenaming({ id: item.id, newName }))
+                dispatch(stopRenaming({id: item.id, newName}))
             }
         },
         [dispatch, item.id, item.title, message, t],

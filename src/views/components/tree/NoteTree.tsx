@@ -6,10 +6,11 @@ import { useAppDispatch } from "~/redux"
 import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
 import { setRightClickItem } from "~/redux/uiSlice"
 
-import useOnNoteTreeMenuClick from "./hooks/useOnNoteTreeMenuClick"
+
 import { MemodNoteTreeItem } from "./NoteTreeItem"
 
 import NoteTreeItemMenu from "$components/menus/NoteTreeItemMenu"
+import useOnNoteTreeMenuClick from "$hooks/noteTreeItem/useOnNoteTreeMenuClick"
 import useItemsTree from "$hooks/useItemsTree"
 import { useSettings } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
@@ -115,5 +116,3 @@ export default function NoteTree({ search }: NoteTreeProps) {
     [data, menuOpened, onListRightClick, onMenuClick, t],
   )
 }
-
-export const MemoedNoteTree = React.memo(NoteTree)

@@ -1,10 +1,9 @@
-import { useCallback } from "react"
+import React, {useCallback} from "react"
 
-import { useAppDispatch } from "~/redux"
-import { startRenaming } from "~/redux/noteSlice"
-import { NoteItem } from "~/types"
+import {useAppDispatch} from "~/redux"
+import {startRenaming} from "~/redux/noteSlice"
 
-export default function useOnRenameKeyDown(item: NoteItem) {
+export default function useOnRenameKeyDown() {
     const dispatch = useAppDispatch()
 
     return useCallback(

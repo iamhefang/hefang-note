@@ -15,7 +15,7 @@ import {useThemeConfig} from "$hooks/useThemeConfig"
 
 export default function useTreeItemTitle(item: NoteItem) {
     const onRenamingBlur = useOnRenamingBlur(item)
-    const onRenameKeyDown = useOnRenameKeyDown(item)
+    const onRenameKeyDown = useOnRenameKeyDown()
     const {renamingId} = useNotes()
     const [search] = useSearchValue()
     const {token} = useThemeConfig()
