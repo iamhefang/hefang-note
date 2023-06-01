@@ -1,9 +1,6 @@
 {
   "name": "🇺🇸 English",
-  "keys": [
-    "en",
-    "en-US"
-  ],
+  "keys": ["en", "en-US"],
   "map": {
     "新建目录": "Create Directory",
     "新建笔记": "Create Note",
@@ -71,6 +68,8 @@
     "版本号": "Version Number",
     "源码版本": "Source Code Version",
     "平台": "Platform",
-    "导出": "Export"
+    "导出": "Export",
+    "升序": "Ascending",
+    "降序": "Descending"
   }
 }

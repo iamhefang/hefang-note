@@ -21,10 +21,10 @@ export default function useGeneralSettings(): Record<string, ReactNode> {
       [t("排序方式")]: (
         <Space>
           <Form.Item name={["sort", "field"]} noStyle>
-            <Select style={{ width: 120 }}>
+            <Select style={{ minWidth: 120 }}>
               {sortItems.map(({ field, label }) => (
                 <Select.Option key={`setting-form-sort-${field}`} value={field}>
-                  按{label}
+                  {t(label)}
                 </Select.Option>
               ))}
             </Select>
@@ -32,10 +32,10 @@ export default function useGeneralSettings(): Record<string, ReactNode> {
           <Form.Item name={["sort", "type"]} noStyle>
             <Select>
               <Select.Option key={"setting-form-sort-asc"} value="asc">
-                升序
+                {t("升序")}
               </Select.Option>
               <Select.Option key={"setting-form-sort-desc"} value="desc">
-                降序
+                {t("降序")}
               </Select.Option>
             </Select>
           </Form.Item>
