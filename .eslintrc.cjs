@@ -239,7 +239,7 @@ module.exports = {
     "import/no-internal-modules": [
       "warn",
       {
-        allow: ["react-dom/client", "@tauri-apps/api/**", "**/assets/*", "antd/locale/*", "refractor/lang/*", "**/*.css", "antd/es/locale"],
+        allow: ["react-dom/client", "@tauri-apps/api/**", "**/assets/*", "antd/locale/*", "refractor/lang/*", "**/*.css", "dayjs/plugin/*", "dayjs/locale/*"],
       },
     ],
     "import/no-useless-path-segments": [

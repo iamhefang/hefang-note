@@ -1,4 +1,5 @@
 import { theme as antTheme, Empty } from "antd"
+import { debounce } from "lodash"
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 
 import { CONTENT_SAVE_DELAY } from "~/config"
@@ -12,7 +13,7 @@ import WangEditor from "./WangEditor"
 import NoteUnlocker from "$components/locker/NoteUnlocker"
 import useCurrent from "$hooks/useCurrent"
 import { usePluginMap } from "$hooks/usePlugins"
-import { useNotes, useSettings } from "$hooks/useSelectors"
+import { useSettings } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
 import { contentStore } from "$utils/database"
 
@@ -38,22 +39,19 @@ export default function EditorArea() {
     setValue(newValue || "")
   }, [])
 
-  useEffect(() => {
-    refSaveTimer.current && window.clearTimeout(refSaveTimer.current)
-    if (!current?.isLeaf || !current?.id || reading) {
-      return
-    }
-    window.setTimeout(() => {
+  useEffect(
+    debounce(() => {
+      //   refSaveTimer.current && window.clearTimeout(refSaveTimer.current)
+      if (!current?.isLeaf || !current?.id || reading) {
+        return
+      }
       const newContent = { id: current.id, content: value }
       console.info("正在保存笔记", newContent)
       dispatch(updateContent(newContent))
       setChanging(false)
-    }, CONTENT_SAVE_DELAY)
-
-    return () => {
-      // refSaveTimer.current && window.clearTimeout(refSaveTimer.current)
-    }
-  }, [current?.id, current?.isLeaf, dispatch, reading, value])
+    }, CONTENT_SAVE_DELAY),
+    [current?.id, current?.isLeaf, dispatch, reading, value],
+  )
 
   const noteLocked = useNoteLocked(current?.id)
   useLayoutEffect(() => {
