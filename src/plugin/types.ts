@@ -50,7 +50,6 @@ export interface IEditorProps {
     placeholder?: string
     onFocus?: () => void
     onBlur?: () => void
-    note: NoteItem
 }
 
 export interface IPluginHooks {
