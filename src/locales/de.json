@@ -1,8 +1,6 @@
 {
   "name": "🇩🇪 Deutsch",
-  "keys": [
-    "de"
-  ],
+  "keys": ["de"],
   "map": {
     "新建目录": "Neues Verzeichnis erstellen",
     "新建笔记": "Neue Notiz erstellen",
@@ -70,6 +68,8 @@
     "版本号": "Versionsnummer",
     "源码版本": "Quellcode-Version",
     "平台": "Plattform",
-    "导出": "Exportieren"
+    "导出": "Exportieren",
+    "升序": "aufsteigende",
+    "降序": "absteigende"
   }
 }
