@@ -1,24 +1,23 @@
 #![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
+all(not(debug_assertions), target_os = "windows"),
+windows_subsystem = "windows"
 )]
 
 pub mod commands;
 pub mod utils;
 
 use commands::fs::is_directory;
-use tauri::{
-    App, AppHandle, CustomMenuItem, GlobalWindowEvent, Manager, Menu, SystemTray, SystemTrayEvent,
-    SystemTrayMenu, SystemTrayMenuItem, WindowMenuEvent,
-};
+use tauri::{App, AppHandle, CustomMenuItem, GlobalWindowEvent, Manager, Menu, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, WindowMenuEvent};
 use utils::consts::{
     EVENT_TOGGLE_LOCK, EVENT_TOGGLE_SETTINGS, MENU_ID_QUIT, MENU_ID_TOGGLE_LOCK,
     MENU_ID_TOGGLE_SETTINGS, MENU_ID_TOGGLE_VISIBLE,
 };
 
 use crate::commands::{fs::save_file, git::git_clone, menu::show_note_menu};
+
 #[derive(Clone, serde::Serialize)]
 struct Payload {}
+
 fn main() {
     tauri::Builder::default()
         .menu(build_window_menu())
@@ -122,14 +121,10 @@ fn on_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
             match id_str {
                 MENU_ID_QUIT => app.exit(0),
                 MENU_ID_TOGGLE_VISIBLE => {
-                    if window.is_visible().unwrap() {
-                        window.minimize().unwrap();
-                        window.hide().unwrap();
-                    } else {
+                    if window.is_minimized().unwrap() {
                         window.unminimize().unwrap();
-                        window.show().unwrap();
-                        window.current_monitor().unwrap();
-                        window.set_focus().unwrap();
+                    } else {
+                        window.minimize().unwrap();
                     }
                 }
                 MENU_ID_TOGGLE_LOCK => {

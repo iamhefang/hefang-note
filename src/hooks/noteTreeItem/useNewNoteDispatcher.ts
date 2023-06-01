@@ -4,8 +4,7 @@ import { useAppDispatch } from "~/redux"
 import { newNote, startRenaming } from "~/redux/noteSlice"
 import { setCurrent, setItemsExpanded } from "~/redux/settingSlice"
 
-import { getNewNote } from "./uitils"
-
+import { getNewNote } from "$hooks/noteTreeItem/uitils"
 import useNoteParents from "$hooks/useNoteParents"
 
 export default function useNewNoteDispatcher(parentId?: string) {
