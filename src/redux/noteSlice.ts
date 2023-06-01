@@ -101,6 +101,14 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
                 state.ids.push(item.id)
             }
         },
+        moveNote(state, action: PayloadAction<{ sourceId: string, targetId: string }>) {
+            const { sourceId, targetId } = action.payload
+            const note = state.entities[sourceId]
+            note.parentId = targetId
+            note.modifyTime = Date.now()
+            console.info(`移动笔记${note.title}到${targetId}`)
+            void notesStore.set({ ...note })
+        },
     },
     extraReducers(builder) {
         builder
@@ -118,5 +126,5 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
 
 export const noteSlice: Slice<NoteState, SliceCaseReducers<NoteState>> = slice
 
-export const { updateContent, startRenaming, stopRenaming, newNote, deleteNote } = slice.actions
+export const { updateContent, startRenaming, stopRenaming, newNote, deleteNote, moveNote } = slice.actions
 

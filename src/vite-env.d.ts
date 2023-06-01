@@ -21,3 +21,7 @@ declare module '*.md' {
     // Modify below per your usage
     export { attributes, toc, html, ReactComponent, VueComponent, VueComponentWith };
 }
+
+declare module 'turndown-plugin-gfm' {
+    export const gfm: TurndownService.Plugin
+}
