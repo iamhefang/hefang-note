@@ -1,10 +1,12 @@
-import {contentStore, database, notesStore} from "$utils/database"
-import {findNoteParents} from "$utils/notes"
 import {createAsyncThunk, createSlice, PayloadAction, Slice, SliceCaseReducers} from "@reduxjs/toolkit"
 import _ from "lodash"
 
 import {CONTENT_SAVE_DELAY} from "~/config"
+import {ContentSaveEvent, PluginHookOccasion} from "~/plugin"
 import {DeleteNotePayload, NoteItem, NoteState} from "~/types"
+
+import {contentStore, database, notesStore} from "$utils/database"
+import {findNoteParents} from "$utils/notes"
 
 
 const sliceName = "notes"
@@ -73,10 +75,26 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
                 .concat({...state.entities[id], modifyTime: now})
             const item = _.last(notes)!
             console.info("正在保存笔记", item.id, content)
-            void notesStore.set(...notes)
-            void contentStore.set(item.id, content)
-            for (const note of notes) {
-                state.entities[note.id] = note
+            const event = new ContentSaveEvent({currentTarget: {note: item, nextContent: content}, occasion: PluginHookOccasion.before})
+            for (const plugin of window.notebook.plugins) {
+                if (!event.bubble) {
+                    break
+                }
+                plugin.hooks?.includes("onContentSave") && plugin.onContentSave?.(event)
+            }
+            if (!event.isDefaultPrevented()) {
+                void notesStore.set(...notes)
+                void contentStore.set(item.id, content)
+                for (const note of notes) {
+                    state.entities[note.id] = note
+                }
+                const afterEvent = new ContentSaveEvent({currentTarget: {note: item, nextContent: content}, occasion: PluginHookOccasion.after})
+                for (const plugin of window.notebook.plugins) {
+                    if (!afterEvent.bubble) {
+                        break
+                    }
+                    plugin.hooks?.includes("onContentSave") && plugin.onContentSave?.(afterEvent)
+                }
             }
         },
         /**

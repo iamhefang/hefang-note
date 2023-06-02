@@ -2,7 +2,7 @@ import {openDB} from "idb"
 import _ from "lodash"
 
 import {versionCode} from "~/consts"
-import {IPluginInfo} from "~/plugin/types"
+import {IPluginInfo} from "~/plugin"
 import {NoteItem, Settings} from "~/types"
 
 import {decrypt, encrypt} from "./encrypt"

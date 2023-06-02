@@ -5,7 +5,7 @@ import "@wangeditor/editor/dist/css/style.css"
 import {App} from "antd"
 import {useEffect, useMemo, useState} from "react"
 
-import {EditorComponent} from "~/plugin/types"
+import {EditorComponent} from "~/plugin"
 
 import ss from "./index.module.scss"
 import useWangEditorTheme from "./useWangEditorTheme"
