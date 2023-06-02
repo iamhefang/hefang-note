@@ -3,22 +3,19 @@ import {appWindow} from "@tauri-apps/api/window"
 import {App, Button, Form, Input, Modal, theme} from "antd"
 import {useCallback, useEffect} from "react"
 
-import {isInClient} from "~/consts"
-import {PluginComponent, PluginHookOccasion, ScreenLockEvent} from "~/plugin"
+import {isInTauri} from "~/consts"
 import {useAppDispatch} from "~/redux"
 import {lockScreen} from "~/redux/settingSlice"
-import {LockSetting} from "~/types"
 
 import ss from "./ScreenLocker.module.scss"
 
 import {useSettings} from "$hooks/useSelectors"
 import {useTranslate} from "$hooks/useTranslate"
-import {callPluginsHook} from "$plugin/utils"
 import {shortcuts} from "$utils/shortcuts"
 
-const ScreenLocker: PluginComponent = () => {
+export default function ScreenLocker() {
     const {
-        lock,
+        lock: {locked, password, immediately},
         shortcut,
     } = useSettings()
     const t = useTranslate()
@@ -31,67 +28,56 @@ const ScreenLocker: PluginComponent = () => {
     const [lockForm] = Form.useForm()
     const [unlockForm] = Form.useForm()
 
-    const dispatchScreenLock = useCallback((payload: Partial<LockSetting>) => {
-        const event = callPluginsHook("onScreenLock", new ScreenLockEvent({
-            detail: {...lock, ...payload},
-            occasion: PluginHookOccasion.before,
-        }))
-        if (event.isDefaultPrevented()) {
-            return false
-        }
-        dispatch(lockScreen(event.detail))
-
-        return true
-    }, [dispatch, lock])
-
     const onLockClick = useCallback(() => {
-        if (lock.immediately && lock.password) {
-            dispatchScreenLock({locked: true})
+        if (immediately && password) {
+            dispatch(lockScreen({locked: true}))
 
             return
         }
-        lockForm.setFieldsValue({password: lock.password})
+        lockForm.setFieldsValue({password})
         modal.confirm({
-            title: t("锁定软件"),
+            title: t("锁定屏幕"),
             icon: <UnlockOutlined/>,
             style: {top: 40},
             content: (
-                <Form form={lockForm} layout="vertical" initialValues={{password: lock.password}}>
+                <Form form={lockForm} layout="vertical" initialValues={{password}}>
                     <Form.Item name="password" label={t("请输入解锁密码")} rules={[{required: true, message: t("请输入解锁密码")}]}>
                         <Input.Password placeholder={t("请输入解锁密码")} maxLength={6}/>
                     </Form.Item>
                 </Form>
             ),
-            okText: t("锁定"),
+            okText: "锁定",
             onOk(closeModal: () => void) {
                 void lockForm.validateFields().then((values) => {
-                    dispatchScreenLock({locked: true, password: values.password}) && closeModal()
+                    dispatch(lockScreen({locked: true, password: values.password}))
+                    closeModal()
                 })
             },
         })
-    }, [lock.immediately, lock.password, lockForm, modal, t, dispatchScreenLock])
+    }, [immediately, password, lockForm, modal, t, dispatch])
 
     const onUnlockClick = useCallback(
         ({password: pwd}: { password: string }) => {
             if (!pwd) {
                 void message.error("请输入密码")
-            } else if (pwd !== lock.password) {
+            } else if (pwd !== password) {
                 void message.error("密码错误")
             } else {
-                dispatchScreenLock({locked: false}) && unlockForm.resetFields()
+                unlockForm.resetFields()
+                dispatch(lockScreen({locked: false}))
             }
         },
-        [lock.password, message, dispatchScreenLock, unlockForm],
+        [password, message, unlockForm, dispatch],
     )
 
     useEffect(() => {
-        if (lock.locked || !isInClient) {
+        if (locked || !isInTauri) {
             return
         }
         const unlistener = appWindow.listen("toggleLock", onLockClick)
 
         return () => void unlistener.then((unlisten) => unlisten())
-    }, [lock.locked, onLockClick])
+    }, [locked, onLockClick])
 
     useEffect(() => {
         if (shortcut?.lock) {
@@ -105,9 +91,9 @@ const ScreenLocker: PluginComponent = () => {
 
     return (
         <>
-            {lock.locked || <Button type="text" size="small" onClick={onLockClick} icon={<LockOutlined/>}/>}
+            {locked || <Button type="text" size="small" onClick={onLockClick} icon={<LockOutlined/>}/>}
             <Modal
-                open={lock.locked}
+                open={locked}
                 closable={false}
                 destroyOnClose
                 centered
@@ -128,6 +114,3 @@ const ScreenLocker: PluginComponent = () => {
         </>
     )
 }
-
-ScreenLocker.order = 5
-export default ScreenLocker

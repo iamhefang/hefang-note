@@ -3,7 +3,7 @@ import {readTextFile, writeTextFile} from "@tauri-apps/api/fs"
 import Ajv from "ajv"
 import {Button, Col, Dropdown, message, Modal, Row} from "antd"
 
-import {isInClient} from "~/consts"
+import {isInTauri} from "~/consts"
 import {NoteItem} from "~/types"
 
 import {contentStore, notesStore} from "./database"
@@ -113,7 +113,7 @@ async function importWithHtml(): Promise<NoteData> {
 export const hefang = {
     contens: {
         export: async () => {
-            if (isInClient) {
+            if (isInTauri) {
                 const downloadDir = await path.downloadDir()
                 void dialog
                     .save({
@@ -151,7 +151,7 @@ export const hefang = {
         },
         import: async (): Promise<number> => {
             return new Promise<number>(async (resolve, reject) => {
-                const json: NoteData = isInClient ? await importWithTauri() : await importWithHtml()
+                const json: NoteData = isInTauri ? await importWithTauri() : await importWithHtml()
                 const importIds = json.notes.map((item) => item.id)
                 const currentIds = await notesStore.getAllIds()
                 const ids = new Set([...currentIds, ...importIds])

@@ -1,10 +1,3 @@
-/*
- * @Author: iamhefang he@hefang.link
- * @LastEditors: iamhefang he@hefang.link
- * @LastEditTime: 2023-05-03 10:06:48
- * @Date: 2023-05-03 08:46:29
- * @Description:
- */
 import {Space} from "antd"
 import React, {Suspense} from "react"
 
@@ -15,8 +8,6 @@ import SiderBarToggle from "$components/topbar/items/SiderBarToggle"
 import ShowInPlatform from "$components/utils/ShowInPlatform"
 import {usePlatformType} from "$hooks/usePlatform"
 import {useSettings, useStates} from "$hooks/useSelectors"
-import usePluginComponents from "$plugin/hooks/usePluginComponents"
-
 
 
 const LazyClientDownload = React.lazy(async () => import("$components/topbar/items/ClientDownload"))
@@ -27,8 +18,6 @@ export default function TopBarLeft() {
         lock: {locked},
     } = useSettings()
     const {showSettingsModal} = useStates()
-
-    const components = usePluginComponents("TopLeft")
 
     return (
         <Space className={ss.root} style={{left: osType === "Darwin" ? 70 : 8}}>
@@ -41,7 +30,6 @@ export default function TopBarLeft() {
                     </Suspense>
                 )}
             </ShowInPlatform>
-            {components}
         </Space>
     )
 }

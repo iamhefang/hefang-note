@@ -62,7 +62,7 @@ export default function useSiderBarTopMenuItems() {
             {type: "divider"},
             {
                 key: "export",
-                label: t("备份笔记"),
+                label: t("导出全部笔记"),
                 onClick: async () =>
                     import("$utils/plugin").then((res) => {
                         void res.hefang.contens.export()
@@ -70,7 +70,7 @@ export default function useSiderBarTopMenuItems() {
             },
             {
                 key: "import",
-                label: t("还原备份"),
+                label: t("导入笔记"),
                 onClick: async () =>
                     import("$utils/plugin").then((res) => {
                         void res.hefang.contens.import().then((count) => {

@@ -1,13 +1,13 @@
-import { FormItemProps, GlobalToken, ThemeConfig } from "antd"
-import { ComponentClass, FC, ReactNode } from "react"
+import {FormItemProps, GlobalToken, ThemeConfig} from "antd"
+import {ComponentClass, FC, ReactNode} from "react"
 
 import store from "~/redux"
-import { noteSlice } from "~/redux/noteSlice"
-import { settingSlice } from "~/redux/settingSlice"
-import { uiSlice } from "~/redux/uiSlice"
-import { NoteItem, ThemeDefine, ThemeType } from "~/types"
+import {noteSlice} from "~/redux/noteSlice"
+import {settingSlice} from "~/redux/settingSlice"
+import {uiSlice} from "~/redux/uiSlice"
+import {ThemeDefine, ThemeType} from "~/types"
 
-import { PlatformType } from "$hooks/usePlatform"
+import {PlatformType} from "$hooks/usePlatform"
 
 export interface IPluginInfo {
     id: string
@@ -35,11 +35,13 @@ export interface IPluginInfo {
     components?: PluginComponents[]
     enable?: boolean
 }
+
 export type PluginSupport = { platform: PlatformType[], version: string }
 
 export type PluginAbility = keyof IPluginAbility
 export type PluginComponents = keyof IPluginComponents
 export type PluginHookKeys = keyof IPluginHooks;
+
 export interface IPlugin extends IPluginInfo, Partial<IPluginHooks>, Partial<IPluginComponents>, Partial<IPluginAbility>, Partial<IPluginLifecycle> {
 
 }
@@ -50,6 +52,7 @@ export interface IEditorProps {
     placeholder?: string
     onFocus?: () => void
     onBlur?: () => void
+    loading?: boolean
 }
 
 export interface IPluginHooks {
@@ -58,9 +61,13 @@ export interface IPluginHooks {
 
 export interface IPluginLifecycle {
     onInstall(): void
+
     onUninstall(): void
+
     onEnable(): void
+
     onDisable(): void
+
     onUpdate(): void
 }
 

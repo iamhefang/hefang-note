@@ -20,7 +20,7 @@ import useTreeItemTitle from "$hooks/noteTreeItem/useTreeItemTitle"
 import {useSettings, useStates} from "$hooks/useSelectors"
 import {useTranslate} from "$hooks/useTranslate"
 
-export default function NoteTreeItem(
+function NoteTreeItem(
     {
         item,
         "data-index": dataIndex,
@@ -147,4 +147,4 @@ export default function NoteTreeItem(
     )
 }
 
-export const MemodNoteTreeItem = React.memo(NoteTreeItem)
+export const MemoNoteTreeItem = React.memo(NoteTreeItem)
