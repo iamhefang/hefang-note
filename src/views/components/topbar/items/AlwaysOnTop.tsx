@@ -3,11 +3,11 @@ import { appWindow } from "@tauri-apps/api/window"
 import { Button } from "antd"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
-import { FooterTopComponent } from "~/plugin"
+import { PluginComponent } from "~/plugin"
 
 import { useTranslate } from "$hooks/useTranslate"
 
-const AlwaysOnTop: FooterTopComponent = () => {
+const AlwaysOnTop: PluginComponent = () => {
   const t = useTranslate()
   const [enable, setEnable] = useState(false)
   const onClick = useCallback(() => {

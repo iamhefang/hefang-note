@@ -1,19 +1,17 @@
-import {InfoCircleOutlined} from "@ant-design/icons"
-import {theme as antdTheme, Col, Layout, Row, Spin} from "antd"
-import dayjs from "dayjs"
+import {theme as antdTheme, Col, Layout, Row} from "antd"
 import {Resizable, ResizeCallback} from "re-resizable"
-import {useCallback, useEffect, useMemo, useState} from "react"
+import React, {useCallback, useEffect, useMemo, useState} from "react"
 
 import {productName, versionName} from "~/consts"
 
 import EditorArea from "$components/editor/EditorArea"
 import SiderBar from "$components/sidebar/SiderBar"
-import Github from "$components/topbar/items/Github"
+import FooterLeftSpace from "$components/statusbar/FooterLeftSpace"
+import FooterRightSpace from "$components/statusbar/FooterRightSpace"
 import TopBarLeft from "$components/topbar/TopBarLeft"
 import TopBarRight from "$components/topbar/TopBarRight"
-import VersionView from "$components/version/VersionView"
 import useCurrent from "$hooks/useCurrent"
-import {useNotes, useSettings} from "$hooks/useSelectors"
+import {useSettings} from "$hooks/useSelectors"
 import {useTranslate} from "$hooks/useTranslate"
 import {shortcuts} from "$utils/shortcuts"
 import {closeWindow} from "$utils/window"
@@ -28,9 +26,7 @@ export default function View() {
         theme,
         lock: {locked},
         shortcut,
-        showEditTime,
     } = useSettings()
-    const {entities, status} = useNotes()
     const {
         token: {colorBgContainer, colorBorder, colorBgBase},
     } = antdTheme.useToken()
@@ -44,27 +40,6 @@ export default function View() {
         },
         [sw],
     )
-    const footer = useMemo(() => {
-        const values = Object.values(entities)
-        const notes = values.filter((item) => item.isLeaf)
-        const dirCount = values.length - notes.length
-        const noteCount = notes.length
-
-        return t("共{dirCount}个目录,{noteCount}篇笔记", {dirCount, noteCount})
-    }, [entities, t])
-
-    const loadStatus = useMemo(() => {
-        if (status === "failed") {
-            return <InfoCircleOutlined/>
-        }
-        if (status === "idle") {
-            return null
-        }
-
-        return (
-            <span title={t("数据量大，正在加载，请稍候")}><Spin size="small"/></span>
-        )
-    }, [status, t])
 
     const current = useCurrent()
 
@@ -119,19 +94,12 @@ export default function View() {
             </Layout>
             <Footer style={{borderColor: colorBorder}}>
                 <Row gutter={10}>
-                    <Col>{footer}</Col>
-                    {showEditTime && current?.modifyTime ? (
-                        <Col>
-                            最近编辑: <span title={dayjs(current?.modifyTime).format("YYYY-M-D H:m:s")}>{dayjs(current?.modifyTime).fromNow()}</span>
-                        </Col>
-                    ) : null}
-                    {loadStatus && <Col>{loadStatus}</Col>}
+                    <Col>
+                        <FooterLeftSpace/>
+                    </Col>
                     <Col flex={1}/>
                     <Col>
-                        <Github/>
-                    </Col>
-                    <Col>
-                        <VersionView/>
+                        <FooterRightSpace/>
                     </Col>
                 </Row>
             </Footer>
