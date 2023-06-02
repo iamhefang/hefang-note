@@ -1,5 +1,4 @@
-
-import { Arch, OsType } from "@tauri-apps/api/os"
+import {Arch, OsType} from "@tauri-apps/api/os"
 
 import pkg from "^/package.json"
 

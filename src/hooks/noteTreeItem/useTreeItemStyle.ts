@@ -1,10 +1,10 @@
-import { theme } from "antd"
-import { CSSProperties, useMemo } from "react"
+import {theme} from "antd"
+import {CSSProperties, useMemo} from "react"
 
-import { NoteIndentItem } from "~/types"
+import {NoteIndentItem} from "~/types"
 
 export default function useTreeItemStyle(item: NoteIndentItem, dataSize: string | number) {
-    const { token } = theme.useToken()
+    const {token} = theme.useToken()
 
     return useMemo(
         (): CSSProperties | Record<string, string> => ({

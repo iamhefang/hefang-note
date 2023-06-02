@@ -1,4 +1,4 @@
-import { Context, sm4_crypt_ecb, sm4_setkey_dec, sm4_setkey_enc } from "./sm4"
+import {Context, sm4_crypt_ecb, sm4_setkey_dec, sm4_setkey_enc} from "./sm4"
 
 const password = localStorage.getItem("key") || (() => {
     const key = crypto.randomUUID().replace(/-/g, "")

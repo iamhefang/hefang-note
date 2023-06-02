@@ -527,4 +527,4 @@ function sm4_crypt_ecb(ctx: Context, data: Uint8Array) {
     return bous
 }
 
-export { Context, sm4_crypt_ecb, sm4_setkey_enc, sm4_setkey_dec }
+export {Context, sm4_crypt_ecb, sm4_setkey_enc, sm4_setkey_dec}
