@@ -56,10 +56,14 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
          * @param action
          */
         updateContent(state, action: PayloadAction<{ id: string, content: string, force?: boolean }>) {
+
             const {id, content, force = false} = action.payload
-            const last = lastSave[id] ?? {time: 0, content}
+            const last = lastSave[id] ?? {time: 0, content: ""}
+
+            // console.log("更新笔记内容到数据库", action.payload, lastSave, last)
+
             const now = Date.now()
-            if (!force && (last.content === content || now - last.time < CONTENT_SAVE_DELAY)) {
+            if (!force && (last.content === content || now - last.time <= CONTENT_SAVE_DELAY)) {
                 return
             }
 
@@ -68,7 +72,7 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
                 .map((me) => ({...me, modifyTime: now}))
                 .concat({...state.entities[id], modifyTime: now})
             const item = _.last(notes)!
-            console.info("正在保存笔记", item)
+            console.info("正在保存笔记", item.id, content)
             void notesStore.set(...notes)
             void contentStore.set(item.id, content)
             for (const note of notes) {
