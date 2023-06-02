@@ -8,15 +8,14 @@
 
 import { ReactElement, useMemo } from "react"
 
-import { IPluginComponents, IPluginDataSlice, PluginComponent } from "~/plugin"
-
 import usePluginFooterTopComponentProps from "./usePluginFooterTopComponentProps"
 import usePlugins from "./usePlugins"
 
+import { FooterTopComponent, IFooterTopComponentProps, IPluginComponents } from "$plugin/types"
 
-export default function usePluginComponents<K extends keyof Omit<IPluginComponents, "Editor">>(
+export default function usePluginFooterTopComponents<K extends keyof Omit<IPluginComponents, "Editor">>(
   type: K,
-): ReactElement<IPluginDataSlice, PluginComponent>[] {
+): ReactElement<IFooterTopComponentProps, FooterTopComponent>[] {
   const plugins = usePlugins()
   const props = usePluginFooterTopComponentProps()
 
@@ -26,7 +25,7 @@ export default function usePluginComponents<K extends keyof Omit<IPluginComponen
     return hasComponents
       .sort((a, b) => (a[type]?.order ?? 0) - (b[type]?.order ?? 0))
       .map((plugin) => {
-        const Component: PluginComponent = plugin[type]!
+        const Component: FooterTopComponent = plugin[type]!
 
         return <Component {...props} key={`${type}-${plugin.id}`} />
       })
