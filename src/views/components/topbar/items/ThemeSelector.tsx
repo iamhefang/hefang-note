@@ -8,6 +8,7 @@
 import { Button, Dropdown, Tooltip } from "antd"
 import { useMemo } from "react"
 
+import { FooterTopComponent, PluginHookOccasion, ThemeChangeEvent } from "~/plugin"
 import { useAppDispatch } from "~/redux"
 import { changeTheme } from "~/redux/settingSlice"
 
@@ -15,7 +16,6 @@ import { useSettings } from "$hooks/useSelectors"
 import useThemes from "$hooks/useThemes"
 import { useTranslate } from "$hooks/useTranslate"
 import usePlugins from "$plugin/hooks/usePlugins"
-import { FooterTopComponent, PluginHookOccasion, ThemeChangeEvent } from "$plugin/types"
 
 const ThemeSelector: FooterTopComponent = () => {
   const { theme } = useSettings()

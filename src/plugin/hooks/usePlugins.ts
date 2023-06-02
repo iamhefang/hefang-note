@@ -9,7 +9,7 @@ import {BaseDirectory, createDir, exists, readDir, readTextFile} from "@tauri-ap
 import {join} from "@tauri-apps/api/path"
 import {useEffect, useMemo, useRef, useState} from "react"
 
-import {isInClient} from "~/consts"
+import {isInTauri} from "~/consts"
 import {IPlugin, IPluginInfo} from "~/plugin"
 
 import {useSettings} from "$hooks/useSelectors"
@@ -28,7 +28,7 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
     const pluginPath = useRef<Record<string, string>>({})
 
     useEffect(() => {
-        if (!isInClient) {
+        if (!isInTauri) {
             return
         }
         void (async () => {
@@ -60,7 +60,6 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
                     }
                 }
             }
-            console.log("plugin infos", ps)
             setPluginInfos(ps)
         })()
     }, [])
@@ -75,7 +74,6 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
                     infos[i] = {...pluginInstance, description: null, license: null, ...plugin}
                 }
             }
-            console.log("plugins", infos)
             setPlugins(infos)
         })()
     }, [pluginsInfos, plugins])
