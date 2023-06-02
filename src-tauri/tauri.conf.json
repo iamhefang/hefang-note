@@ -8,7 +8,7 @@
     },
     "package": {
         "productName": "何方笔记",
-        "version": "0.5.0"
+        "version": "0.3.2"
     },
     "tauri": {
         "systemTray": {
@@ -51,10 +51,7 @@
                 "request": true,
                 "scope": [
                     "https://gitee.com/iamhefang/*",
-                    "https://github.com/iamhefang/*",
-                    "https://iamhefang.cn/*",
-                    "https://note.hefang.app/*",
-                    "https://hefang-note.app/*"
+                    "https://iamhefang.cn/*"
                 ]
             },
             "globalShortcut": {
@@ -115,7 +112,7 @@
             "endpoints": [
                 "https://iamhefang.cn/tools/notebook/index.json"
             ],
-            "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU2NDkyM0JCMTU0Q0QxRDEKUldUUjBVd1Z1eU5KVm5vRnRIb3VPTTFTYVlHWUJwaCtLc0hDbDREWUpqY05DOHdCQWlaVnNXV1MK",
+            "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDE4RUU0QzVDN0Y1QTI2QjMKUldTekpscC9YRXp1R091dDlWRFZBSW8xTkUrc25tbDcyNVJKcDZzUmpLQXdkOUFaVmZzUExuVHUK",
             "dialog": false
         },
         "windows": [
