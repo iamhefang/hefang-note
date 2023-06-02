@@ -18,15 +18,6 @@ export function useNotes(): NoteState {
   return useSelector<StoreState, NoteState>((s) => s.notes)
 }
 
-/**
- * 获取插件自定义配置项
- * @param pluginId 插件ID
- * @returns 插件配置项
- */
-export function usePluginSettings<T = unknown>(pluginId: string): T {
-  return useSelector<StoreState, T>((s) => (s.settings[pluginId] || {}) as T)
-}
-
 export function useEditorOptions<T extends DefaultEditorOptions | object = object>(): T {
   return useSelector<StoreState, T>((s) => {
     const editor = s.settings.editor

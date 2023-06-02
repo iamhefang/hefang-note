@@ -1,5 +1,5 @@
 import {theme as antTheme, Empty} from "antd"
-import {useCallback, useEffect, useLayoutEffect, useMemo, useState} from "react"
+import React, {useCallback, useEffect, useLayoutEffect, useMemo, useState} from "react"
 
 import useNoteLocked from "~/hooks/useNoteLocked"
 import {EditorComponent} from "~/plugin"
@@ -10,9 +10,9 @@ import WangEditor from "./WangEditor"
 
 import NoteUnlocker from "$components/locker/NoteUnlocker"
 import useCurrent from "$hooks/useCurrent"
-import {usePluginMap} from "$hooks/usePlugins"
 import {useSettings} from "$hooks/useSelectors"
 import {useTranslate} from "$hooks/useTranslate"
+import {usePluginMap} from "$plugin/hooks/usePlugins"
 import {contentStore} from "$utils/database"
 
 export default function EditorArea() {
@@ -83,7 +83,7 @@ export default function EditorArea() {
             }}
         >
             <div className="editor-wrapper" style={editorOptions}>
-                <Editor value={value} onChange={onValueChange} placeholder={t("尽情记录吧")} loading={reading}/>
+                <Editor value={value} onChange={onValueChange} placeholder={t("尽情记录吧")} loading={reading} noteId={current.id}/>
             </div>
         </div>
     )
