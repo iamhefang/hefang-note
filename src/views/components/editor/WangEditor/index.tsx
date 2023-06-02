@@ -36,6 +36,9 @@ const WangEditor: EditorComponent = ({value, onChange, onFocus, onBlur, placehol
         () => ({
             placeholder,
             onChange: (domEditor) => {
+                if (loading) {
+                    return
+                }
                 onChange?.(domEditor.isEmpty() ? "" : domEditor.getHtml())
             },
             onFocus: () => onFocus?.(),
@@ -49,7 +52,7 @@ const WangEditor: EditorComponent = ({value, onChange, onFocus, onBlur, placehol
                 },
             },
         }),
-        [message, onBlur, onChange, onFocus, placeholder],
+        [loading, message, onBlur, onChange, onFocus, placeholder],
     )
 
     const theme = useWangEditorTheme()
