@@ -1,5 +1,4 @@
-import {App as Antd, ConfigProvider} from "antd"
-import dayjs from "dayjs"
+import {App as Antd, theme as antdTheme, ConfigProvider} from "antd"
 import React, {Suspense, useEffect} from "react"
 
 import {uiSlice} from "~/redux/uiSlice"
@@ -8,18 +7,23 @@ import View from "~/views"
 import {useAppDispatch} from "./redux"
 
 import Loading from "$components/loading/Loading"
+import ShowInPlatform from "$components/utils/ShowInPlatform"
 import useContentLoader from "$hooks/useContentLoader"
-import {useStates} from "$hooks/useSelectors"
+import usePlugins from "$hooks/usePlugins"
+import {useSettings, useStates} from "$hooks/useSelectors"
 import useSettingsLoader from "$hooks/useSettingsLoader"
 import {useThemeConfig} from "$hooks/useThemeConfig"
 import {useLocaleDefine} from "$hooks/useTranslate"
-import usePluginComponents from "$plugin/hooks/usePluginComponents"
-import usePluginEffect from "$plugin/hooks/usePluginEffect"
+
+
 
 const LazySettings = React.lazy(async () => import("~/views/settings"))
 
 export default function Application() {
+    const {theme, language} = useSettings()
     const {launching} = useStates()
+    const plugins = usePlugins()
+    const {token} = antdTheme.useToken()
     const loadContents = useContentLoader()
     const loadSettings = useSettingsLoader()
     const dispatch = useAppDispatch()
@@ -31,10 +35,14 @@ export default function Application() {
         })()
     }, [dispatch, loadContents, loadSettings])
 
-    usePluginEffect()
+    useEffect(() => {
+        for (const plugin of plugins) {
+            plugin.hooks?.includes?.("onThemeChange") && plugin.onThemeChange?.(theme, token)
+        }
+    }, [theme, plugins, token])
+
     const themeConfig = useThemeConfig()
     const locale = useLocaleDefine()
-    const components = usePluginComponents("Float")
 
     return launching ? (
         <Loading/>
@@ -42,10 +50,13 @@ export default function Application() {
         <ConfigProvider autoInsertSpaceInButton={false} locale={locale.antd} theme={themeConfig}>
             <Antd message={{top: 40}} notification={{top: 40}}>
                 <View/>
-                <Suspense>
-                    <LazySettings/>
-                </Suspense>
-                {components}
+                <ShowInPlatform platforms={["Linux", "Darwin", "Windows_NT", "Browser"]}>
+                    {() => (
+                        <Suspense>
+                            <LazySettings/>
+                        </Suspense>
+                    )}
+                </ShowInPlatform>
             </Antd>
         </ConfigProvider>
     )

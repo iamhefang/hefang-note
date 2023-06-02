@@ -1,4 +1,4 @@
-import { NoteItem } from "~/types"
+import {NoteItem} from "~/types"
 
 const renamingMap: Record<string, string> = {
     "new-note": "输入笔记名",
@@ -8,6 +8,7 @@ const renamingMap: Record<string, string> = {
 export function renamingPlaceholder(renamingId: string, item: NoteItem) {
     return renamingMap[renamingId] ?? item.title
 }
+
 export function renamingDefaultValue(renamingId: string, item: NoteItem) {
     return renamingId.startsWith("new") ? "" : item.title
 }

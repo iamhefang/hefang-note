@@ -1,13 +1,12 @@
-import useSearchValue from "$hooks/useSearchValue"
 import {MoreOutlined} from "@ant-design/icons"
 import {Button, Col, Dropdown, Input, Row, Skeleton} from "antd"
 import {debounce} from "lodash"
-import React, {ChangeEvent, useCallback, useMemo, useState} from "react"
-
-import useSiderBarTopMenuItems from "./hooks/useSiderBarTopMenuItems"
+import React, {ChangeEvent, useCallback} from "react"
 
 import NoteTree from "$components/tree/NoteTree"
+import useSearchValue from "$hooks/useSearchValue"
 import {useNotes} from "$hooks/useSelectors"
+import useSiderBarTopMenuItems from "$hooks/useSiderBarTopMenuItems"
 import {useTranslate} from "$hooks/useTranslate"
 
 export default function SiderBar() {

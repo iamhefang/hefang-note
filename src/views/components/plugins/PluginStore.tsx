@@ -2,7 +2,7 @@ import {Button, Col, Divider, Empty, Row, Space, Tag} from "antd"
 import React, {ForwardedRef, useEffect, useMemo, useState} from "react"
 import {ItemProps, ListProps, Virtuoso} from "react-virtuoso"
 
-import {IPluginInfo} from "~/plugin"
+import {IPluginInfo} from "~/plugin/types"
 
 import {PluginDescription} from "./PluginDescription"
 import ss from "./PluginStore.module.scss"
@@ -15,7 +15,7 @@ const PluginListItem = React.memo(({item, "data-known-size": dataKnownSize, ...p
         <li className={ss.item} style={{height: dataKnownSize}} {...props} key={`store-${item.id}`}>
             <Row gutter={15} wrap={false}>
                 <Col>
-                    <img src={item.logo ?? ""} className={ss.cover} style={{height: (dataKnownSize / 3) * 2}} alt={item.name}/>
+                    <img src={item.logo} className={ss.cover} style={{height: (dataKnownSize / 3) * 2}} alt={item.name}/>
                 </Col>
                 <Col flex={1}>
                     <Space direction="vertical">
@@ -51,30 +51,27 @@ export function PluginStore({search}: PluginProps) {
     const [height, setHeight] = useState(window.innerHeight - 200)
     useEffect(() => {
         void pluginStore.getAll().then(setPlugins)
-    }, [])
 
-    const data = useMemo(() => {
-        const s = search.toLowerCase().trim()
-        if (!s) {
-            return plugins ?? []
-        }
-
-        return plugins?.filter((item) => {
-            return [item.author, item.name, item.description].join("").toLowerCase().includes(s)
-        }) ?? []
-    }, [plugins, search])
-    useEffect(() => {
         const onResize = () => {
-            setHeight(Math.min
-            (window.innerHeight - 200, (data.length * 70) || 200))
+            setHeight(window.innerHeight - 200)
         }
-        onResize()
         window.addEventListener("resize", onResize)
 
         return () => {
             window.removeEventListener("resize", onResize)
         }
-    }, [data])
+    }, [])
+
+    const data = useMemo(() => {
+        const s = search.toLowerCase().trim()
+        if (!s) {
+            return plugins
+        }
+
+        return plugins?.filter((item) => {
+            return [item.author, item.name, item.description].join("").toLowerCase().includes(s)
+        })
+    }, [plugins, search])
 
     return (
         <Virtuoso

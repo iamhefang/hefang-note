@@ -1,14 +1,14 @@
 import {arch, Arch, OsType, platform, Platform, type} from "@tauri-apps/api/os"
 import {useEffect, useState} from "react"
 
-import {isInClient} from "~/consts"
+import {isInTauri} from "~/consts"
 
 export type PlatformType = OsType | "Browser"
 
 export function usePlatformType(): PlatformType {
     const [value, setValue] = useState<PlatformType>("Browser")
     useEffect(() => {
-        isInClient && type().then(setValue).catch(console.error)
+        isInTauri && type().then(setValue).catch(console.error)
     }, [])
 
     return value
@@ -17,7 +17,7 @@ export function usePlatformType(): PlatformType {
 export function usePlatform(): Platform | undefined {
     const [value, setValue] = useState<Platform>()
     useEffect(() => {
-        isInClient && platform().then(setValue).catch(console.error)
+        isInTauri && platform().then(setValue).catch(console.error)
     }, [])
 
     return value
@@ -26,7 +26,7 @@ export function usePlatform(): Platform | undefined {
 export function useArch(): Arch | undefined {
     const [value, setValue] = useState<Arch>()
     useEffect(() => {
-        isInClient && arch().then(setValue).catch(console.error)
+        isInTauri && arch().then(setValue).catch(console.error)
     }, [])
 
     return value
@@ -35,7 +35,7 @@ export function useArch(): Arch | undefined {
 export function useOsTypr(): OsType | undefined {
     const [value, setValue] = useState<OsType>()
     useEffect(() => {
-        isInClient && type().then(setValue).catch(console.error)
+        isInTauri && type().then(setValue).catch(console.error)
     }, [])
 
     return value
