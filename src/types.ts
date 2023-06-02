@@ -68,6 +68,20 @@ export type ThemeType = "auto" | "light" | "dark" | "eyeshield" | "anti-blue-ray
 export type Themes = Record<ThemeType, ThemeDefine>
 export type ThemeDefine = ThemeConfig & { label: ReactNode; tooltip?: string; icon?: ReactNode }
 export type DefaultEditorOptions = { showLineNumbers: boolean; fontSize: number; lineHeight: number; minimap: boolean }
+export  type LockSetting = {
+    /**
+     * 当前是否已锁定
+     */
+    locked: boolean
+    /**
+     * 解锁密码
+     */
+    password?: string
+    /**
+     * 点击锁屏后是否不再弹窗提示弹窗
+     */
+    immediately: boolean
+}
 export type Settings = {
     theme: ThemeType
     /**
@@ -81,20 +95,7 @@ export type Settings = {
     /**
      * 锁屏
      */
-    lock: {
-        /**
-         * 当前是否已锁定
-         */
-        locked: boolean
-        /**
-         * 解锁密码
-         */
-        password?: string
-        /**
-         * 点击锁屏后是否不再弹窗提示弹窗
-         */
-        immediately: boolean
-    }
+    lock: LockSetting
     /**
      * 启用的插件id
      */

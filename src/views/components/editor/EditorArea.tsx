@@ -2,7 +2,7 @@ import {theme as antTheme, Empty} from "antd"
 import {useCallback, useEffect, useLayoutEffect, useMemo, useState} from "react"
 
 import useNoteLocked from "~/hooks/useNoteLocked"
-import {EditorComponent} from "~/plugin/types"
+import {EditorComponent} from "~/plugin"
 import {useAppDispatch} from "~/redux"
 import {updateContent} from "~/redux/noteSlice"
 
