@@ -8,10 +8,11 @@
 
 import { ReactElement, useMemo } from "react"
 
+import { FooterTopComponent, IFooterTopComponentProps, IPluginComponents } from "~/plugin"
+
 import usePluginFooterTopComponentProps from "./usePluginFooterTopComponentProps"
 import usePlugins from "./usePlugins"
 
-import { FooterTopComponent, IFooterTopComponentProps, IPluginComponents } from "$plugin/types"
 
 export default function usePluginFooterTopComponents<K extends keyof Omit<IPluginComponents, "Editor">>(
   type: K,

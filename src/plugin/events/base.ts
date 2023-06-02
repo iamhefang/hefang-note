@@ -1,7 +1,4 @@
-export enum PluginHookOccasion {
-    before = "before",
-    after = "after"
-}
+import {PluginHookOccasion} from "../enums"
 
 export class PluginHookEvent<T> {
     /**
@@ -12,11 +9,11 @@ export class PluginHookEvent<T> {
      * 是否继续冒泡
      */
     #bubble: boolean = true
-    readonly #detail: T
+    readonly #currentTarget: T | null
     readonly #occasion: PluginHookOccasion
 
     constructor(init: PluginHookEventInit<T>) {
-        this.#detail = init.detail
+        this.#currentTarget = init.currentTarget
         this.#defaultPrevented = false
         this.#occasion = init.occasion
         console.info("插件事件", this)
@@ -26,8 +23,8 @@ export class PluginHookEvent<T> {
         return this.#bubble
     }
 
-    public get detail() {
-        return this.#detail
+    public get currentTarget() {
+        return this.#currentTarget
     }
 
     public preventDefault() {
@@ -44,6 +41,6 @@ export class PluginHookEvent<T> {
 }
 
 export type PluginHookEventInit<T> = {
-    detail: T
+    currentTarget: T
     occasion: PluginHookOccasion
 }

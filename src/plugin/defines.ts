@@ -1,12 +1,12 @@
-import {FormItemProps} from "antd/es/form/FormItem"
+import {ThemeConfig} from "antd"
+import {ReactNode} from "react"
 
 import {ThemeDefine} from "~/types"
 
-import {IPluginComponents, IPluginDataSlice} from "./components"
+import {IPluginComponents} from "./components"
 import {ContentSaveEvent, ScreenLockEvent, ThemeChangeEvent} from "./events"
 
 import {PlatformType} from "$hooks/usePlatform"
-import ContentIOEvent from "$plugin/events/ContentIOEvent"
 
 /**
  * 插件信息
@@ -48,15 +48,11 @@ export type PluginHookKeys = keyof IPluginHooks
  * 插件代码导出的信息
  */
 export interface IPluginObject extends Partial<IPluginHooks>, Partial<IPluginComponents>, Partial<IPluginAbility>, Partial<IPluginLifecycle> {
-    settings?: IPluginSettings
-}
-
-export interface IPluginSettings {
-    [key: string]: Omit<FormItemProps, "name">
 }
 
 export interface IPlugin extends IPluginInfo, IPluginObject {
 }
+
 
 export interface IPluginHooks {
     /**
@@ -74,18 +70,6 @@ export interface IPluginHooks {
      * @param event
      */
     onScreenLock(event: ScreenLockEvent): void
-
-    /**
-     * 笔记导出时回调
-     * @param event
-     */
-    onContentExport(event: ContentIOEvent): void
-
-    /**
-     * 笔记导入时回调
-     * @param event
-     */
-    onContentImport(event: ContentIOEvent): void
 }
 
 export interface IPluginLifecycle {
@@ -100,7 +84,6 @@ export interface IPluginLifecycle {
     onUninstall(): void
 
     /**
-     * 插件启用时回调
      */
     onEnable(): void
 
@@ -115,24 +98,14 @@ export interface IPluginLifecycle {
     onUpdate(): void
 }
 
-/**
- * 插件提供笔记同步能力
- */
-export interface IPluginSynchronization {
-    name: string
-    version: string
-    logo: string
-    description: string
+export type PluginTheme = ThemeConfig & { tooltip?: string; icon: ReactNode }
 
-    onInit(runtime: IPluginDataSlice): void
-}
 
 /**
  * 插件提供的能力
  */
 export interface IPluginAbility {
     theme: ThemeDefine
-    synchronization: IPluginSynchronization
 }
 
 export interface INotebook {

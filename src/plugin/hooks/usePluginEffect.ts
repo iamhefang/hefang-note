@@ -3,29 +3,22 @@ import {useEffect, useRef} from "react"
 
 import {IPlugin, PluginHookOccasion, ScreenLockEvent, ThemeChangeEvent} from "~/plugin"
 
-import {useSettings, useStates} from "$hooks/useSelectors"
+import {useSettings} from "$hooks/useSelectors"
 import usePlugins from "$plugin/hooks/usePlugins"
-import {callPluginsHook} from "$plugin/utils"
 
-
-
-/**
- * 主题变化后回调
- */
 function useThemePluginEffect() {
-    const {theme} = useSettings()
+    const {theme, language} = useSettings()
     const plugins = usePlugins()
-    const {launching} = useStates()
     const {token} = antdTheme.useToken()
     useEffect(() => {
-        if (launching) {
-            return
+        const themeEvent = new ThemeChangeEvent({currentTarget: {theme, token}, occasion: PluginHookOccasion.after})
+        for (const plugin of plugins) {
+            if (!themeEvent.bubble) {
+                break
+            }
+            plugin.hooks?.includes?.("onThemeChange") && plugin.onThemeChange?.(themeEvent)
         }
-        callPluginsHook("onThemeChange", new ThemeChangeEvent({
-            detail: {theme, token},
-            occasion: PluginHookOccasion.after,
-        }))
-    }, [theme, plugins, token, launching])
+    }, [theme, plugins, token])
 }
 
 /**
@@ -33,21 +26,20 @@ function useThemePluginEffect() {
  */
 function useScreenLockPluginEffect() {
     const plugins = usePlugins()
-    const {lock} = useSettings()
-    const {launching} = useStates()
+    const {lock: {locked}} = useSettings()
     useEffect(() => {
-        if (launching) {
-            return
+        const event = new ScreenLockEvent({currentTarget: {lock: locked}, occasion: PluginHookOccasion.after})
+        for (const plugin of plugins) {
+            if (!event.bubble) {
+                break
+            }
+            plugin.hooks?.includes("onScreenLock") && plugin.onScreenLock?.(event)
         }
-        callPluginsHook("onScreenLock", new ScreenLockEvent({
-            detail: {...lock},
-            occasion: PluginHookOccasion.after,
-        }))
-    }, [launching, lock, plugins])
+    }, [locked, plugins])
 }
 
 export default function usePluginEffect() {
-    const plugins = usePlugins()
+    const plugins = usePlugins(true)
     const refPlugins = useRef<IPlugin[]>(plugins)
 
     useEffect(() => {
@@ -70,3 +62,4 @@ export default function usePluginEffect() {
     useThemePluginEffect()
     useScreenLockPluginEffect()
 }
+
