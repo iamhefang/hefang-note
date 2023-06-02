@@ -1,9 +1,9 @@
 import React from "react"
 
 export type HtmlProps = React.HTMLAttributes<HTMLDivElement> & {
-  children: string
+    children: string
 }
-export default function Html({ children, ...props }: HtmlProps) {
-  // eslint-disable-next-line react/no-danger
-  return <div {...props} dangerouslySetInnerHTML={{ __html: children }} />
+export default function Html({children, ...props}: HtmlProps) {
+    // eslint-disable-next-line react/no-danger
+    return <div {...props} dangerouslySetInnerHTML={{__html: children}}/>
 }

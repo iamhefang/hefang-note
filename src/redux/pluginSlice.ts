@@ -1,6 +1,6 @@
-import { createSlice, SliceCaseReducers } from "@reduxjs/toolkit"
+import {createSlice, SliceCaseReducers} from "@reduxjs/toolkit"
 
-import { PluginState } from "~/types"
+import {PluginState} from "~/types"
 
 const sliceName = "plugins"
 
@@ -10,7 +10,5 @@ export const pluginSlice = createSlice<PluginState, SliceCaseReducers<PluginStat
     initialState: {
         entities: [],
     },
-    reducers: {
-        
-    },
+    reducers: {},
 })

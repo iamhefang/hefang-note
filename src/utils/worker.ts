@@ -1,10 +1,3 @@
-import { invoke } from "@tauri-apps/api"
-
-import { isInTauri } from "~/consts"
-import { ExportType, IWorkerMessage, WorkerEventKeys } from "~/types"
-
-import pkg from "^/package.json"
-
 // const worker = new window.Worker(new URL("../worker/index.ts", import.meta.url), { type: "module" })
 
 // console.info(worker)
