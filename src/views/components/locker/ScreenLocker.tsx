@@ -4,7 +4,7 @@ import {App, Button, Form, Input, Modal, theme} from "antd"
 import {useCallback, useEffect} from "react"
 
 import {isInTauri} from "~/consts"
-import {FooterTopComponent, PluginHookOccasion, ScreenLockEvent} from "~/plugin"
+import {PluginComponent, PluginHookOccasion, ScreenLockEvent} from "~/plugin"
 import {useAppDispatch} from "~/redux"
 import {lockScreen} from "~/redux/settingSlice"
 import {LockSetting} from "~/types"
@@ -16,7 +16,7 @@ import {useTranslate} from "$hooks/useTranslate"
 import usePlugins from "$plugin/hooks/usePlugins"
 import {shortcuts} from "$utils/shortcuts"
 
-const ScreenLocker: FooterTopComponent = () => {
+const ScreenLocker: PluginComponent = () => {
     const {
         lock,
         shortcut,
@@ -33,7 +33,7 @@ const ScreenLocker: FooterTopComponent = () => {
     const plugins = usePlugins()
 
     const dispatchScreenLock = useCallback((payload: Partial<LockSetting>) => {
-        const event = new ScreenLockEvent({currentTarget: {...lock, ...payload}, occasion: PluginHookOccasion.before})
+        const event = new ScreenLockEvent({detail: {...lock, ...payload}, occasion: PluginHookOccasion.before})
         for (const plugin of plugins) {
             if (!event.bubble) {
                 break
@@ -43,7 +43,7 @@ const ScreenLocker: FooterTopComponent = () => {
         if (event.isDefaultPrevented()) {
             return false
         }
-        dispatch(lockScreen(payload))
+        dispatch(lockScreen(event.detail))
 
         return true
     }, [dispatch, lock, plugins])

@@ -1,5 +1,3 @@
-import {ThemeConfig} from "antd"
-import {ReactNode} from "react"
 
 import {ThemeDefine} from "~/types"
 
@@ -53,7 +51,6 @@ export interface IPluginObject extends Partial<IPluginHooks>, Partial<IPluginCom
 export interface IPlugin extends IPluginInfo, IPluginObject {
 }
 
-
 export interface IPluginHooks {
     /**
      * 主题变动前回调
@@ -97,9 +94,6 @@ export interface IPluginLifecycle {
      */
     onUpdate(): void
 }
-
-export type PluginTheme = ThemeConfig & { tooltip?: string; icon: ReactNode }
-
 
 /**
  * 插件提供的能力

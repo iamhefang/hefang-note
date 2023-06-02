@@ -3,22 +3,29 @@ import {useEffect, useRef} from "react"
 
 import {IPlugin, PluginHookOccasion, ScreenLockEvent, ThemeChangeEvent} from "~/plugin"
 
-import {useSettings} from "$hooks/useSelectors"
+import {useSettings, useStates} from "$hooks/useSelectors"
 import usePlugins from "$plugin/hooks/usePlugins"
 
+/**
+ * 主题变化后回调
+ */
 function useThemePluginEffect() {
-    const {theme, language} = useSettings()
+    const {theme} = useSettings()
     const plugins = usePlugins()
+    const {launching} = useStates()
     const {token} = antdTheme.useToken()
     useEffect(() => {
-        const themeEvent = new ThemeChangeEvent({currentTarget: {theme, token}, occasion: PluginHookOccasion.after})
+        if (launching) {
+            return
+        }
+        const themeEvent = new ThemeChangeEvent({detail: {theme, token}, occasion: PluginHookOccasion.after})
         for (const plugin of plugins) {
             if (!themeEvent.bubble) {
                 break
             }
             plugin.hooks?.includes?.("onThemeChange") && plugin.onThemeChange?.(themeEvent)
         }
-    }, [theme, plugins, token])
+    }, [theme, plugins, token, launching])
 }
 
 /**
@@ -26,16 +33,20 @@ function useThemePluginEffect() {
  */
 function useScreenLockPluginEffect() {
     const plugins = usePlugins()
-    const {lock: {locked}} = useSettings()
+    const {lock} = useSettings()
+    const {launching} = useStates()
     useEffect(() => {
-        const event = new ScreenLockEvent({currentTarget: {lock: locked}, occasion: PluginHookOccasion.after})
+        if (launching) {
+            return
+        }
+        const event = new ScreenLockEvent({detail: {...lock}, occasion: PluginHookOccasion.after})
         for (const plugin of plugins) {
             if (!event.bubble) {
                 break
             }
             plugin.hooks?.includes("onScreenLock") && plugin.onScreenLock?.(event)
         }
-    }, [locked, plugins])
+    }, [launching, lock, plugins])
 }
 
 export default function usePluginEffect() {
@@ -62,4 +73,3 @@ export default function usePluginEffect() {
     useThemePluginEffect()
     useScreenLockPluginEffect()
 }
-

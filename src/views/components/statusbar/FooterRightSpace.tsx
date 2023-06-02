@@ -1,3 +1,4 @@
+import {Space} from "antd"
 import React from "react"
 
 import Github from "$components/topbar/items/Github"
@@ -8,10 +9,10 @@ export default function FooterRightSpace() {
     const components = usePluginComponents("FooterRight")
 
     return (
-        <>
+        <Space>
             {components}
             <Github/>
             <VersionView/>
-        </>
+        </Space>
     )
 }
