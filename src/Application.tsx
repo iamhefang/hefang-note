@@ -13,8 +13,8 @@ import {useStates} from "$hooks/useSelectors"
 import useSettingsLoader from "$hooks/useSettingsLoader"
 import {useThemeConfig} from "$hooks/useThemeConfig"
 import {useLocaleDefine} from "$hooks/useTranslate"
+import usePluginComponents from "$plugin/hooks/usePluginComponents"
 import usePluginEffect from "$plugin/hooks/usePluginEffect"
-import usePlugins from "$plugin/hooks/usePlugins"
 
 
 
@@ -37,6 +37,7 @@ export default function Application() {
     usePluginEffect()
     const themeConfig = useThemeConfig()
     const locale = useLocaleDefine()
+    const components = usePluginComponents("Float")
 
     return launching ? (
         <Loading/>
@@ -51,6 +52,7 @@ export default function Application() {
                         </Suspense>
                     )}
                 </ShowInPlatform>
+                {components}
             </Antd>
         </ConfigProvider>
     )
