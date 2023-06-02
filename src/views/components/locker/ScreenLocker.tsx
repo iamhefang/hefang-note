@@ -36,7 +36,7 @@ export default function ScreenLocker() {
         }
         lockForm.setFieldsValue({password})
         modal.confirm({
-            title: t("锁定屏幕"),
+            title: t("锁定软件"),
             icon: <UnlockOutlined/>,
             style: {top: 40},
             content: (
