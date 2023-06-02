@@ -75,20 +75,20 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
                 .concat({...state.entities[id], modifyTime: now})
             const item = _.last(notes)!
             console.info("正在保存笔记", item.id, content)
-            const event = new ContentSaveEvent({currentTarget: {note: item, nextContent: content}, occasion: PluginHookOccasion.before})
+            const beforeEvent = new ContentSaveEvent({detail: {note: item, nextContent: content}, occasion: PluginHookOccasion.before})
             for (const plugin of window.notebook.plugins) {
-                if (!event.bubble) {
+                if (!beforeEvent.bubble) {
                     break
                 }
-                plugin.hooks?.includes("onContentSave") && plugin.onContentSave?.(event)
+                plugin.hooks?.includes("onContentSave") && plugin.onContentSave?.(beforeEvent)
             }
-            if (!event.isDefaultPrevented()) {
+            if (!beforeEvent.isDefaultPrevented()) {
                 void notesStore.set(...notes)
-                void contentStore.set(item.id, content)
+                void contentStore.set(item.id, beforeEvent.detail.nextContent)
                 for (const note of notes) {
                     state.entities[note.id] = note
                 }
-                const afterEvent = new ContentSaveEvent({currentTarget: {note: item, nextContent: content}, occasion: PluginHookOccasion.after})
+                const afterEvent = new ContentSaveEvent({detail: {note: item, nextContent: content}, occasion: PluginHookOccasion.after})
                 for (const plugin of window.notebook.plugins) {
                     if (!afterEvent.bubble) {
                         break
