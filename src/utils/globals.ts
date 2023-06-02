@@ -10,9 +10,9 @@ import ReactDomClient from "react-dom/client"
 import Html from "$components/utils/Html"
 import ShowInPlatform from "$components/utils/ShowInPlatform"
 
-const globals = { React, ReactDOM, ReactDomClient, _, lodash: _, antd, icons, dayjs, ShowInPlatform, Html }
+const globals = {React, ReactDOM, ReactDomClient, _, lodash: _, antd, icons, dayjs, ShowInPlatform, Html}
 
-Object.defineProperty(window, "globals", { value: globals, writable: false })
+Object.defineProperty(window, "globals", {value: globals, writable: false})
 
 type GlobalType = typeof globals
 

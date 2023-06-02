@@ -1,10 +1,10 @@
-import { useCallback } from "react"
+import {useCallback} from "react"
 
-import { useAppDispatch } from "~/redux"
-import { loadAllNotes, loadNotesProgressively } from "~/redux/noteSlice"
+import {useAppDispatch} from "~/redux"
+import {loadNotesProgressively} from "~/redux/noteSlice"
 
 export default function useContentLoader() {
-  const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch()
 
-  return useCallback(() => dispatch(loadNotesProgressively()), [dispatch])
+    return useCallback(() => dispatch(loadNotesProgressively()), [dispatch])
 }

@@ -1,4 +1,4 @@
-import { Context, sm4_crypt_ecb, sm4_setkey_dec, sm4_setkey_enc } from "~/utils/sm4"
+import {Context, sm4_crypt_ecb, sm4_setkey_dec, sm4_setkey_enc} from "~/utils/sm4"
 
 test("sm4", () => {
     const encoder = new TextEncoder()
@@ -36,4 +36,4 @@ test("sm4", () => {
     }
 })
 
-export { }
+export {}

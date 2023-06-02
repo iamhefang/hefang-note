@@ -1,6 +1,6 @@
-import { NoteItem } from "~/types"
+import {NoteItem} from "~/types"
 
-import { contentStore, notesStore } from "./database"
+import {contentStore, notesStore} from "./database"
 
 import pkg from "^/package.json"
 
@@ -12,7 +12,9 @@ import pkg from "^/package.json"
  */
 export function findNoteParents<T extends NoteItem = NoteItem>(items: Record<string, T>, id: string): T[] {
     let item = items[id]
-    if (!item) { return [] }
+    if (!item) {
+        return []
+    }
     const parents: T[] = []
 
     while (item?.parentId) {
@@ -39,7 +41,9 @@ export async function buildExportJson(): Promise<string> {
 }
 
 export function isNoteLocked(noteId: string | undefined, lockedContents: { [id: string]: string }, unlockedContents: { [id: string]: number }): boolean {
-    if (!noteId) { return false }
+    if (!noteId) {
+        return false
+    }
 
     return !!(lockedContents[noteId] && (unlockedContents[noteId] || Number.MIN_SAFE_INTEGER) < Date.now())
 }

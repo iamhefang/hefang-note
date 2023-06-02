@@ -1,9 +1,9 @@
-import { theme } from "antd"
-import { useMemo } from "react"
+import {theme} from "antd"
+import {useMemo} from "react"
 
 
 export default function useWangEditorTheme(): Record<string, string | number> {
-    const { token } = theme.useToken()
+    const {token} = theme.useToken()
 
     return useMemo(() => ({
         // textarea - css vars
@@ -32,6 +32,6 @@ export default function useWangEditorTheme(): Record<string, string | number> {
     }), [
         token.borderRadius, token.colorBgElevated,
         token.colorBgLayout, token.colorBorder, token.colorPrimaryBg,
-        token.colorPrimaryTextActive, token.colorTextBase, token.colorTextPlaceholder,                                      
+        token.colorPrimaryTextActive, token.colorTextBase, token.colorTextPlaceholder,
     ])
 }

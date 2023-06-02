@@ -1,53 +1,53 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema",
-  "required": [
-    "name",
-    "version",
-    "contents",
-    "notes"
-  ],
-  "properties": {
-    "name": {
-      "type": "string"
-    },
-    "version": {
-      "type": "string"
-    },
-    "contents": {
-      "type": "object",
-      "properties": {}
-    },
-    "notes": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": [
-          "id",
-          "title",
-          "createTime",
-          "modifyTime"
-        ],
-        "properties": {
-          "id": {
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "required": [
+        "name",
+        "version",
+        "contents",
+        "notes"
+    ],
+    "properties": {
+        "name": {
             "type": "string"
-          },
-          "title": {
+        },
+        "version": {
             "type": "string"
-          },
-          "parentId": {
-            "type": "string"
-          },
-          "isLeaf": {
-            "type": "boolean"
-          },
-          "createTime": {
-            "type": "number"
-          },
-          "modifyTime": {
-            "type": "number"
-          }
+        },
+        "contents": {
+            "type": "object",
+            "properties": {}
+        },
+        "notes": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "title",
+                    "createTime",
+                    "modifyTime"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "parentId": {
+                        "type": "string"
+                    },
+                    "isLeaf": {
+                        "type": "boolean"
+                    },
+                    "createTime": {
+                        "type": "number"
+                    },
+                    "modifyTime": {
+                        "type": "number"
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }

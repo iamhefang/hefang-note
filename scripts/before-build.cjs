@@ -1,13 +1,36 @@
-const { writeFileSync, readFileSync } = require("fs")
-const { resolve } = require("path")
+const {writeFileSync, readFileSync} = require("fs")
+const {resolve} = require("path")
+const tauriConfig = require("../src-tauri/tauri.conf.json")
+const pkg = require("../package.json")
+const toml = require("toml")
+const json2toml = require("json2toml")
 
+const cargoTomlPath = resolve(__dirname, "../src-tauri/Cargo.toml")
 const tauriFilePath = resolve(__dirname, "../src-tauri/tauri.conf.json")
-const tauriTemplatePath = resolve(__dirname, "../src-tauri/tauri.conf.template.json")
 
-const pkg = JSON.parse(readFileSync(resolve(__dirname, "../package.json"), "utf-8"))
-const tauri = JSON.parse(readFileSync(tauriTemplatePath, "utf-8"))
+const tomlContent = readFileSync(cargoTomlPath, "utf-8")
 
-tauri.package.productName = pkg.productName
-tauri.package.version = pkg.version
+tauriConfig.package.version = pkg.version
+tauriConfig.package.productName = pkg.productName
+const {package, ...tomlObj} = toml.parse(tomlContent)
 
-writeFileSync(tauriFilePath, JSON.stringify(tauri, null, "    "))
+
+writeFileSync(tauriFilePath, JSON.stringify(tauriConfig, null, "    "))
+writeFileSync(
+    cargoTomlPath,
+    json2toml(
+        {
+            package: {
+                ...package,
+                name: pkg.name,
+                version: pkg.version,
+                description: pkg.description,
+                authors: [pkg.author],
+                license: pkg.license,
+                repository: pkg.repository,
+            },
+            ...tomlObj,
+        },
+        {newlineAfterSection: true},
+    ),
+)

@@ -1,4 +1,4 @@
-import { parseColor } from "@basementuniverse/parsecolor"
+import {parseColor} from "@basementuniverse/parsecolor"
 
 const colorCache: Record<string, string> = {}
 
@@ -7,9 +7,11 @@ function toHex(number: number) {
 }
 
 export function rgb2rrggbb(color: string): string {
-    if (color in colorCache) { return colorCache[color] }
+    if (color in colorCache) {
+        return colorCache[color]
+    }
     try {
-        const { r: red, g: green, b: blue, a: alpha } = parseColor(color)
+        const {r: red, g: green, b: blue, a: alpha} = parseColor(color)
 
         const a = toHex(Math.floor(alpha * 255))
 
