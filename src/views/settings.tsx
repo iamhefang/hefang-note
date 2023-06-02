@@ -3,7 +3,7 @@ import {appWindow} from "@tauri-apps/api/window"
 import {Modal, Space, Tabs} from "antd"
 import {useCallback, useEffect} from "react"
 
-import {isInClient} from "~/consts"
+import {isInTauri} from "~/consts"
 import {useAppDispatch} from "~/redux"
 import {toggleSettingsModal} from "~/redux/uiSlice"
 
@@ -23,7 +23,7 @@ export default function SettingsModal() {
         dispatch(toggleSettingsModal(null))
     }, [dispatch])
     useEffect(() => {
-        if (!isInClient) {
+        if (!isInTauri) {
             return
         }
         const unlisten = appWindow.listen("toggleSettingsModal", (event) => {
@@ -52,11 +52,11 @@ export default function SettingsModal() {
             onCancel={onCancel}
             width="90%"
             style={{
-                maxWidth: isInClient ? 1000 : 800,
+                maxWidth: 1000,
                 top: "calc(var(--top-bar-height) + 10px)",
             }}
         >
-            {isInClient ? <Tabs
+            <Tabs
                 tabPosition="left"
                 items={[
                     {
@@ -70,7 +70,7 @@ export default function SettingsModal() {
                         children: <PluginManager/>,
                     },
                 ]}
-            /> : <SettingForm/>}
+            />
         </Modal>
     )
 }
