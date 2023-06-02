@@ -1,6 +1,6 @@
 import {Select} from "antd"
 
-import {EditorComponent, IEditorProps} from "~/plugin/types"
+import {EditorComponent, IEditorProps} from "~/plugin"
 
 const DefaultEditor: EditorComponent = ({placeholder, value, onChange, onBlur, onFocus}: IEditorProps) => {
     return (
