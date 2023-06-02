@@ -9,11 +9,11 @@ export class PluginHookEvent<T> {
      * 是否继续冒泡
      */
     #bubble: boolean = true
-    readonly #currentTarget: T | null
+    readonly #detail: T
     readonly #occasion: PluginHookOccasion
 
     constructor(init: PluginHookEventInit<T>) {
-        this.#currentTarget = init.currentTarget
+        this.#detail = init.detail
         this.#defaultPrevented = false
         this.#occasion = init.occasion
         console.info("插件事件", this)
@@ -23,8 +23,8 @@ export class PluginHookEvent<T> {
         return this.#bubble
     }
 
-    public get currentTarget() {
-        return this.#currentTarget
+    public get detail() {
+        return this.#detail
     }
 
     public preventDefault() {
@@ -41,6 +41,6 @@ export class PluginHookEvent<T> {
 }
 
 export type PluginHookEventInit<T> = {
-    currentTarget: T
+    detail: T
     occasion: PluginHookOccasion
 }
