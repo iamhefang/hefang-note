@@ -1,11 +1,5 @@
-import NoteUnlocker from "$components/locker/NoteUnlocker"
-import useCurrent from "$hooks/useCurrent"
-import {usePluginMap} from "$hooks/usePlugins"
-import {useSettings} from "$hooks/useSelectors"
-import {useTranslate} from "$hooks/useTranslate"
-import {contentStore} from "$utils/database"
-import {Empty, theme as antTheme} from "antd"
-import {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from "react"
+import {theme as antTheme, Empty} from "antd"
+import {useCallback, useEffect, useLayoutEffect, useMemo, useState} from "react"
 
 import useNoteLocked from "~/hooks/useNoteLocked"
 import {EditorComponent} from "~/plugin/types"
@@ -13,6 +7,13 @@ import {useAppDispatch} from "~/redux"
 import {updateContent} from "~/redux/noteSlice"
 
 import WangEditor from "./WangEditor"
+
+import NoteUnlocker from "$components/locker/NoteUnlocker"
+import useCurrent from "$hooks/useCurrent"
+import {usePluginMap} from "$hooks/usePlugins"
+import {useSettings} from "$hooks/useSelectors"
+import {useTranslate} from "$hooks/useTranslate"
+import {contentStore} from "$utils/database"
 
 export default function EditorArea() {
     const t = useTranslate()
@@ -30,19 +31,20 @@ export default function EditorArea() {
         return editor && plugins[editor]?.Editor ? plugins[editor].Editor! : WangEditor
     }, [editor, plugins])
 
-    const refSaveTimer = useRef<number>(0)
     const onValueChange = useCallback((newValue: string | undefined) => {
+        if (reading) {
+            return
+        }
         setChanging(true)
         setValue(newValue || "")
-    }, [])
+    }, [reading])
 
     useEffect(
         () => {
             if (!current?.isLeaf || !current?.id || reading) {
                 return
             }
-            const newContent = {id: current.id, content: value}
-            dispatch(updateContent(newContent))
+            dispatch(updateContent({id: current.id, content: value}))
             setChanging(false)
         },
         [current?.id, current?.isLeaf, dispatch, reading, value],
@@ -81,7 +83,7 @@ export default function EditorArea() {
             }}
         >
             <div className="editor-wrapper" style={editorOptions}>
-                <Editor key={current.id} value={value} onChange={onValueChange} placeholder={t("尽情记录吧")} loading={reading}/>
+                <Editor value={value} onChange={onValueChange} placeholder={t("尽情记录吧")} loading={reading}/>
             </div>
         </div>
     )
