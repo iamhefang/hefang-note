@@ -248,7 +248,7 @@ module.exports = {
         noUselessIndex: true,
       },
     ],
-    "import/no-relative-parent-imports": "error",
+    // "import/no-relative-parent-imports": "error",
 
     //// Style guide
 
