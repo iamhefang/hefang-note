@@ -13,7 +13,7 @@ import ss from "./ScreenLocker.module.scss"
 
 import {useSettings} from "$hooks/useSelectors"
 import {useTranslate} from "$hooks/useTranslate"
-import usePlugins from "$plugin/hooks/usePlugins"
+import {callPluginsHook} from "$plugin/utils"
 import {shortcuts} from "$utils/shortcuts"
 
 const ScreenLocker: PluginComponent = () => {
@@ -30,23 +30,19 @@ const ScreenLocker: PluginComponent = () => {
 
     const [lockForm] = Form.useForm()
     const [unlockForm] = Form.useForm()
-    const plugins = usePlugins()
 
     const dispatchScreenLock = useCallback((payload: Partial<LockSetting>) => {
-        const event = new ScreenLockEvent({detail: {...lock, ...payload}, occasion: PluginHookOccasion.before})
-        for (const plugin of plugins) {
-            if (!event.bubble) {
-                break
-            }
-            plugin.hooks?.includes("onScreenLock") && plugin.onScreenLock?.(event)
-        }
+        const event = callPluginsHook("onScreenLock", new ScreenLockEvent({
+            detail: {...lock, ...payload},
+            occasion: PluginHookOccasion.before,
+        }))
         if (event.isDefaultPrevented()) {
             return false
         }
         dispatch(lockScreen(event.detail))
 
         return true
-    }, [dispatch, lock, plugins])
+    }, [dispatch, lock])
 
     const onLockClick = useCallback(() => {
         if (lock.immediately && lock.password) {
