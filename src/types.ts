@@ -68,6 +68,7 @@ export type ThemeType = "auto" | "light" | "dark" | "eyeshield" | "anti-blue-ray
 export type Themes = Record<ThemeType, ThemeDefine>
 export type ThemeDefine = ThemeConfig & { label: ReactNode; tooltip?: string; icon?: ReactNode }
 export type DefaultEditorOptions = { showLineNumbers: boolean; fontSize: number; lineHeight: number; minimap: boolean }
+
 export  type LockSetting = {
     /**
      * 当前是否已锁定
@@ -82,6 +83,7 @@ export  type LockSetting = {
      */
     immediately: boolean
 }
+
 export type Settings = {
     theme: ThemeType
     /**
