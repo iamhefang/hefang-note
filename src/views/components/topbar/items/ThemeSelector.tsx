@@ -16,6 +16,9 @@ import {useSettings} from "$hooks/useSelectors"
 import useThemes from "$hooks/useThemes"
 import {useTranslate} from "$hooks/useTranslate"
 import usePlugins from "$plugin/hooks/usePlugins"
+import {callPluginsHook} from "$plugin/utils"
+
+
 
 const ThemeSelector: PluginComponent = () => {
     const {theme} = useSettings()
@@ -37,18 +40,15 @@ const ThemeSelector: PluginComponent = () => {
                 key,
                 icon,
                 onClick: () => {
-                    const event = new ThemeChangeEvent({detail: {theme: key}, occasion: PluginHookOccasion.before})
-                    for (const plugin of plugins) {
-                        if (!event.bubble) {
-                            break
-                        }
-                        plugin.hooks?.includes?.("onThemeChange") && plugin.onThemeChange?.(event)
-                    }
+                    const event = callPluginsHook("onThemeChange", new ThemeChangeEvent({
+                        detail: {theme: key},
+                        occasion: PluginHookOccasion.before,
+                    }))
                     event.isDefaultPrevented() || dispatch(changeTheme(event.detail.theme))
                 },
             })),
         ],
-        [t, themes, theme, dispatch, plugins],
+        [t, themes, dispatch],
     )
 
     const themeConfig = useMemo(() => {

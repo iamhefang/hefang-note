@@ -1,4 +1,7 @@
-import {PluginHookOccasion} from "../enums"
+export enum PluginHookOccasion {
+    before = "before",
+    after = "after"
+}
 
 export class PluginHookEvent<T> {
     /**
