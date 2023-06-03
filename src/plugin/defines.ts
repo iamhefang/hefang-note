@@ -1,10 +1,10 @@
-
 import {ThemeDefine} from "~/types"
 
-import {IPluginComponents} from "./components"
+import {IPluginComponents, IPluginDataSlice} from "./components"
 import {ContentSaveEvent, ScreenLockEvent, ThemeChangeEvent} from "./events"
 
 import {PlatformType} from "$hooks/usePlatform"
+import ContentIOEvent from "$plugin/events/ContentIOEvent"
 
 /**
  * 插件信息
@@ -67,6 +67,18 @@ export interface IPluginHooks {
      * @param event
      */
     onScreenLock(event: ScreenLockEvent): void
+
+    /**
+     * 笔记导出时回调
+     * @param event
+     */
+    onContentExport(event: ContentIOEvent): void
+
+    /**
+     * 笔记导入时回调
+     * @param event
+     */
+    onContentImport(event: ContentIOEvent): void
 }
 
 export interface IPluginLifecycle {
@@ -81,6 +93,7 @@ export interface IPluginLifecycle {
     onUninstall(): void
 
     /**
+     * 插件启用时回调
      */
     onEnable(): void
 
@@ -96,10 +109,23 @@ export interface IPluginLifecycle {
 }
 
 /**
+ * 插件提供笔记同步能力
+ */
+export interface IPluginSynchronization {
+    name: string
+    version: string
+    logo: string
+    description: string
+
+    onInit(runtime: IPluginDataSlice): void
+}
+
+/**
  * 插件提供的能力
  */
 export interface IPluginAbility {
     theme: ThemeDefine
+    synchronization: IPluginSynchronization
 }
 
 export interface INotebook {
