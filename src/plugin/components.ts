@@ -11,14 +11,14 @@ export type EditorComponent = (ComponentClass<IEditorProps> | FC<IEditorProps>) 
 export interface IEditorOptions extends Omit<FormItemProps, "noStyle"> {
 }
 
-export interface IFooterTopComponentProps {
+export interface IPluginDataSlice {
     dispatch: typeof store.dispatch
     settingSlice: typeof settingSlice
     noteSlice: typeof noteSlice
     uiSlice: typeof uiSlice
 }
 
-export type PluginComponent = (ComponentClass<IFooterTopComponentProps> | FC<IFooterTopComponentProps>) & {
+export type PluginComponent = (ComponentClass<IPluginDataSlice> | FC<IPluginDataSlice>) & {
     order?: number
 }
 

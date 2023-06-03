@@ -59,7 +59,6 @@ function NoteTreeItem(
         },
         [item.id],
     )
-    // TODO: 在tauri里面不会触相关事件
     const onDragEnter = useCallback(
         (e: React.DragEvent<HTMLDivElement>) => {
             e.preventDefault()

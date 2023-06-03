@@ -10,6 +10,12 @@ Die Oberfläche und Menüs der Software unterstützen bereits Mehrsprachigkeit (
 
 ---
 
+## v0.5.0
+
+1. `新增` 插件功能完整可用
+2. `优化` 优化新建笔记和目录逻辑
+3. `优化` 使用wangEditor做为内置编辑器
+
 ## v0.4.0
 
 1. `新增` 软件支持多语言

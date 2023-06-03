@@ -8,7 +8,7 @@
 
 import { ReactElement, useMemo } from "react"
 
-import { IFooterTopComponentProps, IPluginComponents, PluginComponent } from "~/plugin"
+import { IPluginComponents, IPluginDataSlice, PluginComponent } from "~/plugin"
 
 import usePluginFooterTopComponentProps from "./usePluginFooterTopComponentProps"
 import usePlugins from "./usePlugins"
@@ -16,7 +16,7 @@ import usePlugins from "./usePlugins"
 
 export default function usePluginComponents<K extends keyof Omit<IPluginComponents, "Editor">>(
   type: K,
-): ReactElement<IFooterTopComponentProps, PluginComponent>[] {
+): ReactElement<IPluginDataSlice, PluginComponent>[] {
   const plugins = usePlugins()
   const props = usePluginFooterTopComponentProps()
 

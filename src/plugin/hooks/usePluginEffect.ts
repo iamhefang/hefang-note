@@ -5,6 +5,9 @@ import {IPlugin, PluginHookOccasion, ScreenLockEvent, ThemeChangeEvent} from "~/
 
 import {useSettings, useStates} from "$hooks/useSelectors"
 import usePlugins from "$plugin/hooks/usePlugins"
+import {callPluginsHook} from "$plugin/utils"
+
+
 
 /**
  * 主题变化后回调
@@ -18,13 +21,10 @@ function useThemePluginEffect() {
         if (launching) {
             return
         }
-        const themeEvent = new ThemeChangeEvent({detail: {theme, token}, occasion: PluginHookOccasion.after})
-        for (const plugin of plugins) {
-            if (!themeEvent.bubble) {
-                break
-            }
-            plugin.hooks?.includes?.("onThemeChange") && plugin.onThemeChange?.(themeEvent)
-        }
+        callPluginsHook("onThemeChange", new ThemeChangeEvent({
+            detail: {theme, token},
+            occasion: PluginHookOccasion.after,
+        }))
     }, [theme, plugins, token, launching])
 }
 
@@ -39,18 +39,15 @@ function useScreenLockPluginEffect() {
         if (launching) {
             return
         }
-        const event = new ScreenLockEvent({detail: {...lock}, occasion: PluginHookOccasion.after})
-        for (const plugin of plugins) {
-            if (!event.bubble) {
-                break
-            }
-            plugin.hooks?.includes("onScreenLock") && plugin.onScreenLock?.(event)
-        }
+        callPluginsHook("onScreenLock", new ScreenLockEvent({
+            detail: {...lock},
+            occasion: PluginHookOccasion.after,
+        }))
     }, [launching, lock, plugins])
 }
 
 export default function usePluginEffect() {
-    const plugins = usePlugins(true)
+    const plugins = usePlugins()
     const refPlugins = useRef<IPlugin[]>(plugins)
 
     useEffect(() => {
