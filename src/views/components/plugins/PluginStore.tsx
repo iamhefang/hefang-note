@@ -15,7 +15,7 @@ const PluginListItem = React.memo(({item, "data-known-size": dataKnownSize, ...p
         <li className={ss.item} style={{height: dataKnownSize}} {...props} key={`store-${item.id}`}>
             <Row gutter={15} wrap={false}>
                 <Col>
-                    <img src={item.logo} className={ss.cover} style={{height: (dataKnownSize / 3) * 2}} alt={item.name}/>
+                    <img src={item.logo ?? ""} className={ss.cover} style={{height: (dataKnownSize / 3) * 2}} alt={item.name}/>
                 </Col>
                 <Col flex={1}>
                     <Space direction="vertical">
@@ -65,13 +65,17 @@ export function PluginStore({search}: PluginProps) {
     const data = useMemo(() => {
         const s = search.toLowerCase().trim()
         if (!s) {
-            return plugins
+            return plugins ?? []
         }
 
         return plugins?.filter((item) => {
             return [item.author, item.name, item.description].join("").toLowerCase().includes(s)
-        })
+        }) ?? []
     }, [plugins, search])
+    useEffect(() => {
+        setHeight(Math.min
+        (window.innerHeight - 200, (data.length * 70) || 200))
+    }, [data])
 
     return (
         <Virtuoso
