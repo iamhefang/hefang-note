@@ -60,6 +60,7 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
                     }
                 }
             }
+            console.log("plugin infos", ps)
             setPluginInfos(ps)
         })()
     }, [])
@@ -74,6 +75,7 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
                     infos[i] = {...pluginInstance, description: null, license: null, ...plugin}
                 }
             }
+            console.log("plugins", infos)
             setPlugins(infos)
         })()
     }, [pluginsInfos, plugins])
