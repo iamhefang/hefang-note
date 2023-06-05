@@ -1,6 +1,6 @@
 import {message} from "antd"
 import TurnDown from "turndown"
-import turndownPluginGfm from "turndown-plugin-gfm"
+import * as  turndownPluginGfm from "turndown-plugin-gfm"
 
 import {ContentIOType, PluginHookOccasion} from "~/plugin"
 import exportTplHTML from "~/templates/export-html.html?raw"

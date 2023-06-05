@@ -1,3 +1,5 @@
+import {FormItemProps} from "antd/es/form/FormItem"
+
 import {ThemeDefine} from "~/types"
 
 import {IPluginComponents, IPluginDataSlice} from "./components"
@@ -46,6 +48,11 @@ export type PluginHookKeys = keyof IPluginHooks
  * 插件代码导出的信息
  */
 export interface IPluginObject extends Partial<IPluginHooks>, Partial<IPluginComponents>, Partial<IPluginAbility>, Partial<IPluginLifecycle> {
+    settings?: IPluginSettings
+}
+
+export interface IPluginSettings {
+    [key: string]: Omit<FormItemProps, "name">
 }
 
 export interface IPlugin extends IPluginInfo, IPluginObject {
