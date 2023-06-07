@@ -5,71 +5,71 @@
  * @Date: 2023-05-03 08:46:29
  * @Description:
  */
-import { shell } from "@tauri-apps/api"
-import { Col, Row, Space, Tag } from "antd"
-import React, { useMemo } from "react"
+import {shell} from "@tauri-apps/api"
+import {Col, Row, Space, Tag} from "antd"
+import React, {useMemo} from "react"
 
-import { IPluginInfo, PluginAbility, PluginComponents } from "~/plugin"
+import {isInTauri} from "~/consts"
+import {IPluginInfo, PluginAbility, PluginComponents} from "~/plugin"
 
 import ss from "./PluginDescription.module.scss"
 
 const abilities: Record<PluginAbility, string> = {
-  theme: "主题",
+    synchronization: "同步",
+    theme: "主题",
 }
 
 function pluginAbilities(value: PluginAbility) {
-  return abilities[value]
+    return <Tag color="volcano" key={value}>{abilities[value]}</Tag>
 }
 
 const components: Record<PluginComponents, string> = {
-  Editor: "编辑器",
-  FooterLeft: "状态栏左",
-  FooterRight: "状态栏右",
-  TopLeft: "标题栏左",
-  TopRight: "标题栏右",
+    Editor: "编辑器",
+    FooterLeft: "状态栏左",
+    FooterRight: "状态栏右",
+    TopLeft: "标题栏左",
+    TopRight: "标题栏右",
+    Float: "悬浮窗",
 }
 
 function pluginComponents(value: PluginComponents) {
-  return components[value]
+    return <Tag color="pink" key={value}>{components[value]}</Tag>
 }
 
 function openInNative(e: React.MouseEvent<HTMLAnchorElement>) {
-  e.preventDefault()
-  void shell.open(e.currentTarget.href)
+    if (!isInTauri || !e.currentTarget?.href) {
+        return
+    }
+    e.preventDefault()
+    void shell.open(e.currentTarget.href)
 }
 
-export function PluginDescription({ plugin }: { plugin: IPluginInfo }) {
-  return useMemo(
-    () => (
-      <Space direction="vertical" style={{ width: "100%" }}>
-        <p className={ss.description}>{plugin.description || "该插件没有描述"}</p>
-        <Row>
-          <Col>
-            <Space>
-              <span>@{plugin.author}</span>
-              {plugin.repository && (
-                <a href={plugin.repository} onClick={openInNative}>
-                  源码
-                </a>
-              )}
-              {plugin.homepage && (
-                <a href={plugin.homepage} onClick={openInNative}>
-                  主页
-                </a>
-              )}
-              {plugin.license && <Tag>{plugin.license}</Tag>}
+export function PluginDescription({plugin}: { plugin: IPluginInfo }) {
+    return useMemo(
+        () => (
+            <Space direction="vertical" style={{width: "100%"}}>
+                <p className={ss.description}>{plugin.description || "该插件没有描述"}</p>
+                <Row>
+                    <Col flex={1}>
+                        <Space>
+                            <a href={plugin.homepage ?? undefined} onClick={openInNative}>@{plugin.author}</a>
+                            {plugin.repository && (
+                                <a href={plugin.repository} onClick={openInNative}>
+                                    源码
+                                </a>
+                            )}
+                            {plugin.license && <Tag>{plugin.license}</Tag>}
+                        </Space>
+                    </Col>
+                    <Col>
+                        <Space size={0}>
+                            {plugin.abilities && plugin.abilities.map(pluginAbilities)}
+                            {plugin.components && plugin.components.map(pluginComponents)}
+                        </Space>
+                    </Col>
+                </Row>
             </Space>
-          </Col>
-          <Col flex={1} />
-          <Col>
-            <Space>
-              {plugin.abilities && plugin.abilities.map(pluginAbilities)}
-              {plugin.components && plugin.components.map(pluginComponents)}
-            </Space>
-          </Col>
-        </Row>
-      </Space>
-    ),
-    [plugin.abilities, plugin.author, plugin.components, plugin.description, plugin.homepage, plugin.license, plugin.repository],
-  )
+        ),
+        [plugin.abilities, plugin.author, plugin.components, plugin.description, plugin.homepage, plugin.license, plugin.repository],
+    )
 }

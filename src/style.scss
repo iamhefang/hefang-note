@@ -19,7 +19,7 @@ kbd {
 }
 
 [data-tauri-drag-region],
-:not(input, textarea, [contenteditable="true"], a, svg) {
+:not(input, textarea, [contenteditable="true"], a, svg,[data-selectable]) {
     cursor: default;
     user-select: none !important;
 }
