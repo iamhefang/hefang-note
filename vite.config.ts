@@ -1,9 +1,11 @@
-import react from "@vitejs/plugin-react"
-import {internalIpV4} from "internal-ip"
 import path from "path"
+
+import react from "@vitejs/plugin-react"
+import autoprefixer from "autoprefixer"
+import {internalIpV4} from "internal-ip"
 import {defineConfig} from "vite"
 import htmlMinifier from "vite-plugin-html-minifier"
-import {Mode, plugin as markdown} from "vite-plugin-markdown"
+import {plugin as markdown, Mode} from "vite-plugin-markdown"
 import {viteStaticCopy} from "vite-plugin-static-copy"
 import svgr from "vite-plugin-svgr"
 
@@ -74,6 +76,11 @@ export default defineConfig(async () => {
         },
         esbuild: {
             pure: process.env.TAURI_DEBUG ? [] : ["console.log", "debugger"],
+        },
+        css: {
+            postcss: {
+                plugins: [autoprefixer({})],
+            },
         },
     }
 })
