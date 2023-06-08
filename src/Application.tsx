@@ -16,9 +16,6 @@ import {useLocaleDefine} from "$hooks/useTranslate"
 import usePluginComponents from "$plugin/hooks/usePluginComponents"
 import usePluginEffect from "$plugin/hooks/usePluginEffect"
 
-
-
-
 const LazySettings = React.lazy(async () => import("~/views/settings"))
 
 export default function Application() {
