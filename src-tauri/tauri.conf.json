@@ -51,7 +51,10 @@
                 "request": true,
                 "scope": [
                     "https://gitee.com/iamhefang/*",
-                    "https://iamhefang.cn/*"
+                    "https://github.com/iamhefang/*",
+                    "https://iamhefang.cn/*",
+                    "https://note.hefang.app/*",
+                    "https://hefang-note.app/*"
                 ]
             },
             "globalShortcut": {
