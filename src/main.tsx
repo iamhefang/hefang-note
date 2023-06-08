@@ -2,9 +2,6 @@ import Html from "$components/utils/Html"
 import "$utils/debug"
 import "$utils/globals"
 
-import "$utils/worker"
-
-
 
 import {Empty, message, Modal} from "antd"
 import dayjs from "dayjs"
