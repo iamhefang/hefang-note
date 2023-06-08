@@ -3,9 +3,9 @@ import "$utils/debug"
 import "$utils/globals"
 
 import "$utils/worker"
+
 import {Empty, message, Modal} from "antd"
 import dayjs from "dayjs"
-import "dayjs/locale/zh-cn"
 import relativeTime from "dayjs/plugin/relativeTime"
 import ReactDOMClient from "react-dom/client"
 import {Provider} from "react-redux"
@@ -16,10 +16,8 @@ import store from "./redux"
 
 import {html} from "^/CHANGELOG.md"
 import pkg from "^/package.json"
-
 import "./style.scss"
 
-dayjs.locale("zh-cn")
 dayjs.extend(relativeTime)
 
 message.config({top: 40})
@@ -43,7 +41,9 @@ void navigator.locks.request("hefang-note", {ifAvailable: true}, async (lock) =>
             })
         }
     } else {
-        root.render(<Empty description={<span style={{color: "yellow"}}>{pkg.productName}已在其他窗口打开 / Application is running in other window</span>}/>)
+        root.render(<Empty
+            description={<span style={{color: "yellow"}}>{pkg.productName}已在其他窗口打开 / Application is running in other window</span>}
+        />)
     }
 
     return new Promise(() => {
