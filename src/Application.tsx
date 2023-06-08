@@ -1,4 +1,5 @@
 import {App as Antd, ConfigProvider} from "antd"
+import dayjs from "dayjs"
 import React, {Suspense, useEffect} from "react"
 
 import {uiSlice} from "~/redux/uiSlice"
@@ -47,11 +48,6 @@ export default function Application() {
                 <Suspense>
                     <LazySettings/>
                 </Suspense>
-                {/*<ShowInPlatform platforms={["Linux", "Darwin", "Windows_NT", "Browser"]}>*/}
-                {/*    {() => (*/}
-                {/*        */}
-                {/*    )}*/}
-                {/*</ShowInPlatform>*/}
                 {components}
             </Antd>
         </ConfigProvider>
