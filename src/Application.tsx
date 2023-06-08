@@ -7,7 +7,6 @@ import View from "~/views"
 import {useAppDispatch} from "./redux"
 
 import Loading from "$components/loading/Loading"
-import ShowInPlatform from "$components/utils/ShowInPlatform"
 import useContentLoader from "$hooks/useContentLoader"
 import {useStates} from "$hooks/useSelectors"
 import useSettingsLoader from "$hooks/useSettingsLoader"
@@ -45,13 +44,14 @@ export default function Application() {
         <ConfigProvider autoInsertSpaceInButton={false} locale={locale.antd} theme={themeConfig}>
             <Antd message={{top: 40}} notification={{top: 40}}>
                 <View/>
-                <ShowInPlatform platforms={["Linux", "Darwin", "Windows_NT", "Browser"]}>
-                    {() => (
-                        <Suspense>
-                            <LazySettings/>
-                        </Suspense>
-                    )}
-                </ShowInPlatform>
+                <Suspense>
+                    <LazySettings/>
+                </Suspense>
+                {/*<ShowInPlatform platforms={["Linux", "Darwin", "Windows_NT", "Browser"]}>*/}
+                {/*    {() => (*/}
+                {/*        */}
+                {/*    )}*/}
+                {/*</ShowInPlatform>*/}
                 {components}
             </Antd>
         </ConfigProvider>

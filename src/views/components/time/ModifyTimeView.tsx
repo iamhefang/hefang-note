@@ -11,9 +11,11 @@ export default function ModifyTimeView() {
     } = useSettings()
 
     return useMemo(() => (
-            current?.modifyTime && showEditTime ? <>
-                最近编辑: <span title={dayjs(current?.modifyTime).format("YYYY-M-D H:m:s")}>{dayjs(current?.modifyTime).fromNow()}</span>
-            </> : null
+            current?.modifyTime && showEditTime ? <span>
+                最近编辑: <span
+                title={dayjs(current?.modifyTime).format("YYYY-M-D H:m:s")}
+                >{dayjs(current?.modifyTime).fromNow()}</span>
+            </span> : null
         ),
         [current?.modifyTime, showEditTime],
     )

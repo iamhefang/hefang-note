@@ -3,14 +3,14 @@ import {Editor, Toolbar} from "@wangeditor/editor-for-react"
 
 import "@wangeditor/editor/dist/css/style.css"
 import {App} from "antd"
-import {useEffect, useMemo, useState} from "react"
+import {useCallback, useEffect, useMemo, useState} from "react"
 
 import {EditorComponent} from "~/plugin"
 
 import ss from "./index.module.scss"
 import useWangEditorTheme from "./useWangEditorTheme"
 
-const WangEditor: EditorComponent = ({value, onChange, onFocus, onBlur, placeholder, loading}) => {
+const WangEditor: EditorComponent = ({value, onChange, onFocus, onBlur, placeholder, loading, noteId}) => {
     const [editor, setEditor] = useState<IDomEditor | null>(null)
     const {message} = App.useApp()
     const toolbarConfig = useMemo<Partial<IToolbarConfig>>(
@@ -35,12 +35,6 @@ const WangEditor: EditorComponent = ({value, onChange, onFocus, onBlur, placehol
     const editorConfig = useMemo<Partial<IEditorConfig>>(
         () => ({
             placeholder,
-            onChange: (domEditor) => {
-                if (loading) {
-                    return
-                }
-                onChange?.(domEditor.isEmpty() ? "" : domEditor.getHtml())
-            },
             onFocus: () => onFocus?.(),
             onBlur: () => onBlur?.(),
             customAlert: (info, type) => {
@@ -52,7 +46,7 @@ const WangEditor: EditorComponent = ({value, onChange, onFocus, onBlur, placehol
                 },
             },
         }),
-        [loading, message, onBlur, onChange, onFocus, placeholder],
+        [message, onBlur, onFocus, placeholder],
     )
 
     const theme = useWangEditorTheme()
@@ -67,13 +61,27 @@ const WangEditor: EditorComponent = ({value, onChange, onFocus, onBlur, placehol
         }
     }, [editor])
 
+    const onValueChange = useCallback((domEditor: IDomEditor) => {
+        if (loading) {
+            return
+        }
+        console.info("onValueChange", noteId, domEditor.getHtml())
+        onChange?.(domEditor.isEmpty() ? "" : domEditor.getHtml())
+    }, [loading, noteId, onChange])
+
     return (
         <div style={{height: "100%", display: "flex", flexDirection: "column", ...theme}} className={ss.editor}>
-            <Toolbar editor={editor} defaultConfig={toolbarConfig} mode="simple" style={{borderBottom: "1px solid var(--w-e-toolbar-border-color)"}}/>
+            <Toolbar
+                editor={editor}
+                defaultConfig={toolbarConfig}
+                mode="simple"
+                style={{borderBottom: "1px solid var(--w-e-toolbar-border-color)"}}
+            />
             <div style={{flex: 1, overflow: "hidden", position: "relative"}}>
                 <Editor
                     defaultConfig={editorConfig}
                     value={value}
+                    onChange={onValueChange}
                     onCreated={setEditor}
                     mode="simple"
                     style={{position: "absolute", left: 0, top: 0, right: 0, bottom: 0}}

@@ -1,9 +1,10 @@
 import {LockOutlined} from "@ant-design/icons"
-import {Input, Result, Space} from "antd"
+import {Input, Result} from "antd"
 import React, {useCallback} from "react"
 
 import {useSettings} from "~/hooks/useSelectors"
 import {useAppDispatch} from "~/redux"
+import {setItemsExpanded} from "~/redux/settingSlice"
 import {unlockContent} from "~/redux/uiSlice"
 import {NoteItem} from "~/types"
 
@@ -13,16 +14,19 @@ export type NoteUnlockerProps = {
     item: NoteItem
 }
 export default function NoteUnlocker({item}: NoteUnlockerProps) {
-    const {lockedContents} = useSettings()
+    const {lockedContents, unlockContentByAppLockPassword, lock: {password}} = useSettings()
     const t = useTranslate()
     const dispatch = useAppDispatch()
     const onChange = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
-            if (lockedContents[item.id] === e.currentTarget.value) {
+            const matchNotePwd = lockedContents[item.id] === e.currentTarget.value
+            const matchAppPwd = unlockContentByAppLockPassword && password === e.currentTarget.value
+            if (matchNotePwd || matchAppPwd) {
                 dispatch(unlockContent(item.id))
+                item.isLeaf || dispatch(setItemsExpanded({[item.id]: true}))
             }
         },
-        [dispatch, item.id, lockedContents],
+        [dispatch, item.id, item.isLeaf, lockedContents, password, unlockContentByAppLockPassword],
     )
 
     return (
@@ -32,9 +36,13 @@ export default function NoteUnlocker({item}: NoteUnlockerProps) {
             subTitle={t(`该${item.isLeaf ? "笔记" : "目录"}已锁定，请输入解锁密码`)}
             icon={<LockOutlined/>}
             extra={
-                <Space>
-                    <Input.Password placeholder={t("请输入解锁密码")} allowClear maxLength={6} onChange={onChange} style={{maxWidth: 180}}/>
-                </Space>
+                <Input.Password
+                    placeholder={t("请输入解锁密码")}
+                    allowClear
+                    maxLength={6}
+                    onChange={onChange}
+                    style={{maxWidth: 180}}
+                />
             }
         />
     )
