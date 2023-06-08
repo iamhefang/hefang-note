@@ -3,16 +3,16 @@ import {exit} from "@tauri-apps/api/process"
 import {appWindow} from "@tauri-apps/api/window"
 import {Modal} from "antd"
 
-import {isInTauri, productName} from "~/consts"
+import {isInClient, productName} from "~/consts"
 
 export function closeWindow() {
-    if (isInTauri) {
+    if (isInClient) {
         void appWindow.minimize()
     }
 }
 
 export function exitProcess() {
-    if (isInTauri) {
+    if (isInClient) {
         void exit(0)
     }
 }
@@ -20,7 +20,7 @@ export function exitProcess() {
 export function showDbBlockingDialog({}: { currentVersion: number; blockedVersion: number | null }) {
     const title = `您已经使用过新版本的${productName}`
     const content = "您使用的当前版本低于之前使用的版本"
-    if (isInTauri) {
+    if (isInClient) {
         void dialog.message(`${content}，请下载使用新版本`, {title}).then(() => {
             void shell.open("https://github.com/iamhefang/hefang-note/releases")
         })

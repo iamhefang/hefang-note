@@ -2,12 +2,12 @@ import {path} from "@tauri-apps/api"
 import {BaseDirectory, createDir, exists, writeTextFile} from "@tauri-apps/api/fs"
 import {deleteDB} from "idb"
 
-import {isInTauri} from "~/consts"
+import {isInClient} from "~/consts"
 
 import {contentStore, database, notesStore, pluginStore, settingsStore} from "./database"
 import {decrypt, encrypt} from "./encrypt"
 
-if (isInTauri) {
+if (isInClient) {
     void (async () => {
         if (!(await exists("test", {dir: BaseDirectory.AppLog}))) {
             await createDir("test", {dir: BaseDirectory.AppLog, recursive: true})
@@ -29,7 +29,7 @@ if (isInTauri) {
 }
 
 // if (import.meta.env.DEV && typeof window !== "undefined") {
-if (isInTauri) {
+if (isInClient) {
     void (async () => {
         console.info("appDataDir", await path.appDataDir())
         console.info("appCacheDir", await path.appCacheDir())

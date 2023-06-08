@@ -19,7 +19,10 @@ export type LocaleKey = keyof LocalMap
 
 export const defaultLocaleDefine: LocalDefine = {...zhCN, antd: zhCNAntd}
 
-export const Locales: LocalDefine[] = [defaultLocaleDefine, {...en, antd: enUSAntd}, {...ja, antd: jaAntd}, {...de, antd: deAntd}]
+export const Locales: LocalDefine[] = [defaultLocaleDefine, {...en, antd: enUSAntd}, {...ja, antd: jaAntd}, {
+    ...de,
+    antd: deAntd,
+}]
 
 export function useLocaleDefine(): LocalDefine {
     const {language} = useSettings()
@@ -37,8 +40,9 @@ export function useTranslate() {
     return useCallback(
         (key: LocaleKey, params?: Record<string, unknown>) => {
             const locale = key in define.map ? define.map : zhCN.map
+            const value = locale[key] ?? key
 
-            return params ? format(locale[key], params) : locale[key]
+            return params ? format(value, params) : value
         },
         [define.map],
     )

@@ -16,11 +16,23 @@ export default function useSafeSettings(): Record<string, ReactNode> {
                 <Space>
                     {immediately && (
                         <Form.Item name={["lock", "password"]} label="解锁密码" dependencies={["lockImmediately"]}>
-                            <Input.Password maxLength={6} placeholder="请输入解锁密码" style={{width: 120}} size="small"/>
+                            <Input.Password
+                                maxLength={6}
+                                placeholder="请输入解锁密码"
+                                style={{width: 120}}
+                                size="small"
+                            />
                         </Form.Item>
                     )}
                     <Form.Item name={["lock", "immediately"]} valuePropName="checked" noStyle>
                         <Switch onChange={setImmediately}/>
+                    </Form.Item>
+                </Space>
+            ),
+            [t("使用锁屏密码解锁笔记")]: (
+                <Space>
+                    <Form.Item name="unlockContentByAppLockPassword" valuePropName="checked" noStyle>
+                        <Switch/>
                     </Form.Item>
                 </Space>
             ),

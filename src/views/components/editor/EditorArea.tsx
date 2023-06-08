@@ -1,6 +1,8 @@
 import {theme as antTheme, Empty} from "antd"
+import {debounce} from "lodash"
 import React, {useCallback, useEffect, useLayoutEffect, useMemo, useState} from "react"
 
+import {CONTENT_SAVE_DELAY} from "~/config"
 import useNoteLocked from "~/hooks/useNoteLocked"
 import {EditorComponent} from "~/plugin"
 import {useAppDispatch} from "~/redux"
@@ -39,15 +41,19 @@ export default function EditorArea() {
         setValue(newValue || "")
     }, [reading])
 
+    const saveContent = useMemo(() => debounce((id: string, newContent: string) => {
+        dispatch(updateContent({id, content: newContent}))
+        setChanging(false)
+    }, CONTENT_SAVE_DELAY), [dispatch])
+
     useEffect(
         () => {
             if (!current?.isLeaf || !current?.id || reading) {
                 return
             }
-            dispatch(updateContent({id: current.id, content: value}))
-            setChanging(false)
+            saveContent(current?.id, value)
         },
-        [current?.id, current?.isLeaf, dispatch, reading, value],
+        [current?.id, current?.isLeaf, dispatch, reading, saveContent, value],
     )
 
     const noteLocked = useNoteLocked(current?.id)
@@ -65,8 +71,15 @@ export default function EditorArea() {
             .finally(() => setTimeout(() => setReading(false), 0))
     }, [current?.id, current?.isLeaf])
 
+    const onBlur = useCallback(() => {
+        if (!current?.isLeaf || !current?.id || reading) {
+            return
+        }
+        saveContent(current?.id, value)
+        saveContent.flush()
+    }, [current?.id, current?.isLeaf, reading, saveContent, value])
+
     if (noteLocked) {
-        // FIXME: 从加锁笔记切换到非加锁笔记时内容区会闪一下
         return <NoteUnlocker item={current!}/>
     }
 
@@ -83,7 +96,15 @@ export default function EditorArea() {
             }}
         >
             <div className="editor-wrapper" style={editorOptions}>
-                <Editor value={value} onChange={onValueChange} placeholder={t("尽情记录吧")} loading={reading} noteId={current.id}/>
+                <Editor
+                    key={current.id}
+                    value={value}
+                    onChange={onValueChange}
+                    placeholder={t("尽情记录吧")}
+                    loading={reading}
+                    noteId={current.id}
+                    onBlur={onBlur}
+                />
             </div>
         </div>
     )

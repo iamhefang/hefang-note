@@ -2,6 +2,7 @@ import {AppstoreOutlined, EditOutlined, HomeOutlined, KeyOutlined, SafetyOutline
 import {Form, List, Segmented} from "antd"
 import {isValidElement, ReactNode, useCallback, useMemo, useState} from "react"
 
+import {isInClient} from "~/consts"
 import {useAppDispatch} from "~/redux"
 import {setSettings} from "~/redux/settingSlice"
 import type {Settings} from "~/types"
@@ -61,20 +62,29 @@ export default function SettingForm() {
             ))}
         </List>
     }, [formItems[active]])
+    const segmentedOptions = useMemo(() => {
+        const options = [
+            {label: t("通用"), value: "general", icon: <HomeOutlined/>},
+            {label: t("安全"), value: "safe", icon: <SafetyOutlined/>},
+            {label: t("编辑器"), value: "editor", icon: <EditOutlined/>},
+            {label: t("快捷键"), value: "shortcut", icon: <KeyOutlined/>},
+        ]
+        if (isInClient) {
+            options.push({label: t("插件"), value: "plugin", icon: <AppstoreOutlined/>})
+        }
+
+        return options
+    }, [t])
 
 
     return (
-        <Form form={form} layout="inline" onValuesChange={onValuesChange} style={{width: "100%"}} initialValues={settings}>
+        <Form form={form} layout="inline" onValuesChange={onValuesChange} style={{width: "100%"}}
+              initialValues={settings}
+        >
             <Segmented
                 value={active}
                 onChange={setActive}
-                options={[
-                    {label: t("通用"), value: "general", icon: <HomeOutlined/>},
-                    {label: t("安全"), value: "safe", icon: <SafetyOutlined/>},
-                    {label: t("编辑器"), value: "editor", icon: <EditOutlined/>},
-                    {label: t("快捷键"), value: "shortcut", icon: <KeyOutlined/>},
-                    {label: t("插件"), value: "plugin", icon: <AppstoreOutlined/>},
-                ]}
+                options={segmentedOptions}
             />
             {content}
         </Form>

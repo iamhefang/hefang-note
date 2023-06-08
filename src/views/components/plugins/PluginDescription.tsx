@@ -9,7 +9,7 @@ import {shell} from "@tauri-apps/api"
 import {Col, Row, Space, Tag} from "antd"
 import React, {useMemo} from "react"
 
-import {isInTauri} from "~/consts"
+import {isInClient} from "~/consts"
 import {IPluginInfo, PluginAbility, PluginComponents} from "~/plugin"
 
 import ss from "./PluginDescription.module.scss"
@@ -37,7 +37,7 @@ function pluginComponents(value: PluginComponents) {
 }
 
 function openInNative(e: React.MouseEvent<HTMLAnchorElement>) {
-    if (!isInTauri || !e.currentTarget?.href) {
+    if (!isInClient || !e.currentTarget?.href) {
         return
     }
     e.preventDefault()
