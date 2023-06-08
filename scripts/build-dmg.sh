@@ -19,7 +19,8 @@ mkdir "./src-tauri/dist"
 
 TIME=$(date +"%Y%m%d%H%M%S")
 
-create-dmg \
+
+./src-tauri/target/release/bundle/dmg/bundle_dmg.sh \
     --volname "何方笔记 v$VERSION" \
     --window-size 660 400 \
     --text-size 16 \
