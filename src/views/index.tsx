@@ -1,4 +1,5 @@
 import {theme as antdTheme, Layout} from "antd"
+import dayjs from "dayjs"
 import {Resizable, ResizeCallback} from "re-resizable"
 import React, {useCallback, useEffect, useMemo, useState} from "react"
 
@@ -11,9 +12,15 @@ import TopBarLeft from "$components/topbar/TopBarLeft"
 import TopBarRight from "$components/topbar/TopBarRight"
 import useCurrent from "$hooks/useCurrent"
 import {useSettings} from "$hooks/useSelectors"
-import {useTranslate} from "$hooks/useTranslate"
+import {useLocaleDefine, useTranslate} from "$hooks/useTranslate"
 import {shortcuts} from "$utils/shortcuts"
 import {closeWindow} from "$utils/window"
+import "dayjs/locale/de.js"
+import "dayjs/locale/en.js"
+import "dayjs/locale/ja.js"
+import "dayjs/locale/zh-cn"
+import "dayjs/locale/zh-tw"
+import "dayjs/locale/zh.js"
 
 
 
@@ -57,6 +64,11 @@ export default function View() {
     useEffect(() => {
         localStorage.setItem("bgColor", colorBgBase)
     }, [colorBgBase, theme])
+    const language = useLocaleDefine()
+    useEffect(() => {
+        console.info("当前语言", language, language.keys[0].toLowerCase())
+        dayjs.locale(language.keys[0].toLowerCase())
+    }, [language])
 
     const title = useMemo(() => {
         if (locked) {
