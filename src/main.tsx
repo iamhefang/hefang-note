@@ -4,6 +4,8 @@ import "$utils/globals"
 
 import "$utils/worker"
 
+
+
 import {Empty, message, Modal} from "antd"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
@@ -32,9 +34,11 @@ void navigator.locks.request("hefang-note", {ifAvailable: true}, async (lock) =>
         if (localStorage.getItem("firstRun") !== versionName) {
             Modal.info({
                 title: "更新日志/Changelog",
-                content: <Html className="changelog-container">{html}</Html>,
+                content: <Html className="changelog-container" data-selectable>{html}</Html>,
                 okText: "知道了/OK",
-                width: "90vw",
+                width: "90%",
+                centered: true,
+                style: {maxWidth: 600},
                 onOk() {
                     localStorage.setItem("firstRun", versionName)
                 },
