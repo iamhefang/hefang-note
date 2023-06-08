@@ -1,7 +1,7 @@
 import {save} from "@tauri-apps/api/dialog"
 import {writeFile} from "@tauri-apps/api/fs"
 
-import {isInTauri} from "~/consts"
+import {isInClient} from "~/consts"
 
 export type DownloadFileOptions = {
     mimeType?: string
@@ -10,7 +10,7 @@ export type DownloadFileOptions = {
 
 export async function saveFile(content: string, options?: DownloadFileOptions): Promise<void> {
     return new Promise((resolve, reject) => {
-        if (isInTauri) {
+        if (isInClient) {
             save({title: "保存文件", defaultPath: options?.fileName}).then(filePath => {
                 if (!filePath) {
                     return

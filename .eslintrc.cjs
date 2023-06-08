@@ -110,7 +110,7 @@ module.exports = {
     "comma-dangle": ["error", "always-multiline"],
     // indent: ["error", 2, { SwitchCase: 1 }],
     "linebreak-style": ["error", "unix"],
-    "max-len": ["error", { code: 160, ignoreStrings: true }],
+    "max-len": ["error", { code: 120, ignoreStrings: true }],
     "new-parens": "error",
     "padding-line-between-statements": ["error", { blankLine: "always", prev: "*", next: "return" }],
     quotes: ["error", "double", { avoidEscape: true }],

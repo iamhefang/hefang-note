@@ -6,7 +6,10 @@ import {noteSlice} from "~/redux/noteSlice"
 import {settingSlice} from "~/redux/settingSlice"
 import {uiSlice} from "~/redux/uiSlice"
 
-export type EditorComponent = (ComponentClass<IEditorProps> | FC<IEditorProps>) & { editorName?: string; options?: IEditorOptions[] }
+export type EditorComponent = (ComponentClass<IEditorProps> | FC<IEditorProps>) & {
+    editorName?: string;
+    options?: IEditorOptions[]
+}
 
 export interface IEditorOptions extends Omit<FormItemProps, "noStyle"> {
 }

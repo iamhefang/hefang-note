@@ -1,8 +1,9 @@
-import {settingsStore} from "$utils/database"
 import {createAsyncThunk, createSlice, PayloadAction, SliceCaseReducers} from "@reduxjs/toolkit"
 import _ from "lodash"
 
 import {Settings} from "~/types"
+
+import {settingsStore} from "$utils/database"
 
 export const defaultSettings: Settings = {
     theme: "auto",
@@ -30,9 +31,7 @@ export const defaultSettings: Settings = {
 const sliceName = "settings"
 
 export const loadSettings = createAsyncThunk(`${sliceName}/loadSettings`, async () => {
-    const settings = await settingsStore.getObject()
-
-    return settings
+    return settingsStore.getObject()
 })
 
 export const settingSlice = createSlice<Settings, SliceCaseReducers<Settings>>({
@@ -145,5 +144,8 @@ export const settingSlice = createSlice<Settings, SliceCaseReducers<Settings>>({
     },
 })
 
-export const {lockScreen, lockContent, cancelLockContent, toggleSidebar, changeTheme, setItemsExpanded, setCurrent, setSort, setSettings, switchPlugin} =
-    settingSlice.actions
+export const {
+    lockScreen, lockContent, cancelLockContent,
+    toggleSidebar, changeTheme, setItemsExpanded,
+    setCurrent, setSort, setSettings, switchPlugin,
+} = settingSlice.actions

@@ -55,7 +55,7 @@ export default function NoteTreeItemMenu({children, onClick, onOpenChange}: Note
                 key: NoteTreeMenuKeys.export,
                 label: t("导出"),
                 children: [
-                    {key: NoteTreeMenuKeys.exportPDF, label: "PDF"},
+                    // {key: NoteTreeMenuKeys.exportPDF, label: "PDF"},
                     {key: NoteTreeMenuKeys.exportHTML, label: "HTML"},
                     {key: NoteTreeMenuKeys.exportMarkdown, label: "Markdown"},
                 ],
