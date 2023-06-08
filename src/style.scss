@@ -19,9 +19,9 @@ kbd {
 }
 
 [data-tauri-drag-region],
-:not(input, textarea, [contenteditable="true"], a, svg,[data-selectable]) {
+:not(input, textarea, [contenteditable="true"], a, svg,[data-selectable="true"] *) {
     cursor: default;
-    user-select: none !important;
+    user-select: none;
 }
 
 .ant-empty {
@@ -92,7 +92,7 @@ kbd {
 }
 
 .changelog-container {
-    max-height: calc(100vh - 400px);
+    max-height: calc(100vh - 200px);
     overflow: auto;
 
     p {
