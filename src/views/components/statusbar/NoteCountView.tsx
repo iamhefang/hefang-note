@@ -13,6 +13,6 @@ export default function NoteCountView() {
         const dirCount = values.length - notes.length
         const noteCount = notes.length
 
-        return <>{t("共{dirCount}个目录,{noteCount}篇笔记", {dirCount, noteCount})}</>
+        return <span>{t("共{dirCount}个目录,{noteCount}篇笔记", {dirCount, noteCount})}</span>
     }, [entities, t])
 }

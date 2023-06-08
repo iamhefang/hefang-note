@@ -1,3 +1,4 @@
+import {App} from "antd"
 import {useCallback} from "react"
 
 import {ContentIOType} from "~/plugin"
@@ -13,14 +14,13 @@ import {doExport} from "$hooks/noteTreeItem/uitils"
 import {useStates} from "$hooks/useSelectors"
 
 
-
-
 export default function useOnNoteTreeMenuClick() {
     const dispatch = useAppDispatch()
     const showLockModal = useLockContentModal()
     const showDeleteModal = useDeleteModal()
     const {rightClickedItem} = useStates()
     const newNoteDispatch = useNewNoteDispatcher(rightClickedItem?.id)
+    const {message} = App.useApp()
 
     return useCallback(
         (info: MenuInfo) => {
@@ -40,14 +40,18 @@ export default function useOnNoteTreeMenuClick() {
                     break
                 case NoteTreeMenuKeys.exportHTML:
                     rightClickedItem && doExport(rightClickedItem, ContentIOType.html)
+                        .then(() => message.success("导出成功"))
+                        .catch(error => message.error(error))
                     break
                 case NoteTreeMenuKeys.exportMarkdown:
                     rightClickedItem && doExport(rightClickedItem, ContentIOType.markdown)
+                        .then(() => message.success("导出成功"))
+                        .catch(error => message.error(error))
                     break
                 default:
                     console.warn("未生效的菜单")
             }
         },
-        [rightClickedItem, dispatch, showDeleteModal, newNoteDispatch, showLockModal],
+        [rightClickedItem, dispatch, showDeleteModal, newNoteDispatch, showLockModal, message],
     )
 }

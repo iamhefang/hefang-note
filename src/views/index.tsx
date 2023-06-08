@@ -1,4 +1,4 @@
-import {theme as antdTheme, Col, Layout, Row} from "antd"
+import {theme as antdTheme, Layout} from "antd"
 import {Resizable, ResizeCallback} from "re-resizable"
 import React, {useCallback, useEffect, useMemo, useState} from "react"
 
@@ -6,8 +6,7 @@ import {productName, versionName} from "~/consts"
 
 import EditorArea from "$components/editor/EditorArea"
 import SiderBar from "$components/sidebar/SiderBar"
-import FooterLeftSpace from "$components/statusbar/FooterLeftSpace"
-import FooterRightSpace from "$components/statusbar/FooterRightSpace"
+import StatusBar from "$components/statusbar/StatusBar"
 import TopBarLeft from "$components/topbar/TopBarLeft"
 import TopBarRight from "$components/topbar/TopBarRight"
 import useCurrent from "$hooks/useCurrent"
@@ -18,7 +17,7 @@ import {closeWindow} from "$utils/window"
 
 
 
-const {Sider, Content, Header, Footer} = Layout
+const {Sider, Content, Header} = Layout
 export default function View() {
     const t = useTranslate()
     const {
@@ -28,7 +27,7 @@ export default function View() {
         shortcut,
     } = useSettings()
     const {
-        token: {colorBgContainer, colorBorder, colorBgBase},
+        token: {colorBgContainer, colorBgBase},
     } = antdTheme.useToken()
     const [width, setWidth] = useState(240)
     const [sw, setSW] = useState(width)
@@ -92,17 +91,7 @@ export default function View() {
                     <EditorArea/>
                 </Content>
             </Layout>
-            <Footer style={{borderColor: colorBorder}}>
-                <Row gutter={10}>
-                    <Col>
-                        <FooterLeftSpace/>
-                    </Col>
-                    <Col flex={1}/>
-                    <Col>
-                        <FooterRightSpace/>
-                    </Col>
-                </Row>
-            </Footer>
+            <StatusBar/>
         </Layout>
     )
 }

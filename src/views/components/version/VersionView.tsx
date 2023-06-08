@@ -1,13 +1,14 @@
-import {useArch, useOsTypr as useOsType} from "$hooks/usePlatform"
-import {useSettings} from "$hooks/useSelectors"
-import {useTranslate} from "$hooks/useTranslate"
 import {shell} from "@tauri-apps/api"
 import {checkUpdate} from "@tauri-apps/api/updater"
-import pkg from "^/package.json"
 import {App, Space, Spin} from "antd"
 import {useCallback, useEffect, useMemo, useState} from "react"
 
-import {clientUrls, isInTauri, versionCode} from "~/consts"
+import {clientUrls, isInClient, versionCode} from "~/consts"
+
+import {useArch, useOsTypr as useOsType} from "$hooks/usePlatform"
+import {useSettings} from "$hooks/useSelectors"
+import {useTranslate} from "$hooks/useTranslate"
+import pkg from "^/package.json"
 
 const enum UpdateStatus {
     none = "none",
@@ -31,13 +32,13 @@ export default function VersionView() {
     const osType = useOsType()
     const arch = useArch()
     const doInstallUpdate = useCallback(async () => {
-        if (!isInTauri || !osType || !arch || !(`${osType}-${arch}` in clientUrls)) {
+        if (!isInClient || !osType || !arch || !(`${osType}-${arch}` in clientUrls)) {
             return
         }
         await shell.open(clientUrls[`${osType}-${arch}`]!)
     }, [arch, osType])
     const doCheckUpdate = useCallback(() => {
-        if (!isInTauri) {
+        if (!isInClient) {
             return
         }
         setStatus(UpdateStatus.checking)
