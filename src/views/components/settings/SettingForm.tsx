@@ -61,7 +61,7 @@ export default function SettingForm() {
                 </List.Item>
             ))}
         </List>
-    }, [formItems[active]])
+    }, [active, formItems])
     const segmentedOptions = useMemo(() => {
         const options = [
             {label: t("通用"), value: "general", icon: <HomeOutlined/>},
@@ -78,8 +78,11 @@ export default function SettingForm() {
 
 
     return (
-        <Form form={form} layout="inline" onValuesChange={onValuesChange} style={{width: "100%"}}
-              initialValues={settings}
+        <Form
+            form={form} layout="inline"
+            onValuesChange={onValuesChange}
+            style={{width: "100%"}}
+            initialValues={settings}
         >
             <Segmented
                 value={active}

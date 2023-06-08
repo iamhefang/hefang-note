@@ -15,10 +15,10 @@ export default function useSafeSettings(): Record<string, ReactNode> {
             [t("锁定时不再弹窗提示")]: (
                 <Space>
                     {immediately && (
-                        <Form.Item name={["lock", "password"]} label="解锁密码" dependencies={["lockImmediately"]}>
+                        <Form.Item name={["lock", "password"]} label={t("解锁密码")} dependencies={["lockImmediately"]}>
                             <Input.Password
                                 maxLength={6}
-                                placeholder="请输入解锁密码"
+                                placeholder={t("请输入解锁密码")}
                                 style={{width: 120}}
                                 size="small"
                             />
