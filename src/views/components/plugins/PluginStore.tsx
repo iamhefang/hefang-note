@@ -51,15 +51,6 @@ export function PluginStore({search}: PluginProps) {
     const [height, setHeight] = useState(window.innerHeight - 200)
     useEffect(() => {
         void pluginStore.getAll().then(setPlugins)
-
-        const onResize = () => {
-            setHeight(window.innerHeight - 200)
-        }
-        window.addEventListener("resize", onResize)
-
-        return () => {
-            window.removeEventListener("resize", onResize)
-        }
     }, [])
 
     const data = useMemo(() => {
@@ -73,8 +64,16 @@ export function PluginStore({search}: PluginProps) {
         }) ?? []
     }, [plugins, search])
     useEffect(() => {
-        setHeight(Math.min
-        (window.innerHeight - 200, (data.length * 70) || 200))
+        const onResize = () => {
+            setHeight(Math.min
+            (window.innerHeight - 200, (data.length * 70) || 200))
+        }
+        onResize()
+        window.addEventListener("resize", onResize)
+
+        return () => {
+            window.removeEventListener("resize", onResize)
+        }
     }, [data])
 
     return (
