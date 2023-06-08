@@ -1,7 +1,7 @@
-import {App, Button, Descriptions, Dropdown, Modal} from "antd"
-import {useCallback, useEffect} from "react"
+import {App, Button, Descriptions, Dropdown, MenuProps, Modal} from "antd"
+import {useCallback, useEffect, useMemo} from "react"
 
-import {isInTauri} from "~/consts"
+import {isInClient, productName} from "~/consts"
 import {useAppDispatch} from "~/redux"
 import {toggleSettingsModal} from "~/redux/uiSlice"
 
@@ -12,6 +12,7 @@ import {shortcuts} from "$utils/shortcuts"
 import {exitProcess} from "$utils/window"
 import pkg from "^/package.json"
 import logo from "^/src-tauri/icons/icon.png"
+
 
 
 export default function AppLogo() {
@@ -37,7 +38,7 @@ export default function AppLogo() {
         })
     }, [modal, osType, t])
     useEffect(() => {
-        if (!isInTauri) {
+        if (!isInClient) {
             return
         }
 
@@ -50,33 +51,43 @@ export default function AppLogo() {
         }
     }, [toggleSettings])
 
+    const menuItems = useMemo<MenuProps["items"]>(() => {
+        const items: MenuProps["items"] = [
+            {
+                key: "app-name",
+                label: `关于${pkg.productName}`,
+                onClick: showAboutModal,
+            },
+            {type: "divider"},
+            {
+                key: "menu-settings",
+                label: <CommonMenuItem title="设置" shortcut="Ctrl+,"/>,
+                onClick: toggleSettings,
+            },
+        ]
+
+        if (isInClient) {
+            items.push(
+                {type: "divider"},
+                {
+                    key: "menu-quit",
+                    label: <CommonMenuItem title="退出" shortcut="Ctrl+Q"/>,
+                    onClick: exitProcess,
+                },
+            )
+        }
+
+        return items
+    }, [showAboutModal, toggleSettings])
+
+
     return (
         <>
             <Dropdown
                 trigger={["click", "contextMenu"]}
                 placement="bottomLeft"
                 overlayStyle={{zIndex: 10000}}
-                menu={{
-                    items: ["Linux", "Windows_NT"].includes(osType)
-                        ? [
-                            {
-                                key: "app-name",
-                                label: `关于${pkg.productName}`,
-                                onClick: showAboutModal,
-                            },
-                            {type: "divider"},
-                            {key: "menu-settings", label: <CommonMenuItem title="设置" shortcut="Ctrl+,"/>, onClick: toggleSettings},
-                            {type: "divider"},
-                            {key: "menu-quit", label: <CommonMenuItem title="退出" shortcut="Ctrl+Q"/>, onClick: exitProcess},
-                        ]
-                        : [
-                            {
-                                key: "app-name",
-                                label: `关于${pkg.productName}`,
-                                onClick: showAboutModal,
-                            },
-                        ],
-                }}
+                menu={{items: menuItems}}
             >
                 <Button
                     type="text"
@@ -90,6 +101,7 @@ export default function AppLogo() {
                                 width: "100%",
                                 pointerEvents: "none",
                             }}
+                            alt={productName}
                         />
                     }
                 />

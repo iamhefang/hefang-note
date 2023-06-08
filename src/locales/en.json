@@ -20,6 +20,7 @@
         "首选项": "Preferences",
         "插件": "Plugins",
         "锁定时不再弹窗提示": "Do not show pop-up windows when locked",
+        "使用锁屏密码解锁笔记": "Use lock screen password to unlock notes",
         "要使用的编辑器": "Editor to use",
         "显示当前笔记编辑时间": "Show time above editor",
         "显示行号": "Show line numbers",

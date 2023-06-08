@@ -3,7 +3,7 @@ import {appWindow} from "@tauri-apps/api/window"
 import {App, Button, Form, Input, Modal, theme} from "antd"
 import {useCallback, useEffect} from "react"
 
-import {isInTauri} from "~/consts"
+import {isInClient} from "~/consts"
 import {PluginComponent, PluginHookOccasion, ScreenLockEvent} from "~/plugin"
 import {useAppDispatch} from "~/redux"
 import {lockScreen} from "~/redux/settingSlice"
@@ -85,7 +85,7 @@ const ScreenLocker: PluginComponent = () => {
     )
 
     useEffect(() => {
-        if (lock.locked || !isInTauri) {
+        if (lock.locked || !isInClient) {
             return
         }
         const unlistener = appWindow.listen("toggleLock", onLockClick)
