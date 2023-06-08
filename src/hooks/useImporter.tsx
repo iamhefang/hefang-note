@@ -6,7 +6,7 @@ import {App, Button, Col, Dropdown, Modal, Row} from "antd"
 import {ModalStaticFunctions} from "antd/es/modal/confirm"
 import {useCallback} from "react"
 
-import {isInTauri} from "~/consts"
+import {isInClient} from "~/consts"
 import schema from "~/data/note-data-schema.json"
 import {NoteItem} from "~/types"
 
@@ -106,7 +106,7 @@ export default function useImporter() {
     const {message, modal} = App.useApp()
 
     return useCallback(async () => {
-        const json: NoteData = isInTauri ? await importWithTauri() : await importWithHtml(modal)
+        const json: NoteData = isInClient ? await importWithTauri() : await importWithHtml(modal)
         const importIds = json.contents.map((item) => item.id)
         const currentIds = await notesStore.getAllIds()
         const ids = new Set([...currentIds, ...importIds])

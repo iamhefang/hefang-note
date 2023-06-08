@@ -3,7 +3,7 @@ import {shell} from "@tauri-apps/api"
 import {Button} from "antd"
 import React, {useCallback} from "react"
 
-import {isInTauri} from "~/consts"
+import {isInClient} from "~/consts"
 
 import {useTranslate} from "$hooks/useTranslate"
 import {repository} from "^/package.json"
@@ -11,7 +11,7 @@ import {repository} from "^/package.json"
 export default function Github() {
     const t = useTranslate()
     const onClick = useCallback((e: React.MouseEvent) => {
-        if (!isInTauri) {
+        if (!isInClient) {
             return
         }
         e.preventDefault()

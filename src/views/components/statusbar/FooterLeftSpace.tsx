@@ -1,4 +1,3 @@
-import {Space} from "antd"
 import React from "react"
 
 import LoadStatusView from "$components/statusbar/LoadStatusView"
@@ -8,13 +7,13 @@ import usePluginComponents from "$plugin/hooks/usePluginComponents"
 
 export default function FooterLeftSpace() {
     const components = usePluginComponents("FooterLeft")
-    
+
     return (
-        <Space>
+        <>
             <NoteCountView/>
             <LoadStatusView/>
             <ModifyTimeView/>
             {components}
-        </Space>
+        </>
     )
 }
