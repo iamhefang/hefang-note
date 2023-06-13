@@ -47,12 +47,16 @@ export type PluginHookKeys = keyof IPluginHooks
 /**
  * 插件代码导出的信息
  */
-export interface IPluginObject extends Partial<IPluginHooks>, Partial<IPluginComponents>, Partial<IPluginAbility>, Partial<IPluginLifecycle> {
-    settings?: IPluginSettings
+export interface IPluginObject
+    extends Partial<IPluginHooks>,
+        Partial<IPluginComponents>,
+        Partial<IPluginAbility>,
+        Partial<IPluginLifecycle> {
 }
 
 export interface IPluginSettings {
-    [key: string]: Omit<FormItemProps, "name">
+    name?: string
+    items: { [key: string]: Omit<FormItemProps, "name"> }
 }
 
 export interface IPlugin extends IPluginInfo, IPluginObject {
@@ -133,6 +137,7 @@ export interface IPluginSynchronization {
 export interface IPluginAbility {
     theme: ThemeDefine
     synchronization: IPluginSynchronization
+    settings: IPluginSettings
 }
 
 export interface INotebook {
