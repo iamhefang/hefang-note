@@ -15,8 +15,24 @@ import {IPlugin, IPluginInfo} from "~/plugin"
 import {useSettings} from "$hooks/useSelectors"
 import {createObjectURL} from "$utils/url"
 
+const globalMap: Record<string, string> = {
+    "@ant-design/icons/lib/icons": "icons",
+    "antd": "antd",
+    "dayjs": "dayjs",
+    "lodash": "lodash",
+    "react": "React",
+    "react-dom": "ReactDOM",
+    "react-dom/client": "ReactDomClient",
+}
+
 async function require(path: string): Promise<IPlugin> {
-    const js = await readTextFile(path)
+    const js = (await readTextFile(path)).replace(/import (.*?) from "(react|antd)"/g, (input, $1, $2) => {
+        if ($2 in globalMap) {
+            return `const ${$1} = window.globals.${globalMap[$2]};`
+        }
+
+        return input
+    })
 
     return (await import(/* @vite-ignore */ createObjectURL(js, {type: "application/javascript; charset=utf-8"}))).default
 }
