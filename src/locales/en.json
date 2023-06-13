@@ -19,6 +19,7 @@
         "设置": "Settings",
         "首选项": "Preferences",
         "插件": "Plugins",
+        "插件管理": "Plugins Manager",
         "锁定时不再弹窗提示": "Do not show pop-up windows when locked",
         "使用锁屏密码解锁笔记": "Use lock screen password to unlock notes",
         "要使用的编辑器": "Editor to use",

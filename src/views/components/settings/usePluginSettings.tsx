@@ -11,7 +11,10 @@ export default function usePluginSettings() {
     const settingRenderer = useCallback((plugin: IPlugin) => {
         return <List style={{width: "100%"}} key={plugin.id}>
             {Object.entries(plugin.settings!).map(([key, {label, ...setting}]) => (
-                <List.Item extra={<Form.Item key={key} name={[plugin.id, key]} {...setting}/>} key={`form-label-${label}`}>
+                <List.Item
+                    extra={<Form.Item key={key} name={[plugin.id, key]} {...setting}/>}
+                    key={`form-label-${label}`}
+                >
                     {label}
                 </List.Item>
             ))}
