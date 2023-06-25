@@ -1,12 +1,13 @@
-import {createAsyncThunk, createSlice, PayloadAction, Slice, SliceCaseReducers} from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice, PayloadAction, Slice, SliceCaseReducers } from "@reduxjs/toolkit"
 import _ from "lodash"
 
-import {CONTENT_SAVE_DELAY} from "~/config"
-import {ContentSaveEvent, PluginHookOccasion} from "~/plugin"
-import {DeleteNotePayload, NoteItem, NoteState} from "~/types"
+import { CONTENT_SAVE_DELAY } from "~/config"
+import { ContentSaveEvent, PluginHookOccasion } from "~/plugin"
+import { DeleteNotePayload, NoteItem, NoteState } from "~/types"
 
-import {contentStore, database, notesStore} from "$utils/database"
-import {findNoteParents} from "$utils/notes"
+import { callPluginsHook } from "$plugin/utils"
+import { contentStore, database, notesStore } from "$utils/database"
+import { findNoteParents } from "$utils/notes"
 
 
 const sliceName = "notes"
@@ -59,8 +60,8 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
          */
         updateContent(state, action: PayloadAction<{ id: string, content: string, force?: boolean }>) {
 
-            const {id, content, force = false} = action.payload
-            const last = lastSave[id] ?? {time: 0, content: ""}
+            const { id, content, force = false } = action.payload
+            const last = lastSave[id] ?? { time: 0, content: "" }
 
             // console.log("更新笔记内容到数据库", action.payload, lastSave, last)
 
@@ -69,32 +70,26 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
                 return
             }
 
-            lastSave[id] = {time: now, content}
+            lastSave[id] = { time: now, content }
             const notes = findNoteParents(state.entities, id)
-                .map((me) => ({...me, modifyTime: now}))
-                .concat({...state.entities[id], modifyTime: now})
+                .map((me) => ({ ...me, modifyTime: now }))
+                .concat({ ...state.entities[id], modifyTime: now })
             const item = _.last(notes)!
             console.info("正在保存笔记", item.id, content)
-            const beforeEvent = new ContentSaveEvent({detail: {note: item, nextContent: content}, occasion: PluginHookOccasion.before})
-            for (const plugin of window.notebook.plugins) {
-                if (!beforeEvent.bubble) {
-                    break
-                }
-                plugin.hooks?.includes("onContentSave") && plugin.onContentSave?.(beforeEvent)
-            }
-            if (!beforeEvent.isDefaultPrevented()) {
+            const event = callPluginsHook("onContentSave", new ContentSaveEvent({
+                detail: { note: item, nextContent: content },
+                occasion: PluginHookOccasion.before,
+            }))
+            if (!event.isDefaultPrevented()) {
                 void notesStore.set(...notes)
-                void contentStore.set(item.id, beforeEvent.detail.nextContent)
+                void contentStore.set(item.id, event.detail.nextContent)
                 for (const note of notes) {
                     state.entities[note.id] = note
                 }
-                const afterEvent = new ContentSaveEvent({detail: {note: item, nextContent: content}, occasion: PluginHookOccasion.after})
-                for (const plugin of window.notebook.plugins) {
-                    if (!afterEvent.bubble) {
-                        break
-                    }
-                    plugin.hooks?.includes("onContentSave") && plugin.onContentSave?.(afterEvent)
-                }
+                callPluginsHook("onContentSave", new ContentSaveEvent({
+                    detail: { note: item, nextContent: content },
+                    occasion: PluginHookOccasion.after,
+                }))
             }
         },
         /**
@@ -103,7 +98,7 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
          * @param action
          */
         deleteNote(state, action: PayloadAction<DeleteNotePayload>) {
-            const {noteId, deleteChildren} = action.payload
+            const { noteId, deleteChildren } = action.payload
             const note = state.entities[noteId]
             delete state.entities[noteId]
             state.ids.splice(state.ids.indexOf(noteId), 1)
@@ -116,7 +111,7 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
                         entity.parentId = note.parentId
                     }
                 }
-                note.isLeaf || void notesStore.set(...children.map((c) => ({...c, parentId: note.parentId})))
+                note.isLeaf || void notesStore.set(...children.map((c) => ({ ...c, parentId: note.parentId })))
             }
             void notesStore.delete(noteId)
         },
@@ -134,11 +129,11 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
          * @param action
          */
         stopRenaming(state: NoteState, action: PayloadAction<{ id: string, newName: string }>) {
-            const {id, newName} = action.payload
+            const { id, newName } = action.payload
             state.renamingId = undefined
             state.entities[id].title = newName
             state.entities[id].modifyTime = Date.now()
-            void notesStore.set({...state.entities[id]})
+            void notesStore.set({ ...state.entities[id] })
         },
         /**
          * 新笔记入库
@@ -167,12 +162,12 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
          * @param action
          */
         moveNote(state, action: PayloadAction<{ sourceId: string, targetId: string }>) {
-            const {sourceId, targetId} = action.payload
+            const { sourceId, targetId } = action.payload
             const note = state.entities[sourceId]
             note.parentId = targetId
             note.modifyTime = Date.now()
             console.info(`移动笔记${note.title}到${targetId}`)
-            void notesStore.set({...note})
+            void notesStore.set({ ...note })
         },
     },
     extraReducers(builder) {
@@ -191,5 +186,5 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
 
 export const noteSlice: Slice<NoteState, SliceCaseReducers<NoteState>> = slice
 
-export const {updateContent, startRenaming, stopRenaming, newNote, deleteNote, moveNote} = slice.actions
+export const { updateContent, startRenaming, stopRenaming, newNote, deleteNote, moveNote } = slice.actions
 
