@@ -1,5 +1,5 @@
-import {PluginHookKeys} from "$plugin/defines"
-import {PluginHookEvent} from "$plugin/events"
+import { PluginHookKeys } from "$plugin/defines"
+import { PluginHookEvent } from "$plugin/events"
 
 export function callPluginsHook<D, E extends PluginHookEvent<D>>(hook: PluginHookKeys, event: E): E {
     for (const plugin of window.notebook.plugins) {
@@ -7,7 +7,7 @@ export function callPluginsHook<D, E extends PluginHookEvent<D>>(hook: PluginHoo
             break
         }
         // @ts-ignore
-        plugin.hooks?.includes(hook) && plugin[hook]?.(event)
+        Array.isArray(plugin.hooks) && plugin.hooks.includes(hook) && plugin[hook]?.(event)
     }
 
     return event
