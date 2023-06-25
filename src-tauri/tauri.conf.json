@@ -54,7 +54,10 @@
                     "https://github.com/iamhefang/*",
                     "https://iamhefang.cn/*",
                     "https://note.hefang.app/*",
-                    "https://hefang-note.app/*"
+                    "https://hefang-note.app/*",
+                    "https://note.hefang.dev/*",
+                    "http://localhost:8888/*",
+                    "http://localhost:8889/*"
                 ]
             },
             "globalShortcut": {
