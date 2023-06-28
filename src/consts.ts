@@ -2,7 +2,7 @@ import { Arch, OsType } from "@tauri-apps/api/os"
 
 import pkg from "^/package.json"
 
-export const serverHost = import.meta.env.DEV ? "http://localhost:8889" : "https://note.hefang.app"
+export const serverHost = import.meta.env.DEV ? "http://localhost:3000" : "https://note.hefang.app"
 
 export const versionName = pkg.version
 export const productName = pkg.productName

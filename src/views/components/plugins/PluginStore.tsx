@@ -2,7 +2,7 @@ import { DownloadOutlined } from "@ant-design/icons"
 import { writeBinaryFile } from "@tauri-apps/api/fs"
 import { fetch } from "@tauri-apps/api/http"
 import { Avatar, Button, Col, Divider, Empty, message, Row, Space, Spin, Tag } from "antd"
-import React, { ForwardedRef, useCallback, useEffect, useMemo, useState } from "react"
+import React, { ForwardedRef, useCallback, useEffect, useState } from "react"
 import { ItemProps, ListProps, Virtuoso } from "react-virtuoso"
 
 import { serverHost } from "~/consts"
@@ -77,7 +77,7 @@ const PluginListItem = React.memo(({ item, "data-known-size": dataKnownSize, ...
           <Space direction="vertical" style={{ width: "100%" }}>
             <Space>
               <h3>{item.name}</h3>
-              <Tag>{item.version}</Tag>
+              <Tag>v{item.version}</Tag>
             </Space>
             <PluginDescription plugin={item} />
           </Space>
@@ -108,8 +108,8 @@ const PluginList = React.forwardRef(({ children, ...props }: ListProps, ref: For
 
 const PluginListEmpty = React.memo(({ context }: { context?: unknown }) => <Empty />)
 const PluginListLoading = React.memo(({ context }: { context?: unknown }) => (
-  <div style={{ textAlign: "center", paddingTop: 50 }}>
-    <Spin />
+  <div style={{ textAlign: "center", padding: "15px 0" }}>
+    <Spin delay={200} />
   </div>
 ))
 
@@ -121,27 +121,44 @@ type PluginInfo = IPluginInfo & {
 }
 
 export function PluginStore({ search }: PluginProps) {
-  const [plugins, setPlugins] = useState<PluginInfo[]>()
+  const [loading, setLoading] = useState(true)
+  const [plugins, setPlugins] = useState<PluginInfo[]>([])
   const [height, setHeight] = useState(window.innerHeight - 200)
   const [pager, setPager] = useState({ pageIndex: 1, pageSize: 10, total: 0 })
-  useEffect(() => {
-    fetch<{
-      code: number
-      msg: string
-      data: { pageIndex: number; pageSize: number; total: number; records: PluginInfo[] }
-    }>(`${serverHost}/apis/v1/plugins?search=${search}`)
-      .then(
-        ({
-          data: {
-            data: { records, ...pagerInfo },
-          },
-        }) => {
-          setPlugins(records)
+  const fetchData = useCallback(
+    (pageIndex: number, pageSize: number) => {
+      setLoading(true)
+      fetch<{
+        code: number
+        msg: string
+        data: { pageIndex: number; pageSize: number; total: number; records: PluginInfo[] }
+      }>(`${serverHost}/api/v1/plugin?search=${search}&pageIndex=${pageIndex}&pageSize=${pageSize}`)
+        .then((res) => {
+          const {
+            data: {
+              data: { records, ...pagerInfo },
+            },
+          } = res
+          setPlugins((lastPlugins) => (pageIndex === 1 ? records : lastPlugins.concat(records)))
           setPager(pagerInfo)
-        },
-      )
-      .catch(console.error)
-  }, [search])
+        })
+        .catch(console.error)
+        .finally(() => {
+          setLoading(false)
+        })
+    },
+    [search],
+  )
+
+  const onEndReached = useCallback(() => {
+    if (pager.pageIndex * pager.pageSize < pager.total) {
+      fetchData(pager.pageIndex + 1, pager.pageSize)
+    }
+  }, [fetchData, pager.pageIndex, pager.pageSize, pager.total])
+
+  useEffect(() => {
+    fetchData(1, 10)
+  }, [fetchData])
   const onResize = useCallback(() => {
     setHeight(Math.min(window.innerHeight - 200, Math.max((plugins?.length ?? 0) * 70, 200)))
   }, [plugins?.length])
@@ -159,8 +176,12 @@ export function PluginStore({ search }: PluginProps) {
       components={{
         List: PluginList,
         Item: PluginListItem,
-        EmptyPlaceholder: plugins === undefined ? PluginListLoading : PluginListEmpty,
+        EmptyPlaceholder: loading ? undefined : PluginListEmpty,
+        Footer: () => {
+          return loading ? <PluginListLoading /> : null
+        },
       }}
+      endReached={onEndReached}
       data={plugins ?? []}
       style={{ height }}
       fixedItemHeight={150}
