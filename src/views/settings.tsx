@@ -15,8 +15,6 @@ import { useSettings, useStates } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
 import usePlugins from "$plugin/hooks/usePlugins"
 
-
-
 export default function SettingsModal() {
     const {
         lock: { locked },
