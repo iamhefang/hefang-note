@@ -57,7 +57,13 @@ export function PluginDescription({ plugin }: { plugin: IPluginInfo }) {
   return useMemo(
     () => (
       <Space direction="vertical" style={{ width: "100%" }}>
-        <p className={ss.description}>{plugin.description || "该插件没有描述"}</p>
+        {plugin.description ? (
+          <p className={ss.description}>{plugin.description}</p>
+        ) : (
+          <p className={ss.description} style={{ opacity: 0.4 }}>
+            该插件没有描述
+          </p>
+        )}
         <Row>
           <Col flex={1}>
             <Space>

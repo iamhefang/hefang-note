@@ -1,9 +1,10 @@
-import { DownloadOutlined } from "@ant-design/icons"
+import { ArrowRightOutlined, CloudUploadOutlined, DownloadOutlined } from "@ant-design/icons"
 import { writeBinaryFile } from "@tauri-apps/api/fs"
 import { fetch } from "@tauri-apps/api/http"
-import { Avatar, Button, Col, Divider, Empty, message, Row, Space, Spin, Tag } from "antd"
-import React, { ForwardedRef, useCallback, useEffect, useState } from "react"
+import { App, Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Tag } from "antd"
+import React, { ForwardedRef, ReactNode, useCallback, useEffect, useMemo, useState } from "react"
 import { ItemProps, ListProps, Virtuoso } from "react-virtuoso"
+import * as semver from "semver"
 
 import { serverHost } from "~/consts"
 import { IPluginInfo } from "~/plugin"
@@ -11,6 +12,8 @@ import { IPluginInfo } from "~/plugin"
 import { PluginDescription } from "./PluginDescription"
 import ss from "./PluginStore.module.scss"
 import { PluginProps } from "./types"
+
+import usePlugins from "$plugin/hooks/usePlugins"
 
 const enum PluginStatus {
   installed = "installed",
@@ -29,16 +32,26 @@ const statusText: Record<PluginStatus, string> = {
   verifing: "校验中",
   none: "安装",
 }
+const statusIcon: Partial<Record<PluginStatus, ReactNode>> = {
+  [PluginStatus.none]: <DownloadOutlined />,
+  [PluginStatus.upgradable]: <CloudUploadOutlined />,
+}
 
 const PluginListItem = React.memo(({ item, "data-known-size": dataKnownSize, ...props }: ItemProps<PluginInfo>) => {
+  const plugins = usePlugins(true)
+  const plugin = useMemo(() => plugins.find((p) => p.id === item.id), [item.id, plugins])
+  const upgradable = useMemo(
+    () => (plugin?.version ? semver.gt(item.version, plugin.version) : false),
+    [item.version, plugin?.version],
+  )
   const [status, setStatus] = useState<PluginStatus>(PluginStatus.none)
+  const { message } = App.useApp()
   const doDownload = useCallback(() => {
     setStatus(PluginStatus.downloading)
 
     fetch<number[]>(item.downloadUrl, { responseType: 3, method: "GET" })
       .then((res) => {
         setStatus(PluginStatus.verifing)
-        console.info("hash", item.hashType, item.hashValue)
         crypto.subtle
           .digest(item.hashType, new Uint8Array(res.data))
           .then((hash) => {
@@ -65,10 +78,23 @@ const PluginListItem = React.memo(({ item, "data-known-size": dataKnownSize, ...
         setStatus(PluginStatus.downloadfailed)
         console.error(err)
       })
-  }, [item.downloadUrl, item.hashType, item.hashValue, item.id])
+  }, [item.downloadUrl, item.hashType, item.hashValue, item.id, message])
+
+  useEffect(() => {
+    setStatus((lastStatus) => {
+      if (!plugin?.id) {
+        return lastStatus
+      }
+      if (upgradable) {
+        return PluginStatus.upgradable
+      }
+
+      return PluginStatus.installed
+    })
+  }, [plugin?.id, upgradable])
 
   return (
-    <li className={ss.item} style={{ height: dataKnownSize }} {...props} key={`store-${item.id}`}>
+    <li className={ss.item} {...props} style={{ height: dataKnownSize }} key={`store-${item.id}`}>
       <Row gutter={15} wrap={false}>
         <Col>
           <Avatar src={item.logo} shape="square" size={(dataKnownSize / 3) * 2} />
@@ -87,7 +113,9 @@ const PluginListItem = React.memo(({ item, "data-known-size": dataKnownSize, ...
             onClick={doDownload}
             loading={status === PluginStatus.downloading}
             danger={status === PluginStatus.downloadfailed}
-            icon={status === PluginStatus.none ? <DownloadOutlined /> : undefined}
+            icon={statusIcon[status]}
+            disabled={status === PluginStatus.installed}
+            title={upgradable ? `可从 v${plugin?.version} 升级到 v${item.version}` : undefined}
           >
             {statusText[status]}
           </Button>
@@ -160,7 +188,7 @@ export function PluginStore({ search }: PluginProps) {
     fetchData(1, 10)
   }, [fetchData])
   const onResize = useCallback(() => {
-    setHeight(Math.min(window.innerHeight - 200, Math.max((plugins?.length ?? 0) * 70, 200)))
+    setHeight(Math.min(window.innerHeight - 200, Math.max((plugins?.length ?? 0) * 150, 200)))
   }, [plugins?.length])
   useEffect(() => {
     onResize()
@@ -178,6 +206,10 @@ export function PluginStore({ search }: PluginProps) {
         Item: PluginListItem,
         EmptyPlaceholder: loading ? undefined : PluginListEmpty,
         Footer: () => {
+          if (pager.pageIndex * pager.pageSize >= pager.total) {
+            return <div style={{ opacity: 0.3, textAlign: "center" }}>已加载全部插件</div>
+          }
+
           return loading ? <PluginListLoading /> : null
         },
       }}

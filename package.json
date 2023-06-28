@@ -44,6 +44,7 @@
         "react-virtuoso": "^4.1.0",
         "redux": "^4.2.1",
         "refractor": "^4.8.1",
+        "semver": "^7.5.3",
         "shortcuts": "^2.0.3",
         "turndown": "^7.1.2",
         "turndown-plugin-gfm": "^1.0.2"
@@ -57,6 +58,7 @@
         "@types/node": "^18.7.10",
         "@types/react": "^18.0.15",
         "@types/react-dom": "^18.0.6",
+        "@types/semver": "^7.5.0",
         "@types/turndown": "^5.0.1",
         "@typescript-eslint/eslint-plugin": "^5.53.0",
         "@typescript-eslint/parser": "^5.53.0",
