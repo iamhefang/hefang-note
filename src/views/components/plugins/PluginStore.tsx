@@ -102,7 +102,7 @@ export function PluginStore({ search }: PluginProps) {
       fetch<{
         code: number
         msg: string
-        data: { pageIndex: number; pageSize: number; total: number; records: PluginInfo[] }
+        data: { pageIndex: number; pageSize: number; total: number; records: PluginStoreInfo[] }
       }>(`${serverHost}/api/v1/plugin?search=${search}&pageIndex=${pageIndex}&pageSize=${pageSize}`)
         .then((res) => {
           const {
@@ -149,7 +149,7 @@ export function PluginStore({ search }: PluginProps) {
         Item: PluginListItem,
         EmptyPlaceholder: loading ? undefined : PluginListEmpty,
         Footer: () => {
-          if (pager.pageIndex * pager.pageSize >= pager.total) {
+          if (pager.pageIndex * pager.pageSize >= pager.total && pager.total > 0) {
             return <div style={{ opacity: 0.3, textAlign: "center" }}>已加载全部插件</div>
           }
 
