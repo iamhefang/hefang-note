@@ -1,5 +1,5 @@
-import type {ThemeConfig} from "antd"
-import type {ReactNode} from "react"
+import type { ThemeConfig } from "antd"
+import type { ReactNode } from "react"
 
 declare global {
     function isContentEditable(electron: Element | null | EventTarget): boolean
@@ -69,7 +69,7 @@ export type Themes = Record<ThemeType, ThemeDefine>
 export type ThemeDefine = ThemeConfig & { label: ReactNode; tooltip?: string; icon?: ReactNode }
 export type DefaultEditorOptions = { showLineNumbers: boolean; fontSize: number; lineHeight: number; minimap: boolean }
 
-export  type LockSetting = {
+export type LockSetting = {
     /**
      * 当前是否已锁定
      */
@@ -156,7 +156,7 @@ export type UIState = {
     /**
      * 当前是否正在显示设置弹窗
      */
-    showSettingsModal: boolean
+    showSettingsModal: "settings" | "about" | "plugins" | string | false
     /**
      * 是否正在启动
      */

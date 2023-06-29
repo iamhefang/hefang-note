@@ -1,6 +1,5 @@
-import { writeBinaryFile } from "@tauri-apps/api/fs"
 import { fetch } from "@tauri-apps/api/http"
-import { App, Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Tag } from "antd"
+import { Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Tag } from "antd"
 import React, { ForwardedRef, useCallback, useEffect, useMemo, useState } from "react"
 import { ItemProps, ListProps, Virtuoso } from "react-virtuoso"
 import * as semver from "semver"
@@ -44,7 +43,7 @@ const PluginListItem = React.memo(
 
     return (
       <li className={ss.item} {...props} style={{ height: dataKnownSize }} key={`store-${item.id}`}>
-        <Row gutter={15} wrap={false}>
+        <Row gutter={15} wrap={false} align="middle">
           <Col>
             <Avatar src={item.logo} shape="square" size={(dataKnownSize / 3) * 2} style={{ borderRadius: 17 }} />
           </Col>
@@ -59,6 +58,7 @@ const PluginListItem = React.memo(
           </Col>
           <Col style={{ alignSelf: "center" }}>
             <Button
+              size="small"
               onClick={downloader}
               loading={status === PluginStatus.downloading}
               danger={status === PluginStatus.downloadfailed}

@@ -24,24 +24,28 @@ function PluginItem({ item }: { item: IPluginInfo }) {
   const [status, setStatus, downloader] = usePluginDownloader(newPlugins[item.id])
 
   useEffect(() => {
-    fetch<{ code: number; data: PluginStoreInfo[] }>(
-      `${serverHost}/api/v1/plugin/ids/${plugins.map((p) => p.id).join(",")}`,
-    )
-      .then((res) => {
-        setNewPlugins(
-          res.data.data.reduce(
-            (acc, cur) => ({
-              ...acc,
-              [cur.id]: {
-                ...cur,
-                upgradable: semver.gt(cur.version, plugins.find((p) => p.id === cur.id)?.version || "0.0.0"),
-              },
-            }),
-            {},
-          ),
-        )
-      })
-      .catch(console.error)
+    plugins.length &&
+      fetch<{ code: number; data: PluginStoreInfo[]; msg: string }>(
+        `${serverHost}/api/v1/plugin/ids/${plugins.map((p) => p.id).join(",")}`,
+      )
+        .then((res) => {
+          if (res.data.code !== 200) {
+            return console.error("获取插件信息失败", res)
+          }
+          setNewPlugins(
+            res.data.data.reduce(
+              (acc, cur) => ({
+                ...acc,
+                [cur.id]: {
+                  ...cur,
+                  upgradable: semver.gt(cur.version, plugins.find((p) => p.id === cur.id)?.version || "0.0.0"),
+                },
+              }),
+              {},
+            ),
+          )
+        })
+        .catch(console.error)
   }, [plugins])
 
   useEffect(() => {

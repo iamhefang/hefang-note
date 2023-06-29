@@ -5,6 +5,7 @@
         "en-US"
     ],
     "map": {
+        "关于": "About",
         "新建目录": "Create Directory",
         "新建笔记": "Create Note",
         "排序方式": "Sort By",
