@@ -1,130 +1,80 @@
-import { ArrowRightOutlined, CloudUploadOutlined, DownloadOutlined } from "@ant-design/icons"
 import { writeBinaryFile } from "@tauri-apps/api/fs"
 import { fetch } from "@tauri-apps/api/http"
 import { App, Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Tag } from "antd"
-import React, { ForwardedRef, ReactNode, useCallback, useEffect, useMemo, useState } from "react"
+import React, { ForwardedRef, useCallback, useEffect, useMemo, useState } from "react"
 import { ItemProps, ListProps, Virtuoso } from "react-virtuoso"
 import * as semver from "semver"
 
 import { serverHost } from "~/consts"
-import { IPluginInfo } from "~/plugin"
 
 import { PluginDescription } from "./PluginDescription"
 import ss from "./PluginStore.module.scss"
 import { PluginProps } from "./types"
 
+import usePluginDownloader, {
+  PluginStatus,
+  PluginStoreInfo,
+  statusIcon,
+  statusText,
+} from "$hooks/pluginManager/usePluginDownloader"
 import usePlugins from "$plugin/hooks/usePlugins"
 
-const enum PluginStatus {
-  installed = "installed",
-  upgradable = "upgradable",
-  downloading = "downloading",
-  downloadfailed = "downloadfailed",
-  none = "none",
-  verifing = "verifing",
-}
+const PluginListItem = React.memo(
+  ({ item, "data-known-size": dataKnownSize, ...props }: ItemProps<PluginStoreInfo>) => {
+    const plugins = usePlugins(true)
+    const plugin = useMemo(() => plugins.find((p) => p.id === item.id), [item.id, plugins])
+    const upgradable = useMemo(
+      () => (plugin?.version ? semver.gt(item.version, plugin.version) : false),
+      [item.version, plugin?.version],
+    )
+    const [status, setStatus, downloader] = usePluginDownloader(item)
 
-const statusText: Record<PluginStatus, string> = {
-  installed: "已安装",
-  upgradable: "可升级",
-  downloading: "下载中",
-  downloadfailed: "下载失败",
-  verifing: "校验中",
-  none: "安装",
-}
-const statusIcon: Partial<Record<PluginStatus, ReactNode>> = {
-  [PluginStatus.none]: <DownloadOutlined />,
-  [PluginStatus.upgradable]: <CloudUploadOutlined />,
-}
+    useEffect(() => {
+      setStatus((lastStatus) => {
+        if (!plugin?.id) {
+          return lastStatus
+        }
+        if (upgradable) {
+          return PluginStatus.upgradable
+        }
 
-const PluginListItem = React.memo(({ item, "data-known-size": dataKnownSize, ...props }: ItemProps<PluginInfo>) => {
-  const plugins = usePlugins(true)
-  const plugin = useMemo(() => plugins.find((p) => p.id === item.id), [item.id, plugins])
-  const upgradable = useMemo(
-    () => (plugin?.version ? semver.gt(item.version, plugin.version) : false),
-    [item.version, plugin?.version],
-  )
-  const [status, setStatus] = useState<PluginStatus>(PluginStatus.none)
-  const { message } = App.useApp()
-  const doDownload = useCallback(() => {
-    setStatus(PluginStatus.downloading)
-
-    fetch<number[]>(item.downloadUrl, { responseType: 3, method: "GET" })
-      .then((res) => {
-        setStatus(PluginStatus.verifing)
-        crypto.subtle
-          .digest(item.hashType, new Uint8Array(res.data))
-          .then((hash) => {
-            const hashString = Array.from(new Uint8Array(hash))
-              .map((b) => b.toString(16).padStart(2, "0"))
-              .join("")
-            console.info("hash", hashString)
-            if (hashString === item.hashValue) {
-              setStatus(PluginStatus.installed)
-              writeBinaryFile(`plugins/${item.id}.zip`, res.data).catch(console.error)
-            } else {
-              void message.error("检验失败")
-              setStatus(PluginStatus.downloadfailed)
-            }
-          })
-          .catch((e) => {
-            void message.error("检验错误")
-            console.error(e)
-            setStatus(PluginStatus.downloadfailed)
-          })
+        return PluginStatus.installed
       })
-      .catch((err) => {
-        void message.error("下载失败")
-        setStatus(PluginStatus.downloadfailed)
-        console.error(err)
-      })
-  }, [item.downloadUrl, item.hashType, item.hashValue, item.id, message])
+    }, [plugin?.id, setStatus, upgradable])
 
-  useEffect(() => {
-    setStatus((lastStatus) => {
-      if (!plugin?.id) {
-        return lastStatus
-      }
-      if (upgradable) {
-        return PluginStatus.upgradable
-      }
-
-      return PluginStatus.installed
-    })
-  }, [plugin?.id, upgradable])
-
-  return (
-    <li className={ss.item} {...props} style={{ height: dataKnownSize }} key={`store-${item.id}`}>
-      <Row gutter={15} wrap={false}>
-        <Col>
-          <Avatar src={item.logo} shape="square" size={(dataKnownSize / 3) * 2} />
-        </Col>
-        <Col flex={1}>
-          <Space direction="vertical" style={{ width: "100%" }}>
-            <Space>
-              <h3>{item.name}</h3>
-              <Tag>v{item.version}</Tag>
+    return (
+      <li className={ss.item} {...props} style={{ height: dataKnownSize }} key={`store-${item.id}`}>
+        <Row gutter={15} wrap={false}>
+          <Col>
+            <Avatar src={item.logo} shape="square" size={(dataKnownSize / 3) * 2} style={{ borderRadius: 17 }} />
+          </Col>
+          <Col flex={1}>
+            <Space direction="vertical" style={{ width: "100%" }}>
+              <Space>
+                <h3>{item.name}</h3>
+                <Tag>v{item.version}</Tag>
+              </Space>
+              <PluginDescription plugin={item} />
             </Space>
-            <PluginDescription plugin={item} />
-          </Space>
-        </Col>
-        <Col style={{ alignSelf: "center" }}>
-          <Button
-            onClick={doDownload}
-            loading={status === PluginStatus.downloading}
-            danger={status === PluginStatus.downloadfailed}
-            icon={statusIcon[status]}
-            disabled={status === PluginStatus.installed}
-            title={upgradable ? `可从 v${plugin?.version} 升级到 v${item.version}` : undefined}
-          >
-            {statusText[status]}
-          </Button>
-        </Col>
-      </Row>
-      <Divider />
-    </li>
-  )
-})
+          </Col>
+          <Col style={{ alignSelf: "center" }}>
+            <Button
+              onClick={downloader}
+              loading={status === PluginStatus.downloading}
+              danger={status === PluginStatus.downloadfailed}
+              icon={statusIcon[status]}
+              disabled={status === PluginStatus.installed}
+              title={upgradable ? `可从 v${plugin?.version} 升级到 v${item.version}` : undefined}
+            >
+              {statusText[status]}
+            </Button>
+          </Col>
+        </Row>
+        <Divider />
+      </li>
+    )
+  },
+)
 
 const PluginList = React.forwardRef(({ children, ...props }: ListProps, ref: ForwardedRef<HTMLDivElement>) => {
   return (
@@ -141,16 +91,9 @@ const PluginListLoading = React.memo(({ context }: { context?: unknown }) => (
   </div>
 ))
 
-type PluginInfo = IPluginInfo & {
-  hashType: string
-  hashValue: string
-  downloadUrl: string
-  downloadCount: 1
-}
-
 export function PluginStore({ search }: PluginProps) {
   const [loading, setLoading] = useState(true)
-  const [plugins, setPlugins] = useState<PluginInfo[]>([])
+  const [plugins, setPlugins] = useState<PluginStoreInfo[]>([])
   const [height, setHeight] = useState(window.innerHeight - 200)
   const [pager, setPager] = useState({ pageIndex: 1, pageSize: 10, total: 0 })
   const fetchData = useCallback(
