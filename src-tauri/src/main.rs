@@ -1,16 +1,19 @@
 #![cfg_attr(
-all(not(debug_assertions), target_os = "windows"),
-windows_subsystem = "windows"
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
 )]
 
 pub mod commands;
 pub mod utils;
 
 use commands::fs::is_directory;
-use tauri::{App, AppHandle, CustomMenuItem, GlobalWindowEvent, Manager, Menu, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, WindowMenuEvent};
+use tauri::{
+    App, AppHandle, CustomMenuItem, GlobalWindowEvent, Manager, Menu, SystemTray, SystemTrayEvent,
+    SystemTrayMenu, SystemTrayMenuItem, WindowMenuEvent,
+};
 use utils::consts::{
-    EVENT_TOGGLE_LOCK, EVENT_TOGGLE_SETTINGS, MENU_ID_QUIT, MENU_ID_TOGGLE_LOCK,
-    MENU_ID_TOGGLE_SETTINGS, MENU_ID_TOGGLE_VISIBLE,
+    EVENT_SHOW_ABOUT, EVENT_SHOW_PLUGIN, EVENT_SHOW_SETTINGS, EVENT_TOGGLE_LOCK, MENU_ID_QUIT,
+    MENU_ID_TOGGLE_LOCK, MENU_ID_TOGGLE_SETTINGS, MENU_ID_TOGGLE_VISIBLE,
 };
 
 use crate::commands::{fs::save_file, git::git_clone, menu::show_note_menu};
@@ -38,16 +41,14 @@ fn main() {
 
 fn build_window_menu() -> Menu {
     if cfg!(target_os = "macos") {
-        use tauri::{AboutMetadata, MenuItem, Submenu};
+        use tauri::{MenuItem, Submenu};
         let app_menu = Submenu::new(
             "app",
             Menu::new()
-                .add_native_item(MenuItem::About(
-                    "何方笔记".to_string(),
-                    AboutMetadata::default(),
-                ))
+                .add_item(CustomMenuItem::new("about", "关于"))
                 .add_item(CustomMenuItem::new("check-update", "检查更新"))
                 .add_native_item(MenuItem::Separator)
+                .add_item(CustomMenuItem::new("plugin", "插件管理..."))
                 .add_item(CustomMenuItem::new("settings", "设置...").accelerator("Command+,"))
                 .add_native_item(MenuItem::Separator)
                 .add_native_item(MenuItem::Services)
@@ -77,13 +78,18 @@ fn build_window_menu() -> Menu {
 }
 
 fn on_menu_event(event: WindowMenuEvent) {
+    let window = event.window();
+    window.unminimize().unwrap();
+    window.show().unwrap();
     match event.menu_item_id() {
         "settings" => {
-            println!("Setting menu clicked: {}", event.window().label());
-            let window = event.window();
-            window.unminimize().unwrap();
-            window.show().unwrap();
-            window.emit(EVENT_TOGGLE_SETTINGS, Payload {}).unwrap();
+            window.emit(EVENT_SHOW_SETTINGS, Payload {}).unwrap();
+        }
+        "about" => {
+            window.emit(EVENT_SHOW_ABOUT, Payload {}).unwrap();
+        }
+        "plugin" => {
+            window.emit(EVENT_SHOW_PLUGIN, Payload {}).unwrap();
         }
         _ => {}
     }
@@ -135,7 +141,7 @@ fn on_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
                 MENU_ID_TOGGLE_SETTINGS => {
                     window.unminimize().unwrap();
                     window.show().unwrap();
-                    window.emit(EVENT_TOGGLE_SETTINGS, Payload {}).unwrap();
+                    window.emit(EVENT_SHOW_SETTINGS, Payload {}).unwrap();
                 }
                 _ => {
                     println!("未监听的菜单事件: {}", id)

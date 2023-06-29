@@ -1,10 +1,10 @@
 import { CloudUploadOutlined, DownloadOutlined } from "@ant-design/icons"
+import { writeBinaryFile } from "@tauri-apps/api/fs"
+import { fetch } from "@tauri-apps/api/http"
+import { App } from "antd"
 import { ReactNode, useCallback, useMemo, useState } from "react"
 
 import { IPluginInfo } from "$plugin/index"
-import { fetch } from "@tauri-apps/api/http"
-import { writeBinaryFile } from "@tauri-apps/api/fs"
-import { App } from "antd"
 
 export type PluginStoreInfo = IPluginInfo & {
   hashType: string

@@ -5,14 +5,14 @@
  * @Date: 2023-05-03 08:46:29
  * @Description:
  */
-import { shell } from "@tauri-apps/api"
 import { Col, Row, Space, Tag } from "antd"
-import React, { useMemo } from "react"
+import { useMemo } from "react"
 
-import { isInClient } from "~/consts"
 import { IPluginInfo, PluginAbility, PluginComponents } from "~/plugin"
 
 import ss from "./PluginDescription.module.scss"
+
+import { openInNative } from "$components/utils/native"
 
 const abilities: Record<PluginAbility, string> = {
   synchronization: "同步",
@@ -45,13 +45,6 @@ function pluginComponents(value: PluginComponents) {
   )
 }
 
-function openInNative(e: React.MouseEvent<HTMLAnchorElement>) {
-  if (!isInClient || !e.currentTarget?.href) {
-    return
-  }
-  e.preventDefault()
-  void shell.open(e.currentTarget.href)
-}
 
 export function PluginDescription({ plugin }: { plugin: IPluginInfo }) {
   return useMemo(
