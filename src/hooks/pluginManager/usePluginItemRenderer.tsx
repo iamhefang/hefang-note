@@ -1,18 +1,52 @@
+import { fetch } from "@tauri-apps/api/http"
 import { Avatar, List, Space, Switch, Tag } from "antd"
-import { useCallback } from "react"
+import { useCallback, useEffect, useState } from "react"
+import * as semver from "semver"
 
-import { IPlugin } from "~/plugin"
+import { serverHost } from "~/consts"
+import { IPlugin, IPluginInfo } from "~/plugin"
 import { useAppDispatch } from "~/redux"
 import { switchPlugin } from "~/redux/settingSlice"
+
+import usePluginDownloader, { PluginStatus, PluginStoreInfo, statusText } from "./usePluginDownloader"
 
 import { PluginDescription } from "$components/plugins"
 import useAntdConfirm from "$hooks/useAntdConfirm"
 import { useSettings } from "$hooks/useSelectors"
+import usePlugins from "$plugin/hooks/usePlugins"
 
-export default function usePluginItemRenderer() {
+function PluginItem({ item }: { item: IPluginInfo }) {
   const { editor, theme } = useSettings()
   const dispatch = useAppDispatch()
   const showConfirm = useAntdConfirm()
+  const plugins = usePlugins(true)
+  const [newPlugins, setNewPlugins] = useState<Record<string, PluginStoreInfo & { upgradable: boolean }>>({})
+  const [status, setStatus, downloader] = usePluginDownloader(newPlugins[item.id])
+
+  useEffect(() => {
+    fetch<{ code: number; data: PluginStoreInfo[] }>(
+      `${serverHost}/api/v1/plugin/ids/${plugins.map((p) => p.id).join(",")}`,
+    )
+      .then((res) => {
+        setNewPlugins(
+          res.data.data.reduce(
+            (acc, cur) => ({
+              ...acc,
+              [cur.id]: {
+                ...cur,
+                upgradable: semver.gt(cur.version, plugins.find((p) => p.id === cur.id)?.version || "0.0.0"),
+              },
+            }),
+            {},
+          ),
+        )
+      })
+      .catch(console.error)
+  }, [plugins])
+
+  useEffect(() => {
+    newPlugins[item.id]?.upgradable && setStatus(PluginStatus.upgradable)
+  }, [item.id, newPlugins, setStatus])
 
   const createOnPluginEnable = useCallback(
     (plugin: IPlugin) => {
@@ -43,30 +77,41 @@ export default function usePluginItemRenderer() {
     [editor, theme, showConfirm, dispatch],
   )
 
-  return useCallback(
-    (item: IPlugin) => (
-      <List.Item
-        extra={
-          <Switch
-            checked={item.enable}
-            onChange={createOnPluginEnable(item)}
-            checkedChildren="开"
-            unCheckedChildren="关"
-          />
-        }
-      >
-        <List.Item.Meta
-          avatar={<Avatar src={item.logo} alt={item.name} size={100} shape="square" />}
-          title={
-            <Space>
-              <span>{item.name}</span>
-              <Tag>v{item.version}</Tag>
-            </Space>
-          }
-          description={<PluginDescription plugin={item} />}
+  return (
+    <List.Item
+      extra={
+        <Switch
+          checked={item.enable}
+          onChange={createOnPluginEnable(item)}
+          checkedChildren="开"
+          unCheckedChildren="关"
         />
-      </List.Item>
-    ),
-    [createOnPluginEnable],
+      }
+    >
+      <List.Item.Meta
+        avatar={<Avatar src={item.logo} alt={item.name} size={100} shape="square" style={{ borderRadius: 17 }} />}
+        title={
+          <Space>
+            <span>{item.name}</span>
+            <Tag>v{item.version}</Tag>
+            {newPlugins[item.id]?.upgradable && (
+              <Tag
+                color="orange"
+                onClick={downloader}
+                style={{ cursor: "pointer" }}
+                title={`可从 v${item.version} 升级到 v${newPlugins[item.id]?.version}`}
+              >
+                {statusText[status]}
+              </Tag>
+            )}
+          </Space>
+        }
+        description={<PluginDescription plugin={item} />}
+      />
+    </List.Item>
   )
+}
+
+export default function usePluginItemRenderer() {
+  return useCallback((item: IPlugin) => <PluginItem item={item} />, [])
 }
