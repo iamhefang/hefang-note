@@ -1,9 +1,8 @@
-import {createSlice, PayloadAction, SliceCaseReducers} from "@reduxjs/toolkit"
+import { createSlice, PayloadAction, SliceCaseReducers } from "@reduxjs/toolkit"
 
-import {NoteIndentItem, UIState} from "~/types"
+import { NoteIndentItem, UIState } from "~/types"
 
 const sliceName = "states"
-
 
 export const uiSlice = createSlice<UIState, SliceCaseReducers<UIState>>({
     name: sliceName,
@@ -20,7 +19,10 @@ export const uiSlice = createSlice<UIState, SliceCaseReducers<UIState>>({
          * @param state
          */
         toggleSettingsModal(state: UIState) {
-            state.showSettingsModal = !state.showSettingsModal
+            state.showSettingsModal = state.showSettingsModal ? false : "settings"
+        },
+        showSettingModal(state: UIState, action: PayloadAction<UIState["showSettingsModal"]>) {
+            state.showSettingsModal = action.payload
         },
         /**
          * 重新锁定笔记或目录
@@ -72,4 +74,5 @@ export const {
     relockContent,
     setRightClickItem,
     setSearchValue,
+    showSettingModal,
 } = uiSlice.actions
