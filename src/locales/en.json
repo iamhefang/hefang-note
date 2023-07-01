@@ -5,6 +5,7 @@
         "en-US"
     ],
     "map": {
+        "退出": "Quit",
         "关于": "About",
         "新建目录": "Create Directory",
         "新建笔记": "Create Note",

@@ -4,8 +4,10 @@ import { useCallback, useEffect, useMemo } from "react"
 import { isInClient, productName } from "~/consts"
 import { useAppDispatch } from "~/redux"
 import { showSettingModal } from "~/redux/uiSlice"
+import { UIState } from "~/types"
 
 import CommonMenuItem from "$components/menus/CommonMenuItem"
+import { useTranslate } from "$hooks/useTranslate"
 import { shortcuts } from "$utils/shortcuts"
 import { exitProcess } from "$utils/window"
 import pkg from "^/package.json"
@@ -13,11 +15,10 @@ import logo from "^/src-tauri/icons/icon.png"
 
 export default function AppLogo() {
   const dispatch = useAppDispatch()
+  const t = useTranslate()
+  const showModal = useCallback((type: UIState["showSettingsModal"]) => dispatch(showSettingModal(type)), [dispatch])
   const toggleSettings = useCallback(() => {
     dispatch(showSettingModal("settings"))
-  }, [dispatch])
-  const showAboutModal = useCallback(() => {
-    dispatch(showSettingModal("about"))
   }, [dispatch])
   useEffect(() => {
     if (!isInClient) {
@@ -38,13 +39,18 @@ export default function AppLogo() {
       {
         key: "app-name",
         label: `关于${pkg.productName}`,
-        onClick: showAboutModal,
+        onClick: () => showModal("about"),
       },
       { type: "divider" },
       {
+        key: "menu-plugin",
+        label: <CommonMenuItem title={t("插件")} />,
+        onClick: () => showModal("plugins"),
+      },
+      {
         key: "menu-settings",
-        label: <CommonMenuItem title="设置" shortcut="Ctrl+," />,
-        onClick: toggleSettings,
+        label: <CommonMenuItem title={t("设置")} shortcut="Ctrl+," />,
+        onClick: () => showModal("settings"),
       },
     ]
 
@@ -53,14 +59,14 @@ export default function AppLogo() {
         { type: "divider" },
         {
           key: "menu-quit",
-          label: <CommonMenuItem title="退出" shortcut="Ctrl+Q" />,
+          label: <CommonMenuItem title={t("退出")} shortcut="Ctrl+Q" />,
           onClick: exitProcess,
         },
       )
     }
 
     return items
-  }, [showAboutModal, toggleSettings])
+  }, [showModal, t])
 
   return (
     <>
