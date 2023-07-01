@@ -1,8 +1,9 @@
 import { CloudUploadOutlined, DownloadOutlined } from "@ant-design/icons"
-import { writeBinaryFile } from "@tauri-apps/api/fs"
-import { fetch } from "@tauri-apps/api/http"
 import { App } from "antd"
 import { ReactNode, useCallback, useMemo, useState } from "react"
+
+import { useAppDispatch } from "~/redux"
+import { installPlugin } from "~/redux/pluginSlice"
 
 import { IPluginInfo } from "$plugin/index"
 
@@ -40,6 +41,7 @@ export default function usePluginDownloader(
 ): [PluginStatus, React.Dispatch<React.SetStateAction<PluginStatus>>, () => void] {
   const [status, setStatus] = useState<PluginStatus>(PluginStatus.none)
   const { message } = App.useApp()
+  const dispatch = useAppDispatch()
 
   const downloader = useCallback(() => {
     if (!item) {
@@ -47,19 +49,19 @@ export default function usePluginDownloader(
     }
     setStatus(PluginStatus.downloading)
 
-    fetch<number[]>(item.downloadUrl, { responseType: 3, method: "GET" })
+    fetch(item.downloadUrl, { method: "GET" })
+      .then(async (res) => res.text())
       .then((res) => {
         setStatus(PluginStatus.verifing)
         crypto.subtle
-          .digest(item.hashType, new Uint8Array(res.data))
+          .digest(item.hashType, new TextEncoder().encode(res))
           .then((hash) => {
             const hashString = Array.from(new Uint8Array(hash))
               .map((b) => b.toString(16).padStart(2, "0"))
               .join("")
-            console.info("hash", hashString)
             if (hashString === item.hashValue) {
               setStatus(PluginStatus.installed)
-              writeBinaryFile(`plugins/${item.id}.zip`, res.data).catch(console.error)
+              dispatch(installPlugin({ plugin: item, content: res }))
             } else {
               void message.error("检验失败")
               setStatus(PluginStatus.downloadfailed)
@@ -76,7 +78,7 @@ export default function usePluginDownloader(
         setStatus(PluginStatus.downloadfailed)
         console.error(err)
       })
-  }, [item, message])
+  }, [dispatch, item, message])
 
   return useMemo(() => [status, setStatus, downloader], [status, setStatus, downloader])
 }

@@ -1,4 +1,3 @@
-import { fetch } from "@tauri-apps/api/http"
 import { Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Tag } from "antd"
 import React, { ForwardedRef, useCallback, useEffect, useMemo, useState } from "react"
 import { ItemProps, ListProps, Virtuoso } from "react-virtuoso"
@@ -99,20 +98,21 @@ export function PluginStore({ search }: PluginProps) {
   const fetchData = useCallback(
     (pageIndex: number, pageSize: number) => {
       setLoading(true)
-      fetch<{
-        code: number
-        msg: string
-        data: { pageIndex: number; pageSize: number; total: number; records: PluginStoreInfo[] }
-      }>(`${serverHost}/api/v1/plugin?search=${search}&pageIndex=${pageIndex}&pageSize=${pageSize}`)
-        .then((res) => {
-          const {
-            data: {
+      fetch(`${serverHost}/api/v1/plugin?search=${search}&pageIndex=${pageIndex}&pageSize=${pageSize}`)
+        .then(async (res) => res.json())
+        .then(
+          (res: {
+            code: number
+            msg: string
+            data: { pageIndex: number; pageSize: number; total: number; records: PluginStoreInfo[] }
+          }) => {
+            const {
               data: { records, ...pagerInfo },
-            },
-          } = res
-          setPlugins((lastPlugins) => (pageIndex === 1 ? records : lastPlugins.concat(records)))
-          setPager(pagerInfo)
-        })
+            } = res
+            setPlugins((lastPlugins) => (pageIndex === 1 ? records : lastPlugins.concat(records)))
+            setPager(pagerInfo)
+          },
+        )
         .catch(console.error)
         .finally(() => {
           setLoading(false)

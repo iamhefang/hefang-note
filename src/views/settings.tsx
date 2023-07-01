@@ -111,13 +111,11 @@ export default function SettingsModal() {
               label: t("设置"),
               children: <SettingForm />,
             },
-            isInClient
-              ? {
-                  key: "plugins",
-                  label: t("插件管理"),
-                  children: <PluginManager />,
-                }
-              : null,
+            {
+              key: "plugins",
+              label: t("插件管理"),
+              children: <PluginManager />,
+            },
             ...(pluginItems ?? []),
             {
               key: "about",

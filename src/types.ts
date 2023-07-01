@@ -1,3 +1,4 @@
+import { PluginState } from "$plugin/redux"
 import type { ThemeConfig } from "antd"
 import type { ReactNode } from "react"
 
@@ -218,10 +219,6 @@ export type NoteState = {
      */
     renamingId?: string | "new-note" | "new-dir"
 }
-export type PluginState = {
-    entities: string[]
-}
-
 export type Sort<F> = { field: F; type: "asc" | "desc" }
 
 export type DeleteNotePayload = {

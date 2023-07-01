@@ -19,7 +19,6 @@ export class PluginHookEvent<T> {
         this.#detail = init.detail
         this.#defaultPrevented = false
         this.#occasion = init.occasion
-        console.info("插件事件", this)
     }
 
     public get bubble() {
