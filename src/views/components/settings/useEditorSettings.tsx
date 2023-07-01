@@ -2,9 +2,9 @@ import {Form, Select, Switch} from "antd"
 import {ReactNode, useMemo} from "react"
 
 import WangEditor from "$components/editor/WangEditor"
-import usePlugins from "$hooks/usePlugins"
 import {useSettings} from "$hooks/useSelectors"
 import {useTranslate} from "$hooks/useTranslate"
+import usePlugins from "$plugin/hooks/usePlugins"
 
 export default function useEditorSettings(): Record<string, ReactNode> {
     const allPlugins = usePlugins()

@@ -1,11 +1,11 @@
-import {openDB} from "idb"
+import { openDB } from "idb"
 import _ from "lodash"
 
-import {versionCode} from "~/consts"
-import {IPluginInfo} from "~/plugin"
-import {NoteItem, Settings} from "~/types"
+import { versionCode } from "~/consts"
+import { IPluginInfo } from "~/plugin"
+import { NoteItem, Settings } from "~/types"
 
-import {decrypt, encrypt} from "./encrypt"
+import { decrypt, encrypt } from "./encrypt"
 
 import changelog from "^/CHANGELOG.md?raw"
 import pkg from "^/package.json"
@@ -27,8 +27,8 @@ export const database = openDB(pkg.name, versionCode, {
                 content: changelog,
             }
             storeSettings = db.createObjectStore("settings")
-            storeContent = db.createObjectStore("content", {keyPath: "id"})
-            db.createObjectStore("plugins", {keyPath: "id"})
+            storeContent = db.createObjectStore("content", { keyPath: "id" })
+            db.createObjectStore("plugins", { keyPath: "id" })
 
             await storeContent.add(example)
             await storeSettings.add(example.id, "current")
@@ -39,10 +39,10 @@ export const database = openDB(pkg.name, versionCode, {
             if (!storeContent) {
                 storeContent = transaction.objectStore("content")
             }
-            const storeNote = db.createObjectStore("notes", {keyPath: "id"})
+            const storeNote = db.createObjectStore("notes", { keyPath: "id" })
             storeContents = db.createObjectStore("contents")
             const allContent: NoteItem[] = await (storeContent)?.getAll() || []
-            for (const {content, ...item} of allContent) {
+            for (const { content, ...item } of allContent) {
                 await storeNote.put(item)
                 await storeContents.put(content, item.id)
             }
@@ -50,6 +50,7 @@ export const database = openDB(pkg.name, versionCode, {
         }
         if (nv >= 20 && oldVersion < 20) {
             console.info(`正在把数据库从${oldVersion}升级到v0.2.0`)
+            db.createObjectStore("pluginScripts")
             if (!storeContents) {
                 storeContents = transaction.objectStore("contents")
             }
@@ -99,7 +100,10 @@ export interface IRecordDbStore<T> {
     getBy(ranges: IDBKeyRange): Promise<T[]>
 }
 
-function createKeyValueDbStore<T extends object, K extends keyof T = keyof T>(storeName: string, needEncrypt: boolean | K[] = false): IKeyValueDbStore<T> {
+function createKeyValueDbStore<T extends object, K extends keyof T = keyof T>(
+    storeName: string,
+    needEncrypt: boolean | K[] = false,
+): IKeyValueDbStore<T> {
 
     function shouldEncrypt(key: K) {
         return needEncrypt === true || Array.isArray(needEncrypt) && needEncrypt.includes(key)
@@ -113,7 +117,11 @@ function createKeyValueDbStore<T extends object, K extends keyof T = keyof T>(st
             return _.isUndefined(value) ? defaultValue : (shouldEncrypt(name) ? JSON.parse(decrypt(value)) : value)
         },
         async set(name: K, value: T[K]): Promise<void> {
-            await (await database).put(storeName, shouldEncrypt(name) ? encrypt(JSON.stringify(value)) : value, name as string)
+            await (await database).put(
+                storeName,
+                shouldEncrypt(name) ? encrypt(JSON.stringify(value)) : value,
+                name as string,
+            )
         },
         async setObject(values: Partial<T>): Promise<void> {
             const tx = (await database).transaction(storeName, "readwrite")
@@ -185,3 +193,4 @@ export const settingsStore = createKeyValueDbStore<Settings>("settings", ["locke
 export const contentStore = createKeyValueDbStore<{ [id: string]: string }>("contents", true)
 export const notesStore = createRecordsDbStore<NoteItem>("notes")
 export const pluginStore = createRecordsDbStore<Omit<IPluginInfo, "path">>("plugins")
+export const pluginScriptStore = createKeyValueDbStore<Record<string, string>>("pluginScripts", false)
