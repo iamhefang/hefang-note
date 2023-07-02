@@ -6,6 +6,7 @@ import { useAppDispatch } from "~/redux"
 import { installPlugin } from "~/redux/pluginSlice"
 
 import { IPluginInfo } from "$plugin/index"
+import { digestHash } from "$utils/hash"
 
 export type PluginStoreInfo = IPluginInfo & {
   hashType: string
@@ -51,17 +52,19 @@ export default function usePluginDownloader(
 
     fetch(item.downloadUrl, { method: "GET" })
       .then(async (res) => res.text())
-      .then((res) => {
+      .then(async (res) => {
+        if (item.hashType === "none" || !item.hashType || !item.hashValue) {
+          dispatch(installPlugin({ plugin: item, content: res }))
+          setStatus(PluginStatus.installed)
+
+          return
+        }
         setStatus(PluginStatus.verifing)
-        crypto.subtle
-          .digest(item.hashType, new TextEncoder().encode(res))
+        digestHash(item.hashType, res)
           .then((hash) => {
-            const hashString = Array.from(new Uint8Array(hash))
-              .map((b) => b.toString(16).padStart(2, "0"))
-              .join("")
-            if (hashString === item.hashValue) {
-              setStatus(PluginStatus.installed)
+            if (hash === item.hashValue) {
               dispatch(installPlugin({ plugin: item, content: res }))
+              setStatus(PluginStatus.installed)
             } else {
               void message.error("检验失败")
               setStatus(PluginStatus.downloadfailed)

@@ -19,7 +19,18 @@ kbd {
 }
 
 [data-tauri-drag-region],
-:not(input, textarea, [contenteditable="true"], a, svg,[data-selectable="true"] *) {
+.ant-tabs .ant-tabs-tab,
+.ant-select-dropdown .ant-select-item,
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item,
+.ant-dropdown-menu-submenu .ant-dropdown-menu .ant-dropdown-menu-item,
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-submenu-title,
+.ant-dropdown-menu-submenu .ant-dropdown-menu .ant-dropdown-menu-submenu-title,
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item-disabled:hover,
+.ant-dropdown-menu-submenu .ant-dropdown-menu .ant-dropdown-menu-item-disabled:hover,
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-submenu-title-disabled:hover,
+.ant-dropdown-menu-submenu .ant-dropdown-menu .ant-dropdown-menu-submenu-title-disabled:hover,
+.ant-input-affix-wrapper .anticon.ant-input-password-icon,
+:not(input, textarea, [contenteditable="true"], a, svg, [data-selectable="true"] *) {
     cursor: default;
     user-select: none;
 }
@@ -59,7 +70,7 @@ kbd {
     }
 }
 
-.ant-tag{
+.ant-tag {
     padding-inline: 3px;
     line-height: 16px;
 }
