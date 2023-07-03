@@ -5,6 +5,11 @@
         "en-US"
     ],
     "map": {
+        "纯文本": "Plain Text",
+        "本软件基于下列开源软件开发": "This software is developed based on the following open source software",
+        "网页版": "Online",
+        "反馈": "Issues",
+        "源码": "Source",
         "退出": "Quit",
         "关于": "About",
         "新建目录": "Create Directory",

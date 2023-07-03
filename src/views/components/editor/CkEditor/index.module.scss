@@ -1,3 +1,41 @@
-.ck-editor__editable_inline {
-    min-height: 400px;
+.root {
+    height: 100%;
+    width: 100;
+
+    :global {
+        .ck-source-editing-area {
+            height: calc(100vh - var(--top-bar-height) - 40px - var(--status-bar-height));
+
+            textarea {
+                border: none;
+                background: none;
+                color: var(--ck-color-text);
+
+                &:focus {
+                    border: none;
+                }
+            }
+        }
+
+        .ck.ck-editor__top .ck-sticky-panel .ck-toolbar {
+            border-bottom: thin solid;
+        }
+
+        .ck.ck-toolbar {
+            border: none;
+        }
+
+        .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+            border: none;
+        }
+
+        .ck.ck-editor__editable.ck-focused:not(.ck-editor__nested-editable) {
+            border: none
+        }
+
+        .ck-content pre {
+            color: var(--ck-color-text);
+        }
+
+    }
 }
