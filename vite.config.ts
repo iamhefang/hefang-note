@@ -9,7 +9,6 @@ import { defineConfig } from "vite"
 import htmlMinifier from "vite-plugin-html-minifier"
 import { plugin as markdown, Mode } from "vite-plugin-markdown"
 import { viteStaticCopy } from "vite-plugin-static-copy"
-import svgr from "vite-plugin-svgr"
 
 const require = createRequire(import.meta.url)
 

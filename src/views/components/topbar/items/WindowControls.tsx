@@ -23,10 +23,10 @@ export default function WindowControls() {
           <Iconfont type="window-minimum" />
         </button>
         <button onClick={toggleMaximize}>
-          {maximized ? <Iconfont type="window-maximize" /> : <Iconfont type="window-restore" />}
+          {maximized ? <Iconfont type="window-restore" /> : <Iconfont type="window-max-s-o" />}
         </button>
         <button onClick={closeWindow} className={ss.close}>
-          <Iconfont type="window-close" />
+          <Iconfont type="window_close" />
         </button>
       </div>
     )
