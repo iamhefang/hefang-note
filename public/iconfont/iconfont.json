@@ -1,0 +1,58 @@
+{
+  "id": "3923761",
+  "name": "何方笔记",
+  "font_family": "iconfont",
+  "css_prefix_text": "",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "32265297",
+      "name": "window-minimum",
+      "font_class": "window-minimum",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "704728",
+      "name": "sunglasses",
+      "font_class": "sunglasses",
+      "unicode": "ead0",
+      "unicode_decimal": 60112
+    },
+    {
+      "icon_id": "1277644",
+      "name": "window-max-s-o",
+      "font_class": "window-max-s-o",
+      "unicode": "e7c2",
+      "unicode_decimal": 59330
+    },
+    {
+      "icon_id": "17942184",
+      "name": "window-restore",
+      "font_class": "window-restore",
+      "unicode": "e653",
+      "unicode_decimal": 58963
+    },
+    {
+      "icon_id": "22042298",
+      "name": "window_close",
+      "font_class": "window_close",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "141815",
+      "name": "moon",
+      "font_class": "moon",
+      "unicode": "e7d3",
+      "unicode_decimal": 59347
+    },
+    {
+      "icon_id": "142061",
+      "name": "sun",
+      "font_class": "sun",
+      "unicode": "e8c9",
+      "unicode_decimal": 59593
+    }
+  ]
+}

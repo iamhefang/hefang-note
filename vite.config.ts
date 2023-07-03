@@ -1,13 +1,17 @@
+import { createRequire } from "node:module"
 import path from "path"
 
+import ckeditor5 from "@ckeditor/vite-plugin-ckeditor5"
 import react from "@vitejs/plugin-react"
 import autoprefixer from "autoprefixer"
-import {internalIpV4} from "internal-ip"
-import {defineConfig} from "vite"
+import { internalIpV4 } from "internal-ip"
+import { defineConfig } from "vite"
 import htmlMinifier from "vite-plugin-html-minifier"
-import {plugin as markdown, Mode} from "vite-plugin-markdown"
-import {viteStaticCopy} from "vite-plugin-static-copy"
+import { plugin as markdown, Mode } from "vite-plugin-markdown"
+import { viteStaticCopy } from "vite-plugin-static-copy"
 import svgr from "vite-plugin-svgr"
+
+const require = createRequire(import.meta.url)
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => {
@@ -17,14 +21,17 @@ export default defineConfig(async () => {
         base: "./",
         plugins: [
             react(),
-            svgr({exportAsDefault: true, svgrOptions: {icon: true}}),
+            ckeditor5({
+                theme: require.resolve("@ckeditor/ckeditor5-theme-lark"),
+            }),
+            // svgr({ exportAsDefault: true, svgrOptions: { icon: true } }),
             viteStaticCopy({
                 targets: [
-                    {src: "src-tauri/icons/icon.ico", dest: "./", rename: "favicon.ico"},
+                    { src: "src-tauri/icons/icon.ico", dest: "./", rename: "favicon.ico" },
                 ],
             }),
-            htmlMinifier({minify: true}),
-            markdown({mode: [Mode.HTML]}),
+            htmlMinifier({ minify: true }),
+            markdown({ mode: [Mode.HTML] }),
         ],
         resolve: {
             alias: {
@@ -40,7 +47,7 @@ export default defineConfig(async () => {
         // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
         // prevent vite from obscuring rust errors
         clearScreen: true,
-        worker: {format: "es"},
+        worker: { format: "es" },
         // tauri expects a fixed port, fail if that port is not available
         server: {
             host: "0.0.0.0",
