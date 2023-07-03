@@ -122,7 +122,10 @@ module.exports = {
     "@typescript-eslint/array-type": ["error", { default: "array", readonly: "generic" }],
     "@typescript-eslint/await-thenable": "error",
     "@typescript-eslint/ban-types": "error",
-    "@typescript-eslint/consistent-type-assertions": ["error", { assertionStyle: "as", objectLiteralTypeAssertions: "never" }],
+    "@typescript-eslint/consistent-type-assertions": [
+      "error",
+      { assertionStyle: "as", objectLiteralTypeAssertions: "never" },
+    ],
     "@typescript-eslint/member-ordering": [
       "error",
       {
@@ -239,7 +242,17 @@ module.exports = {
     "import/no-internal-modules": [
       "warn",
       {
-        allow: ["react-dom/client", "@tauri-apps/api/**", "**/assets/*", "antd/locale/*", "refractor/lang/*", "**/*.css", "dayjs/plugin/*", "dayjs/locale/*"],
+        allow: [
+          "react-dom/client",
+          "@tauri-apps/api/**",
+          "**/assets/*",
+          "antd/locale/*",
+          "refractor/lang/*",
+          "**/*.css",
+          "dayjs/plugin/*",
+          "dayjs/locale/*",
+          "@ckeditor/ckeditor5-build-classic/build/translations/*",
+        ],
       },
     ],
     "import/no-useless-path-segments": [

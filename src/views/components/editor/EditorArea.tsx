@@ -1,6 +1,6 @@
 import { theme as antTheme, Empty } from "antd"
 import { debounce } from "lodash"
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react"
 
 import { CONTENT_SAVE_DELAY } from "~/config"
 import useNoteLocked from "~/hooks/useNoteLocked"
@@ -9,7 +9,6 @@ import { useAppDispatch } from "~/redux"
 import { updateContent } from "~/redux/noteSlice"
 
 import CkEditor from "./CkEditor"
-import WangEditor from "./WangEditor"
 
 import NoteUnlocker from "$components/locker/NoteUnlocker"
 import useCurrent from "$hooks/useCurrent"

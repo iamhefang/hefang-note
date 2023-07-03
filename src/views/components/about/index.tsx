@@ -7,6 +7,7 @@ import pkg from "../../../../package.json"
 import ss from "./index.module.scss"
 
 import { openInNative } from "$components/utils/native"
+import { T } from "$hooks/useTranslate"
 import logo from "^/src-tauri/icons/icon.png"
 
 const src = import.meta.env.VITE_COMMIT
@@ -29,13 +30,13 @@ export default function About() {
         {isInClient ? (
           <Col>
             <a href="https://note.hefang.app" onClick={openInNative}>
-              网页版
+              <T input="网页版" />
             </a>
           </Col>
         ) : null}
         <Col>
           <a href={src} onClick={openInNative}>
-            源码
+            <T input="源码" />
           </a>
         </Col>
         <Col>
@@ -45,13 +46,13 @@ export default function About() {
             rel="noreferrer"
             onClick={openInNative}
           >
-            反馈
+            <T input="反馈" />
           </a>
         </Col>
       </Row>
       <div>
         <Divider />
-        {productName}基于下列开源软件开发：
+        <T input="本软件基于下列开源软件开发" />：
         <ol>
           {Object.keys(pkg.dependencies).map((name) => (
             <li key={name}>
