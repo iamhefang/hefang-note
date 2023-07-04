@@ -10,6 +10,7 @@
                 border: none;
                 background: none;
                 color: var(--ck-color-text);
+                overflow: auto;
 
                 &:focus {
                     border: none;
@@ -18,7 +19,7 @@
         }
 
         .ck.ck-editor__top .ck-sticky-panel .ck-toolbar {
-            border-bottom: thin solid;
+            border-bottom: thin solid var(--ck-color-base-border);
         }
 
         .ck.ck-toolbar {
