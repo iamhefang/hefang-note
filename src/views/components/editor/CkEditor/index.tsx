@@ -1,5 +1,5 @@
 import { Autoformat } from "@ckeditor/ckeditor5-autoformat"
-import { Bold, Italic } from "@ckeditor/ckeditor5-basic-styles"
+import { Bold, Code, CodeEditing, CodeUI, Italic, Strikethrough } from "@ckeditor/ckeditor5-basic-styles"
 import { BlockQuote } from "@ckeditor/ckeditor5-block-quote"
 import "@ckeditor/ckeditor5-build-classic/build/translations/de"
 import "@ckeditor/ckeditor5-build-classic/build/translations/en-gb"
@@ -55,13 +55,17 @@ const CkEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placehold
         "heading",
         "bold",
         "italic",
+        "strikethrough",
+        "|",
         "todoList",
         "bulletedList",
         "numberedList",
         "blockQuote",
         "|",
         "link",
+        "code",
         "codeBlock",
+        "insertTable",
         opt.showSource ? "sourceEditing" : undefined,
       ].filter(Boolean) as string[],
     [opt.showSource],
@@ -76,6 +80,7 @@ const CkEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placehold
       Essentials,
       Bold,
       Italic,
+      Strikethrough,
       Paragraph,
       //   ImageUpload,
       //   EasyImage,
@@ -96,15 +101,17 @@ const CkEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placehold
       CodeBlock,
       CodeBlockEditing,
       CodeBlockUI,
+      Code,
+      CodeEditing,
+      CodeUI,
     ],
     [],
   )
   const theme = useCkEditorTheme()
 
   return (
-    <div style={theme} className={ss.root}>
+    <div style={theme} className={ss.root} key={`${locale.name}${JSON.stringify(opt)}`}>
       <CKEditor
-        key={locale.name}
         editor={ClassicEditor}
         data={value || ""}
         onChange={onValueChange}
@@ -115,6 +122,9 @@ const CkEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placehold
           language: locale.ckEditor,
           toolbar,
           plugins,
+          table: {
+            contentToolbar: ["tableColumn", "tableRow", "mergeTableCells"],
+          },
           codeBlock: {
             languages: [
               { language: "plaintext", label: t("纯文本") },
@@ -131,6 +141,7 @@ const CkEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placehold
               { language: "ruby", label: "Ruby" },
               { language: "typescript", label: "TypeScript" },
               { language: "xml", label: "XML" },
+              { language: "shell", label: "Shell" },
             ],
           },
           ui: {
@@ -164,7 +175,7 @@ const CkEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placehold
 CkEditor.editorName = "CkEditor"
 CkEditor.options = [
   {
-    label: "显示源代码",
+    label: "启用源代码编辑功能",
     name: "showSource",
     children: <Switch />,
     valuePropName: "checked",

@@ -80,6 +80,9 @@ dependencies:
   '@ckeditor/ckeditor5-source-editing':
     specifier: ^38.1.0
     version: 38.1.0
+  '@ckeditor/ckeditor5-special-characters':
+    specifier: ^38.1.0
+    version: 38.1.0
   '@ckeditor/ckeditor5-table':
     specifier: ^38.1.0
     version: 38.1.0
@@ -950,6 +953,13 @@ packages:
     engines: {node: '>=16.0.0', npm: '>=5.7.1'}
     dependencies:
       '@ckeditor/ckeditor5-theme-lark': 38.1.0
+      ckeditor5: 38.1.0
+    dev: false
+
+  /@ckeditor/ckeditor5-special-characters@38.1.0:
+    resolution: {integrity: sha512-JNeVWHUc4jbgG8xEn+iLfDoVxsBnfulosAXilYksCTaT9TwiuONJYF1gg1UoW1+yP2Mlgd4BKNXfiXEZ+MSQig==}
+    engines: {node: '>=16.0.0', npm: '>=5.7.1'}
+    dependencies:
       ckeditor5: 38.1.0
     dev: false
 
