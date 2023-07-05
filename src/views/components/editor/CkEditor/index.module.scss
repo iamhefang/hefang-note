@@ -3,23 +3,32 @@
     width: 100;
 
     :global {
+        .ck .ck-content .ck-editor__editable .ck-rounded-corners .ck-editor__editable_inline .ck-blurred {
+            line-height: 1.5;
+        }
+
+        .ck.ck-editor__editable.ck-focused:not(.ck-editor__nested-editable) {
+            box-shadow: none;
+        }
+
         .ck-source-editing-area {
             height: calc(100vh - var(--top-bar-height) - 40px - var(--status-bar-height));
 
             textarea {
-                border: none;
                 background: none;
                 color: var(--ck-color-text);
                 overflow: auto;
+                border: none;
 
-                &:focus {
+                &:not([readonly]):focus {
                     border: none;
+                    box-shadow: none;
                 }
             }
         }
 
         .ck.ck-editor__top .ck-sticky-panel .ck-toolbar {
-            border-bottom: thin solid var(--ck-color-base-border);
+            border: none;
         }
 
         .ck.ck-toolbar {
@@ -31,12 +40,11 @@
         }
 
         .ck.ck-editor__editable.ck-focused:not(.ck-editor__nested-editable) {
-            border: none
+            border: none;
         }
 
         .ck-content pre {
             color: var(--ck-color-text);
         }
-
     }
 }

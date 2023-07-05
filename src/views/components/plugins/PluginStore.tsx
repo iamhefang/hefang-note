@@ -83,7 +83,9 @@ const PluginList = React.forwardRef(({ children, ...props }: ListProps, ref: For
   )
 })
 
-const PluginListEmpty = React.memo(({ context }: { context?: unknown }) => <Empty />)
+const PluginListEmpty = React.memo(({ context }: { context?: unknown }) => (
+  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ marginBlock: 0 }} />
+))
 const PluginListLoading = React.memo(({ context }: { context?: unknown }) => (
   <div style={{ textAlign: "center", padding: "15px 0" }}>
     <Spin delay={200} />

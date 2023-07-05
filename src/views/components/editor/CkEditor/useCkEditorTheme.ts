@@ -5,21 +5,20 @@ import { useMemo } from "react"
 export default function useCkEditorTheme(): Record<string, string> {
     const { token } = theme.useToken()
 
-
     return useMemo(() => ({
         "--ck-color-base-foreground": token.colorTextBase,
         "--ck-color-base-background": token.colorBgBase,
-        "--ck-color-base-border": "hsl(0, 0%, 77%)",
+        "--ck-color-base-border": token.colorBorder,
         "--ck-color-base-action": "hsl(104, 44%, 48%)",
         "--ck-color-base-focus": "hsl(209, 92%, 70%)",
         "--ck-color-base-text": token.colorTextBase,
-        "--ck-color-base-active": "hsl(208, 88%, 52%)",
-        "--ck-color-base-active-focus": "hsl(208, 88%, 47%)",
+        "--ck-color-base-active": token.colorPrimary,
+        "--ck-color-base-active-focus": token.colorPrimaryBg,
         "--ck-color-base-error": "hsl(15, 100%, 43%)",
 
         /* -- Generic colors ------------------------------------------------------------------------ */
 
-        "--ck-color-focus-border": "hsl(208, 79%, 51%)",
+        "--ck-color-focus-border": token.colorPrimary,
         "--ck-color-focus-outer-shadow": "hsl(207, 89%, 86%)",
         "--ck-color-focus-disabled-shadow": "hsla(209, 90%, 72%,.3)",
         "--ck-color-focus-error-shadow": "hsla(9,100%,56%,.3)",
@@ -31,13 +30,14 @@ export default function useCkEditorTheme(): Record<string, string> {
         /* -- Buttons ------------------------------------------------------------------------------- */
 
         "--ck-color-button-default-background": "transparent",
-        "--ck-color-button-default-hover-background": "hsl(0, 0%, 90%)",
+        "--ck-color-button-default-hover-background": token.colorPrimaryBgHover,
         "--ck-color-button-default-active-background": "hsl(0, 0%, 85%)",
         "--ck-color-button-default-active-shadow": "hsl(0, 0%, 75%)",
         "--ck-color-button-default-disabled-background": "transparent",
 
-        "--ck-color-button-on-background": "hsl(0, 0%, 87%)",
-        "--ck-color-button-on-hover-background": "hsl(0, 0%, 77%)",
+        "--ck-color-button-on-color": token.colorPrimary,
+        "--ck-color-button-on-background": token.colorPrimaryBg,
+        "--ck-color-button-on-hover-background": token.colorPrimaryBgHover,
         "--ck-color-button-on-active-background": "hsl(0, 0%, 73%)",
         "--ck-color-button-on-active-shadow": "hsl(0, 0%, 63%)",
         "--ck-color-button-on-disabled-background": "hsl(0, 0%, 87%)",
@@ -109,5 +109,18 @@ export default function useCkEditorTheme(): Record<string, string> {
 
         "--ck-color-link-default": "hsl(240, 100%, 47%)",
         "--ck-color-link-selected-background": "hsla(201, 100%, 56%, 0.1)",
-    }), [token.colorBgBase, token.colorTextBase])
+
+        /* -- Others -------------------------------------------------------------------------------- */
+        "--ck-focus-outer-shadow": "none",
+        "--ck-focus-ring": "none",
+    }),
+        [
+            token.colorBgBase,
+            token.colorBorder,
+            token.colorPrimary,
+            token.colorPrimaryBg,
+            token.colorPrimaryBgHover,
+            token.colorTextBase,
+        ],
+    )
 }
