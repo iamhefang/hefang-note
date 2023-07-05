@@ -1,48 +1,38 @@
-import { Autoformat } from "@ckeditor/ckeditor5-autoformat"
-import { Bold, Code, CodeEditing, CodeUI, Italic, Strikethrough } from "@ckeditor/ckeditor5-basic-styles"
-import { BlockQuote } from "@ckeditor/ckeditor5-block-quote"
 import "@ckeditor/ckeditor5-build-classic/build/translations/de"
 import "@ckeditor/ckeditor5-build-classic/build/translations/en-gb"
 import "@ckeditor/ckeditor5-build-classic/build/translations/ja"
 import "@ckeditor/ckeditor5-build-classic/build/translations/zh-cn"
-import { CodeBlock, CodeBlockEditing, CodeBlockUI } from "@ckeditor/ckeditor5-code-block"
-import type { EditorConfig } from "@ckeditor/ckeditor5-core"
 import { ClassicEditor } from "@ckeditor/ckeditor5-editor-classic"
-// import ClassicEditor from "@ckeditor/ckeditor5-build-classic"
-import { Essentials } from "@ckeditor/ckeditor5-essentials"
-import { Heading } from "@ckeditor/ckeditor5-heading"
-import { HorizontalLine } from "@ckeditor/ckeditor5-horizontal-line"
-import { Image, ImageCaption } from "@ckeditor/ckeditor5-image"
-import { Link } from "@ckeditor/ckeditor5-link"
-import { List, TodoList } from "@ckeditor/ckeditor5-list"
-import { Markdown } from "@ckeditor/ckeditor5-markdown-gfm"
-import { MediaEmbed } from "@ckeditor/ckeditor5-media-embed"
-import { Paragraph } from "@ckeditor/ckeditor5-paragraph"
-import { PasteFromOffice } from "@ckeditor/ckeditor5-paste-from-office"
 import { CKEditor } from "@ckeditor/ckeditor5-react"
-import { SourceEditing } from "@ckeditor/ckeditor5-source-editing"
-import { Table, TableToolbar } from "@ckeditor/ckeditor5-table"
 import { Switch } from "antd"
-import { useCallback, useMemo } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 
+import { ckEditorPlugins } from "./configs/ckEditorPlugins"
+import useCodeBlockConfig from "./configs/useCodeBlockConfig"
 import ss from "./index.module.scss"
 import useCkEditorTheme from "./useCkEditorTheme"
 
 import { useEditorOptions } from "$hooks/useSelectors"
-import { useLocaleDefine, useTranslate } from "$hooks/useTranslate"
+import { useLocaleDefine } from "$hooks/useTranslate"
 import { EditorComponent } from "$plugin/index"
 
 const CkEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placeholder, loading, noteId }) => {
   const onValueChange = useCallback(
     (event: unknown, editor: { getData: () => string }) => {
       const data = editor.getData()
-      console.log({ event, editor, data })
       onChange(data)
     },
     [onChange],
   )
 
-  const t = useTranslate()
+  useEffect(() => {
+    const txt = document.querySelector(".ck-source-editing-area textarea") as HTMLTextAreaElement | undefined
+    if (txt) {
+      txt.placeholder = placeholder ?? ""
+    }
+  }, [placeholder])
+
+  const codeBlockConfig = useCodeBlockConfig()
 
   const opt = useEditorOptions<{ showSource: boolean }>()
 
@@ -72,41 +62,6 @@ const CkEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placehold
   )
 
   const locale = useLocaleDefine()
-  const plugins = useMemo<EditorConfig["plugins"]>(
-    () => [
-      Markdown,
-      SourceEditing,
-      Heading,
-      Essentials,
-      Bold,
-      Italic,
-      Strikethrough,
-      Paragraph,
-      //   ImageUpload,
-      //   EasyImage,
-      //   UploadAdapter,
-      BlockQuote,
-      //   CKFinder,
-      Image,
-      ImageCaption,
-      Link,
-      List,
-      TodoList,
-      MediaEmbed,
-      PasteFromOffice,
-      Table,
-      TableToolbar,
-      Autoformat,
-      HorizontalLine,
-      CodeBlock,
-      CodeBlockEditing,
-      CodeBlockUI,
-      Code,
-      CodeEditing,
-      CodeUI,
-    ],
-    [],
-  )
   const theme = useCkEditorTheme()
 
   return (
@@ -121,29 +76,11 @@ const CkEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placehold
           placeholder,
           language: locale.ckEditor,
           toolbar,
-          plugins,
+          plugins: ckEditorPlugins,
           table: {
             contentToolbar: ["tableColumn", "tableRow", "mergeTableCells"],
           },
-          codeBlock: {
-            languages: [
-              { language: "plaintext", label: t("纯文本") },
-              { language: "c", label: "C" },
-              { language: "cs", label: "C#" },
-              { language: "cpp", label: "C++" },
-              { language: "css", label: "CSS" },
-              { language: "diff", label: "Diff" },
-              { language: "html", label: "HTML" },
-              { language: "java", label: "Java" },
-              { language: "javascript", label: "JavaScript" },
-              { language: "php", label: "PHP" },
-              { language: "python", label: "Python" },
-              { language: "ruby", label: "Ruby" },
-              { language: "typescript", label: "TypeScript" },
-              { language: "xml", label: "XML" },
-              { language: "shell", label: "Shell" },
-            ],
-          },
+          codeBlock: codeBlockConfig,
           ui: {
             poweredBy: {
               position: "inside",

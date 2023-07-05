@@ -36,7 +36,7 @@ export default function useThemes(): Themes {
       eyeshield: {
         label: "护眼",
         icon: <EyeOutlined />,
-        token: { colorBgBase: "#bcf7c7", colorPrimary: "#49a35a" },
+        token: { colorBgBase: "#bcf7c7", colorPrimary: "#53b571" },
       },
       "anti-blue-ray": {
         label: "防蓝光",

@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1467367",
+      "name": "linux",
+      "font_class": "linux",
+      "unicode": "e697",
+      "unicode_decimal": 59031
+    },
+    {
+      "icon_id": "26611928",
+      "name": "macos",
+      "font_class": "macos",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "27365362",
+      "name": "windows",
+      "font_class": "windows",
+      "unicode": "ec2e",
+      "unicode_decimal": 60462
+    },
+    {
       "icon_id": "32265297",
       "name": "window-minimum",
       "font_class": "window-minimum",
