@@ -1,10 +1,10 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3923761 */
-  src: url('iconfont.eot?t=1688353693050'); /* IE9 */
-  src: url('iconfont.eot?t=1688353693050#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('iconfont.woff2?t=1688353693050') format('woff2'),
-       url('iconfont.woff?t=1688353693050') format('woff'),
-       url('iconfont.ttf?t=1688353693050') format('truetype');
+  src: url('iconfont.eot?t=1688527707906'); /* IE9 */
+  src: url('iconfont.eot?t=1688527707906#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('iconfont.woff2?t=1688527707906') format('woff2'),
+       url('iconfont.woff?t=1688527707906') format('woff'),
+       url('iconfont.ttf?t=1688527707906') format('truetype');
 }
 
 .iconfont {
@@ -13,6 +13,18 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.linux:before {
+  content: "\e697";
+}
+
+.macos:before {
+  content: "\e60b";
+}
+
+.windows:before {
+  content: "\ec2e";
 }
 
 .window-minimum:before {

@@ -5,6 +5,8 @@
         "en-US"
     ],
     "map": {
+        "下载{productName}客户端": "Download {productName}",
+        "下载客户端": "Download",
         "纯文本": "Plain Text",
         "本软件基于下列开源软件开发": "This software is developed based on the following open source software",
         "网页版": "Online",
