@@ -1,18 +1,31 @@
 import { DownloadOutlined } from "@ant-design/icons"
 import { Button, Modal, Space, Tooltip } from "antd"
-import { useCallback, useState } from "react"
+import { isEmpty } from "lodash"
+import { useCallback, useEffect, useState } from "react"
 
-import { clientUrls, productName } from "~/consts"
+import { productName, serverHost } from "~/consts"
 
-import Iconfont from "$components/icons/Iconfont"
 import { useTranslate } from "$hooks/useTranslate"
 
 export default function ClientDownload() {
   const [open, setOpen] = useState(false)
+  const [clients, setClients] = useState<{
+    platforms: Record<string, { installerUrl: string; platformName: string }>
+  }>()
   const onClick = useCallback(() => {
     setOpen(!open)
   }, [open])
   const t = useTranslate()
+  useEffect(() => {
+    fetch(`${serverHost}/api/v1/release/latest`)
+      .then(async (res) => res.json())
+      .then(setClients)
+      .catch(console.error)
+  }, [])
+
+  if (isEmpty(clients?.platforms)) {
+    return null
+  }
 
   return (
     <>
@@ -32,20 +45,15 @@ export default function ClientDownload() {
         destroyOnClose
         onCancel={onClick}
       >
-        <Space style={{ width: "100%", justifyContent: "space-between", marginTop: 15 }}>
-          <Space direction="vertical" align="center" size="large">
-            <Iconfont type="macos" style={{ fontSize: 80 }} />
-            <Button href={clientUrls["Darwin-x86_64"]}>MacOS</Button>
-          </Space>
-          <Space direction="vertical" align="center" size="large">
-            <Iconfont type="windows" style={{ fontSize: 80 }} />
-            <Button href={clientUrls["Windows_NT-x86_64"]}>Windows</Button>
-          </Space>
-          <Space direction="vertical" align="center" size="large">
-            <Iconfont type="linux" style={{ fontSize: 80 }} />
-            <Button>敬请期待</Button>
-          </Space>
-        </Space>
+        <ul>
+          {Object.entries(clients?.platforms ?? {}).map(([platform, { installerUrl, platformName }]) => (
+            <li key={platform}>
+              <a href={installerUrl} target="__blank">
+                {platformName}
+              </a>
+            </li>
+          ))}
+        </ul>
       </Modal>
     </>
   )

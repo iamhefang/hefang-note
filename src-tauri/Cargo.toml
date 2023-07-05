@@ -27,7 +27,7 @@ description = "高性能跨平台笔记软件"
 edition = "2021"
 license = "GPL3"
 name = "hefang-note"
-repository = "https://github.com/iamhefang/hefang-note"
+repository = "https://note.hefang.app/api/v1/release/latest"
 version = "0.5.0"
 
 [profile.release]
