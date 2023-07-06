@@ -6,10 +6,10 @@
     "license": "GPL3",
     "type": "module",
     "author": "iamhefang",
-    "repository": "https://note.hefang.app/api/v1/release/latest",
+    "repository": "https://github.com/iamhefang/hefang-note",
     "scripts": {
         "dev": "vite",
-        "build": "VITE_COMMIT=`git log -1 --pretty=format:%H` vite build",
+        "build": "vite build",
         "lint": "tsc",
         "preview": "vite preview",
         "tauri": "pnpm run syncinfo && tauri",
