@@ -10,11 +10,16 @@ Die Oberfläche und Menüs der Software unterstützen bereits Mehrsprachigkeit (
 
 ---
 
+## v0.6.0
+
+1. `优化` 使用 CKEditor5 做为内置编辑器
+2. `优化` 修复一些 bug
+
 ## v0.5.0
 
 1. `新增` 插件功能基本可用
 2. `优化` 优化新建笔记和目录逻辑
-3. `优化` 使用wangEditor做为内置编辑器
+3. `优化` 使用 wangEditor 做为内置编辑器
 
 ## v0.4.0
 
