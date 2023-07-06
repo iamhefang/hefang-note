@@ -16,7 +16,7 @@ use utils::consts::{
     MENU_ID_TOGGLE_LOCK, MENU_ID_TOGGLE_SETTINGS, MENU_ID_TOGGLE_VISIBLE,
 };
 
-use crate::commands::{fs::save_file, git::git_clone, menu::show_note_menu};
+use crate::commands::{fs::save_file,  menu::show_note_menu};
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {}
@@ -30,7 +30,6 @@ fn main() {
         .on_window_event(on_window_event)
         .invoke_handler(tauri::generate_handler![
             is_directory,
-            git_clone,
             show_note_menu,
             save_file
         ])

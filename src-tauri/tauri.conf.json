@@ -116,7 +116,7 @@
         "updater": {
             "active": true,
             "endpoints": [
-                "https://iamhefang.cn/tools/notebook/index.json"
+                "https://note.hefang.app/api/v1/release/latest"
             ],
             "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDE4RUU0QzVDN0Y1QTI2QjMKUldTekpscC9YRXp1R091dDlWRFZBSW8xTkUrc25tbDcyNVJKcDZzUmpLQXdkOUFaVmZzUExuVHUK",
             "dialog": false
