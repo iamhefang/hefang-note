@@ -89,7 +89,7 @@
                 "icons/icon.icns",
                 "icons/icon.ico"
             ],
-            "identifier": "link.hefang.notes",
+            "identifier": "app.hefang.note",
             "longDescription": "使用 Git 仓库做为数据源的开源笔记软件",
             "macOS": {
                 "entitlements": null,
