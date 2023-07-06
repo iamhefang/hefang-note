@@ -113,6 +113,7 @@ export default function useCkEditorTheme(): Record<string, string> {
         /* -- Others -------------------------------------------------------------------------------- */
         "--ck-focus-outer-shadow": "none",
         "--ck-focus-ring": "none",
+        "--ck-color-widget-type-around-button-active": "var(--ck-color-base-active)",
     }),
         [
             token.colorBgBase,
