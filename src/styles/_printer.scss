@@ -1,0 +1,22 @@
+@mixin printer {
+    .editor-wrapper {}
+
+    body {
+        overflow: auto !important;
+    }
+
+    .ant-layout-has-sider>div,
+    .ant-layout-header,
+    .ant-layout-footer,
+    .ck.ck-editor__top.ck-reset_all {
+        display: none !important
+    }
+
+    .ck.ck-content.ck-editor__editable.ck-rounded-corners.ck-editor__editable_inline.ck-blurred {
+        height: max-content !important;
+    }
+}
+
+// @media print {
+// @include printer;
+// }
