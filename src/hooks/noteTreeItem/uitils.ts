@@ -1,17 +1,13 @@
-import TurnDown from "turndown"
-import * as  turndownPluginGfm from "turndown-plugin-gfm"
+import { marked } from "marked"
 
-import {ContentIOType, PluginHookOccasion} from "~/plugin"
+import { ContentIOType, PluginHookOccasion } from "~/plugin"
 import exportTplHTML from "~/templates/export-html.html?raw"
-import {NoteItem} from "~/types"
+import { NoteItem } from "~/types"
 
-import ContentIOEvent, {ContentIODirection} from "$plugin/events/ContentIOEvent"
-import {callPluginsHook} from "$plugin/utils"
-import {contentStore} from "$utils/database"
-import {saveFile} from "$utils/file"
-
-const turndown = new TurnDown({headingStyle: "atx"})
-turndown.use(turndownPluginGfm.gfm)
+import ContentIOEvent, { ContentIODirection } from "$plugin/events/ContentIOEvent"
+import { callPluginsHook } from "$plugin/utils"
+import { contentStore } from "$utils/database"
+import { saveFile } from "$utils/file"
 
 export function getNewNote(item: Partial<NoteItem>): NoteItem {
     return {
@@ -24,12 +20,16 @@ export function getNewNote(item: Partial<NoteItem>): NoteItem {
     }
 }
 
-function convert4export(html: string, type: ContentIOType): [string, string, string] {
+function convert4export(markdown: string, type: ContentIOType, title: string): [string, string, string] {
     switch (type) {
         case ContentIOType.markdown:
-            return [turndown.turndown(html), "text/markdown", "md"]
+            return [`# ${title}\n\n${markdown}`, "text/markdown", "md"]
         case ContentIOType.html:
-            return [html, "text/html", "html"]
+            const exportHtml = exportTplHTML
+                .replace("$TITLE_PLACEHOLDER$", title)
+                .replace("$CONTENT_PLACEHOLDER$", marked(markdown))
+
+            return [exportHtml, "text/html", "html"]
         default:
             throw new Error("不支持的导出类型")
     }
@@ -55,9 +55,8 @@ export async function doExport(item: NoteItem, type: ContentIOType): Promise<voi
                     return reject("插件阻止了导出")
                 }
                 const title = event.detail.item.title
-                const exportHtml = exportTplHTML.replace("$TITLE_PLACEHOLDER$", title).replace("$CONTENT_PLACEHOLDER$", event.detail.content)
-                const [finalContent, mimeType, fileExt] = convert4export(exportHtml, type)
-                saveFile(finalContent, {mimeType, fileName: `${title}.${fileExt}`}).then(res => {
+                const [finalContent, mimeType, fileExt] = convert4export(event.detail.content, type, title)
+                saveFile(finalContent, { mimeType, fileName: `${title}.${fileExt}` }).then(res => {
                     callPluginsHook("onContentExport", new ContentIOEvent({
                         detail: event.detail,
                         occasion: PluginHookOccasion.after,
