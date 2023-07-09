@@ -1,57 +1,58 @@
-import {App} from "antd"
-import {useCallback} from "react"
+import { App } from "antd"
+import { useCallback } from "react"
 
-import {ContentIOType} from "~/plugin"
-import {useAppDispatch} from "~/redux"
-import {startRenaming} from "~/redux/noteSlice"
+import { ContentIOType } from "~/plugin"
+import { useAppDispatch } from "~/redux"
+import { startRenaming } from "~/redux/noteSlice"
 
 import useNewNoteDispatcher from "./useNewNoteDispatcher"
 
-import {MenuInfo, NoteTreeMenuKeys} from "$components/menus/NoteTreeItemMenu"
+import { MenuInfo, NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
 import useDeleteModal from "$hooks/modals/useDeleteModal"
 import useLockContentModal from "$hooks/modals/useLockContentModal"
-import {doExport} from "$hooks/noteTreeItem/uitils"
-import {useStates} from "$hooks/useSelectors"
-
+import { doExport } from "$hooks/noteTreeItem/uitils"
+import { useStates } from "$hooks/useSelectors"
 
 export default function useOnNoteTreeMenuClick() {
-    const dispatch = useAppDispatch()
-    const showLockModal = useLockContentModal()
-    const showDeleteModal = useDeleteModal()
-    const {rightClickedItem} = useStates()
-    const newNoteDispatch = useNewNoteDispatcher(rightClickedItem?.id)
-    const {message} = App.useApp()
+  const dispatch = useAppDispatch()
+  const showLockModal = useLockContentModal()
+  const showDeleteModal = useDeleteModal()
+  const { rightClickedItem } = useStates()
+  const newNoteDispatch = useNewNoteDispatcher(rightClickedItem?.id)
+  const { message } = App.useApp()
 
-    return useCallback(
-        (info: MenuInfo) => {
-            switch (info.key) {
-                case NoteTreeMenuKeys.rename:
-                    rightClickedItem && dispatch(startRenaming(rightClickedItem.id))
-                    break
-                case NoteTreeMenuKeys.delete:
-                    rightClickedItem && showDeleteModal(rightClickedItem)
-                    break
-                case NoteTreeMenuKeys.newDir:
-                case NoteTreeMenuKeys.newNote:
-                    newNoteDispatch(info.key === NoteTreeMenuKeys.newNote)
-                    break
-                case NoteTreeMenuKeys.lock:
-                    showLockModal(rightClickedItem)
-                    break
-                case NoteTreeMenuKeys.exportHTML:
-                    rightClickedItem && doExport(rightClickedItem, ContentIOType.html)
-                        .then(() => message.success("导出成功"))
-                        .catch(error => message.error(error))
-                    break
-                case NoteTreeMenuKeys.exportMarkdown:
-                    rightClickedItem && doExport(rightClickedItem, ContentIOType.markdown)
-                        .then(() => message.success("导出成功"))
-                        .catch(error => message.error(error))
-                    break
-                default:
-                    console.warn("未生效的菜单")
-            }
-        },
-        [rightClickedItem, dispatch, showDeleteModal, newNoteDispatch, showLockModal, message],
-    )
+  return useCallback(
+    (info: MenuInfo) => {
+      switch (info.key) {
+        case NoteTreeMenuKeys.rename:
+          rightClickedItem && dispatch(startRenaming(rightClickedItem.id))
+          break
+        case NoteTreeMenuKeys.delete:
+          rightClickedItem && showDeleteModal(rightClickedItem)
+          break
+        case NoteTreeMenuKeys.newDir:
+        case NoteTreeMenuKeys.newNote:
+          newNoteDispatch(info.key === NoteTreeMenuKeys.newNote)
+          break
+        case NoteTreeMenuKeys.lock:
+          showLockModal(rightClickedItem)
+          break
+        case NoteTreeMenuKeys.exportHTML:
+          rightClickedItem &&
+            doExport(rightClickedItem, ContentIOType.html)
+              .then(() => message.success("导出成功"))
+              .catch((error) => message.error(error))
+          break
+        case NoteTreeMenuKeys.exportMarkdown:
+          rightClickedItem &&
+            doExport(rightClickedItem, ContentIOType.markdown)
+              .then(() => message.success("导出成功"))
+              .catch((error) => message.error(error))
+          break
+        default:
+          console.warn("未生效的菜单")
+      }
+    },
+    [rightClickedItem, dispatch, showDeleteModal, newNoteDispatch, showLockModal, message],
+  )
 }
