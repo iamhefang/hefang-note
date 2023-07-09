@@ -10,6 +10,10 @@ Die Oberfläche und Menüs der Software unterstützen bereits Mehrsprachigkeit (
 
 ---
 
+## v0.6.1
+
+1. `优化` 修复一些 bug
+
 ## v0.6.0
 
 1. `优化` 使用 CKEditor5 做为内置编辑器
