@@ -32,7 +32,7 @@ export default function VersionError() {
   }, [doUpgrade])
 
   return (
-    <div className={ss.root}>
+    <div className={ss.root} data-tauri-drag-region>
       <div>
         <WarningOutlined style={{ fontSize: 100 }} />
       </div>
