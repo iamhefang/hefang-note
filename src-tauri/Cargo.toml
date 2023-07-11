@@ -13,7 +13,7 @@ features = ["derive"]
 version = "1.0"
 
 [dependencies.tauri]
-features = ["dialog-all","fs-all","global-shortcut-all","http-all","notification-all","os-all","path-all","process-exit","process-relaunch","reqwest-native-tls-vendored","shell-open","system-tray","updater","window-maximize","window-minimize","window-set-always-on-top","window-start-dragging","window-unmaximize","window-unminimize"]
+features = ["dialog-all", "fs-all", "global-shortcut-all", "http-all", "notification-all", "os-all", "path-all", "process-exit", "process-relaunch", "reqwest-native-tls-vendored", "shell-open", "system-tray", "updater", "window-maximize", "window-minimize", "window-set-always-on-top", "window-start-dragging", "window-unmaximize", "window-unminimize"]
 version = "1.4.0"
 
 [features]
@@ -27,7 +27,7 @@ edition = "2021"
 license = "GPL3"
 name = "hefang-note"
 repository = "https://github.com/iamhefang/hefang-note"
-version = "0.6.2"
+version = "0.6.1"
 
 [profile.release]
 codegen-units = 1

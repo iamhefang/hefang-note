@@ -1,19 +1,21 @@
-import { App as Antd, ConfigProvider } from "antd"
+import { App } from "antd"
 import React, { Suspense, useEffect } from "react"
 
 import { uiSlice } from "~/redux/uiSlice"
 import View from "~/views"
 
+import { versionName } from "./consts"
 import { useAppDispatch } from "./redux"
 
 import Loading from "$components/loading/Loading"
+import Html from "$components/utils/Html"
 import useContentLoader from "$hooks/useContentLoader"
 import { useStates } from "$hooks/useSelectors"
 import useSettingsLoader from "$hooks/useSettingsLoader"
-import { useThemeConfig } from "$hooks/useThemeConfig"
-import { useLocaleDefine } from "$hooks/useTranslate"
+import { useTranslate } from "$hooks/useTranslate"
 import usePluginComponents from "$plugin/hooks/usePluginComponents"
 import usePluginEffect from "$plugin/hooks/usePluginEffect"
+import { html } from "^/CHANGELOG.md"
 
 const LazySettings = React.lazy(async () => import("~/views/settings"))
 
@@ -22,6 +24,8 @@ export default function Application() {
   const loadContents = useContentLoader()
   const loadSettings = useSettingsLoader()
   const dispatch = useAppDispatch()
+  const { modal } = App.useApp()
+  const t = useTranslate()
   useEffect(() => {
     void (async () => {
       await loadSettings()
@@ -31,21 +35,38 @@ export default function Application() {
   }, [dispatch, loadContents, loadSettings])
 
   usePluginEffect()
-  const themeConfig = useThemeConfig()
-  const locale = useLocaleDefine()
+
+  useEffect(() => {
+    if (localStorage.getItem("firstRun") !== versionName) {
+      modal.info({
+        title: t("更新日志"),
+        content: (
+          <Html className="changelog-container" data-selectable>
+            {html}
+          </Html>
+        ),
+        okText: t("知道了"),
+        width: "90%",
+        centered: true,
+        style: { maxWidth: 600 },
+        onOk() {
+          localStorage.setItem("firstRun", versionName)
+        },
+      })
+    }
+  }, [modal, t])
+
   const components = usePluginComponents("Float")
 
   return launching ? (
     <Loading />
   ) : (
-    <ConfigProvider autoInsertSpaceInButton={false} locale={locale.antd} theme={themeConfig}>
-      <Antd message={{ top: 40 }} notification={{ top: 40 }}>
-        <View />
-        <Suspense>
-          <LazySettings />
-        </Suspense>
-        {components}
-      </Antd>
-    </ConfigProvider>
+    <>
+      <View />
+      <Suspense>
+        <LazySettings />
+      </Suspense>
+      {components}
+    </>
   )
 }
