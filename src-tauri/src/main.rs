@@ -16,7 +16,7 @@ use utils::consts::{
     MENU_ID_TOGGLE_LOCK, MENU_ID_TOGGLE_SETTINGS, MENU_ID_TOGGLE_VISIBLE,
 };
 
-use crate::commands::{fs::save_file,  menu::show_note_menu};
+use crate::commands::{fs::save_file, menu::show_note_menu};
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {}
@@ -142,9 +142,7 @@ fn on_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
                     window.show().unwrap();
                     window.emit(EVENT_SHOW_SETTINGS, Payload {}).unwrap();
                 }
-                _ => {
-                    println!("未监听的菜单事件: {}", id)
-                }
+                _ => {}
             }
         }
         _ => {}
@@ -160,9 +158,7 @@ fn on_window_event(event: GlobalWindowEvent) {
         tauri::WindowEvent::FileDrop(files) => {
             println!("文件拖拽事件: {:?}", files);
         }
-        _others => {
-            println!("未监听的窗口事件: {:?}", _others)
-        }
+        _others => {}
     }
 }
 
