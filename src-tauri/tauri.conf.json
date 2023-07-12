@@ -76,7 +76,7 @@
         },
         "bundle": {
             "active": true,
-            "category": "DeveloperTool",
+            "category": "Utility",
             "copyright": "何方软件©2023",
             "deb": {
                 "depends": []
@@ -90,7 +90,7 @@
                 "icons/icon.ico"
             ],
             "identifier": "app.hefang.note",
-            "longDescription": "使用 Git 仓库做为数据源的开源笔记软件",
+            "longDescription": "高性能跨平台开源笔记软件",
             "macOS": {
                 "entitlements": null,
                 "exceptionDomain": "",
@@ -99,16 +99,23 @@
                 "signingIdentity": null
             },
             "resources": [],
-            "shortDescription": "Git 开源笔记",
-            "targets": "all",
+            "shortDescription": "开源笔记",
+            "targets": [
+                "deb",
+                "dmg",
+                "msi",
+                "updater"
+            ],
             "windows": {
-                "certificateThumbprint": null,
                 "digestAlgorithm": "sha256",
-                "timestampUrl": "",
                 "wix": {
                     "language": "zh-CN"
                 }
-            }
+            },
+            "appimage": {
+                "bundleMediaFramework": false
+            },
+            "publisher": "何方软件"
         },
         "security": {
             "csp": null
@@ -119,7 +126,10 @@
                 "https://note.hefang.app/api/v1/release/latest"
             ],
             "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDE4RUU0QzVDN0Y1QTI2QjMKUldTekpscC9YRXp1R091dDlWRFZBSW8xTkUrc25tbDcyNVJKcDZzUmpLQXdkOUFaVmZzUExuVHUK",
-            "dialog": false
+            "dialog": false,
+            "windows": {
+                "installMode": "basicUi"
+            }
         },
         "windows": [
             {

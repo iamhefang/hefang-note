@@ -1,11 +1,13 @@
-import Html from "$components/utils/Html"
 import { relaunch } from "@tauri-apps/api/process"
-import { installUpdate, checkUpdate } from "@tauri-apps/api/updater"
-import { App, message } from "antd"
-import { useState, useCallback, Dispatch, SetStateAction, useMemo } from "react"
-import { versionCode, isInClient, versionName } from "~/consts"
+import { checkUpdate, installUpdate, onUpdaterEvent } from "@tauri-apps/api/updater"
+import { App } from "antd"
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react"
+
+import { isInClient, versionCode, versionName } from "~/consts"
+
 import { useTranslate } from "./useTranslate"
-import modal from "antd/es/modal"
+
+import Html from "$components/utils/Html"
 
 export const enum UpdateStatus {
   none = "none",
@@ -16,7 +18,7 @@ export const enum UpdateStatus {
 
 export default function useCheckUpdate(): [() => void, UpdateStatus, Dispatch<SetStateAction<UpdateStatus>>] {
   const t = useTranslate()
-  const app = App.useApp()
+  const { modal, message } = App.useApp()
   const checkedVersion = Number((localStorage?.getItem("version") || versionName).replace(/\./g, ""))
   const [status, setStatus] = useState(checkedVersion > versionCode ? UpdateStatus.hasUpgrade : UpdateStatus.none)
   const doInstallUpdate = useCallback(async () => {
@@ -29,9 +31,9 @@ export default function useCheckUpdate(): [() => void, UpdateStatus, Dispatch<Se
     })
     setStatus(UpdateStatus.none)
     await relaunch().catch((error) => {
-      void (app.message ?? message).error(JSON.stringify(error))
+      void message.error(JSON.stringify(error))
     })
-  }, [app.message])
+  }, [message])
   const doCheckUpdate = useCallback(() => {
     if (!isInClient) {
       return
@@ -42,7 +44,7 @@ export default function useCheckUpdate(): [() => void, UpdateStatus, Dispatch<Se
         setStatus(res.shouldUpdate ? UpdateStatus.hasUpgrade : UpdateStatus.none)
         if (res.shouldUpdate) {
           res.manifest?.version && localStorage.setItem("version", res.manifest?.version)
-          ;(app.modal ?? modal).confirm({
+          modal.confirm({
             title: t("有新版本可用"),
             closable: false,
             content: (
@@ -72,7 +74,18 @@ export default function useCheckUpdate(): [() => void, UpdateStatus, Dispatch<Se
       .catch((error) => {
         console.error(error)
       })
-  }, [app.modal, doInstallUpdate, t])
+  }, [modal, t, doInstallUpdate, message])
+
+  useEffect(() => {
+    const unlisten = onUpdaterEvent((event) => {
+      // This will log all updater events, including status updates and errors.
+      console.log("Updater event", event)
+    })
+
+    return () => {
+      void unlisten.then((func) => func())
+    }
+  }, [])
 
   return useMemo(() => [doCheckUpdate, status, setStatus], [doCheckUpdate, status, setStatus])
 }
