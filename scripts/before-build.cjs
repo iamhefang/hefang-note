@@ -4,6 +4,7 @@ const tauriConfig = require("../src-tauri/tauri.conf.json")
 const pkg = require("../package.json")
 const toml = require("toml")
 const json2toml = require("json2toml")
+const { platform } = require("os")
 
 const cargoTomlPath = resolve(__dirname, "../src-tauri/Cargo.toml")
 const tauriFilePath = resolve(__dirname, "../src-tauri/tauri.conf.json")
@@ -11,7 +12,8 @@ const tauriFilePath = resolve(__dirname, "../src-tauri/tauri.conf.json")
 const tomlContent = readFileSync(cargoTomlPath, "utf-8")
 
 tauriConfig.package.version = pkg.version
-tauriConfig.package.productName = pkg.productName
+tauriConfig.package.productName = pkg.name
+
 const { package, ...tomlObj } = toml.parse(tomlContent)
 
 writeFileSync(tauriFilePath, JSON.stringify(tauriConfig, null, 4))
