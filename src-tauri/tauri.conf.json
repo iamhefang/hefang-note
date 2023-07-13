@@ -8,7 +8,7 @@
     },
     "package": {
         "productName": "何方笔记",
-        "version": "0.6.2"
+        "version": "0.6.3"
     },
     "tauri": {
         "systemTray": {
@@ -101,6 +101,7 @@
             "resources": [],
             "shortDescription": "开源笔记",
             "targets": [
+                "app",
                 "deb",
                 "dmg",
                 "msi",
