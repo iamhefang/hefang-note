@@ -6,13 +6,23 @@ const toml = require("toml")
 const json2toml = require("json2toml")
 const { platform } = require("os")
 
+const platformName = platform()
 const cargoTomlPath = resolve(__dirname, "../src-tauri/Cargo.toml")
 const tauriFilePath = resolve(__dirname, "../src-tauri/tauri.conf.json")
 
 const tomlContent = readFileSync(cargoTomlPath, "utf-8")
 
 tauriConfig.package.version = pkg.version
-tauriConfig.package.productName = pkg.name
+
+// if (platformName === "linux") {
+//   tauriConfig.package.productName = pkg.name
+// } else {
+// tauriConfig.package.productName = pkg.productName
+//   .split("")
+//   .map((char) => `\\u${char.charCodeAt(0).toString(16).padStart(2, "0")}`)
+//   .join("")
+//   .replace(/\\\\/g, "\\")
+// }
 
 const { package, ...tomlObj } = toml.parse(tomlContent)
 
