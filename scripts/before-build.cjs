@@ -14,15 +14,11 @@ const tomlContent = readFileSync(cargoTomlPath, "utf-8")
 
 tauriConfig.package.version = pkg.version
 
-// if (platformName === "linux") {
-//   tauriConfig.package.productName = pkg.name
-// } else {
-// tauriConfig.package.productName = pkg.productName
-//   .split("")
-//   .map((char) => `\\u${char.charCodeAt(0).toString(16).padStart(2, "0")}`)
-//   .join("")
-//   .replace(/\\\\/g, "\\")
-// }
+if (platformName === "linux") {
+  tauriConfig.package.productName = pkg.name
+} else {
+  tauriConfig.package.productName = pkg.productName
+}
 
 const { package, ...tomlObj } = toml.parse(tomlContent)
 

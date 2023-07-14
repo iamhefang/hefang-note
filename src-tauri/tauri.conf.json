@@ -7,7 +7,7 @@
         "withGlobalTauri": false
     },
     "package": {
-        "productName": "\u4f55\u65b9\u7b14\u8bb0",
+        "productName": "hefang-note",
         "version": "0.6.5"
     },
     "tauri": {
