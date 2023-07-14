@@ -10,6 +10,11 @@ Die Oberfläche und Menüs der Software unterstützen bereits Mehrsprachigkeit (
 
 ---
 
+## v0.6.5
+
+1. `优化` 修复一些 bug
+
+
 ## v0.6.4
 
 1. `优化` 修复一些 bug
