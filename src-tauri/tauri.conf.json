@@ -7,7 +7,7 @@
         "withGlobalTauri": false
     },
     "package": {
-        "productName": "hefang-note",
+        "productName": "何方笔记",
         "version": "0.6.5"
     },
     "tauri": {
