@@ -77,6 +77,9 @@ export default function useCheckUpdate(): [() => void, UpdateStatus, Dispatch<Se
   }, [modal, t, doInstallUpdate, message])
 
   useEffect(() => {
+    if (!isInClient) {
+      return
+    }
     const unlisten = onUpdaterEvent((event) => {
       // This will log all updater events, including status updates and errors.
       console.log("Updater event", event)

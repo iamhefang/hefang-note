@@ -1,9 +1,9 @@
 import { theme as antdTheme, Layout } from "antd"
 import dayjs from "dayjs"
 import { Resizable, ResizeCallback } from "re-resizable"
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
-import { productName, versionName } from "~/consts"
+import { isLocalhost, productName, versionName } from "~/consts"
 
 import EditorArea from "$components/editor/EditorArea"
 import SiderBar from "$components/sidebar/SiderBar"
@@ -73,7 +73,9 @@ export default function View() {
       return t("已锁定")
     }
 
-    return `${current?.isLeaf ? `${current.title} - ` : ""}${productName} v${versionName}`
+    const debug = isLocalhost ? "(dev)" : ""
+
+    return `${current?.isLeaf ? `${current.title} - ` : ""}${productName}${debug} v${versionName}`
   }, [current?.isLeaf, current?.title, locked, t])
 
   return (

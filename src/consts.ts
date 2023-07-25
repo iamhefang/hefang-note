@@ -10,8 +10,4 @@ export const productDescription = pkg.description
 export const versionCode = parseInt(pkg.version.replace(/\./g, ""), 10)
 export const isInClient = typeof window !== "undefined" && Reflect.has(window, "__TAURI_IPC__")
 export const isInWorker = typeof WorkerGlobalScope !== "undefined" && self instanceof WorkerGlobalScope
-
-export const clientUrls: Partial<Record<`${OsType}-${Arch}`, string>> = {
-    "Darwin-x86_64": "https://iamhefang.cn/tools/notebook/releases/何方笔记_x64.dmg",
-    "Windows_NT-x86_64": "https://iamhefang.cn/tools/notebook/releases/何方笔记_x64_zh-CN.msi",
-}
+export const isLocalhost = window.location.hostname === "localhost"
