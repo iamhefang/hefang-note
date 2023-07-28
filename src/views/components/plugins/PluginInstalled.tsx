@@ -27,12 +27,5 @@ export function PluginInstalled({ search }: PluginProps) {
     })
   }, [search, allPlugins])
 
-  return (
-    <List
-      itemLayout="vertical"
-      dataSource={dataSource}
-      renderItem={renderItem}
-      loading={!dataSource}
-    />
-  )
+  return <List itemLayout="vertical" dataSource={dataSource} renderItem={renderItem} loading={!dataSource} />
 }

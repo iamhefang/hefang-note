@@ -73,7 +73,7 @@ function PluginItem({ item }: { item: IPluginInfo }) {
               okText: "关闭",
             }))
         }
-        if (sureClose) {
+        if (sureClose || checked) {
           dispatch(switchPlugin(plugin.id))
         }
       }

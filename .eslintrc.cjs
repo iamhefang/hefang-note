@@ -46,7 +46,7 @@ module.exports = {
         "max-statements": ["error", 100],
         "no-bitwise": "error",
         "no-caller": "error",
-        "no-console": ["warn", { allow: ["error", "warn", "info", "group", "groupEnd"] }],
+        "no-console": ["warn", { allow: ["error", "warn", "info", "group", "groupEnd", "clear"] }],
         "no-empty": "error",
         "no-eval": "error",
         "no-extra-bind": "error",

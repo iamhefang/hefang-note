@@ -1,37 +1,37 @@
-import {configureStore} from "@reduxjs/toolkit"
+import { configureStore } from "@reduxjs/toolkit"
 import _ from "lodash"
-import {useDispatch} from "react-redux"
+import { useDispatch } from "react-redux"
 
+import { noteSlice } from "./noteSlice"
+import { pluginSlice } from "./pluginSlice"
+import { defaultSettings, settingSlice } from "./settingSlice"
+import { uiSlice } from "./uiSlice"
 
-import {noteSlice} from "./noteSlice"
-import {pluginSlice} from "./pluginSlice"
-import {defaultSettings, settingSlice} from "./settingSlice"
-import {uiSlice} from "./uiSlice"
-
-import {settingsStore} from "$utils/database"
+import { settingsStore } from "$utils/database"
 
 const store = configureStore({
-    reducer: {
-        settings: settingSlice.reducer,
-        notes: noteSlice.reducer,
-        states: uiSlice.reducer,
-        plugins: pluginSlice.reducer,
-    },
-    devTools: import.meta.env.DEV,
+  reducer: {
+    settings: settingSlice.reducer,
+    notes: noteSlice.reducer,
+    states: uiSlice.reducer,
+    plugins: pluginSlice.reducer,
+  },
+  devTools: import.meta.env.DEV,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
 })
 
 let lastSettings = defaultSettings
 
 const saveSettings = _.debounce(() => {
-    const newSettings = store.getState().settings
-    if (!_.isEqual(lastSettings, newSettings)) {
-        void settingsStore.setObject(newSettings)
-        lastSettings = newSettings
-    }
+  const newSettings = store.getState().settings
+  if (!_.isEqual(lastSettings, newSettings)) {
+    void settingsStore.setObject(newSettings)
+    lastSettings = newSettings
+  }
 }, 1000)
 
 store.subscribe(() => {
-    saveSettings()
+  saveSettings()
 })
 
 export const useAppDispatch: () => typeof store.dispatch = useDispatch

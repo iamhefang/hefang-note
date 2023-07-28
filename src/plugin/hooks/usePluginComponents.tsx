@@ -13,10 +13,9 @@ import { IPluginComponents, IPluginDataSlice, PluginComponent } from "~/plugin"
 import usePluginFooterTopComponentProps from "./usePluginFooterTopComponentProps"
 import usePlugins from "./usePlugins"
 
-
 export default function usePluginComponents<K extends keyof Omit<IPluginComponents, "Editor">>(
   type: K,
-): ReactElement<IPluginDataSlice, PluginComponent>[] {
+): (ReactElement<IPluginDataSlice, PluginComponent> | null)[] {
   const plugins = usePlugins()
   const props = usePluginFooterTopComponentProps()
 
@@ -26,9 +25,15 @@ export default function usePluginComponents<K extends keyof Omit<IPluginComponen
     return hasComponents
       .sort((a, b) => (a[type]?.order ?? 0) - (b[type]?.order ?? 0))
       .map((plugin) => {
-        const Component: PluginComponent = plugin[type]!
+        try {
+          const Component: PluginComponent = plugin[type]!
 
-        return <Component {...props} key={`${type}-${plugin.id}`} />
+          return <Component {...props} key={`${type}-${plugin.id}`} />
+        } catch (e) {
+          console.error(`渲染插件组件(${type})时出错`, plugin, e)
+
+          return null
+        }
       })
   }, [plugins, type, props])
 }

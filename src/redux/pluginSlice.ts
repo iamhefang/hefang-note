@@ -36,9 +36,13 @@ export const loadPlugins = createAsyncThunk<PluginState, boolean | void>(
     const entities: PluginState["entities"] = {}
     const ids: PluginState["ids"] = []
     for (const plugin of plugins) {
-      const instance = await requireJavascript(await pluginScriptStore.get(plugin.id))
-      entities[plugin.id] = { ...instance, ...plugin }
-      ids.push(plugin.id)
+      try {
+        const instance = await requireJavascript(await pluginScriptStore.get(plugin.id))
+        entities[plugin.id] = { ...instance, ...plugin }
+        ids.push(plugin.id)
+      } catch (error) {
+        console.error(`加载插件 ${plugin.name}(${plugin.id}) 失败`, error)
+      }
     }
 
     return { entities, ids }

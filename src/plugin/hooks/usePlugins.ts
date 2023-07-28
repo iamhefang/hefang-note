@@ -11,25 +11,25 @@ import { IPlugin } from "~/plugin"
 import { useAppDispatch } from "~/redux"
 import { loadPlugins } from "~/redux/pluginSlice"
 
-import { usePluginState } from "$hooks/useSelectors"
+import { usePluginState, useSettings } from "$hooks/useSelectors"
 
 export default function usePlugins(includeDisabled: boolean = false): IPlugin[] {
-    const { entities } = usePluginState()
-    const dispatch = useAppDispatch()
-    useEffect(() => {
-        void dispatch(loadPlugins())
-    }, [dispatch])
+  const { entities } = usePluginState()
+  const { plugins: enabledPlugins } = useSettings()
+  const dispatch = useAppDispatch()
+  useEffect(() => {
+    void dispatch(loadPlugins())
+  }, [dispatch])
 
-    return useMemo(() => {
-        const plugins = Object.values(entities)
+  return useMemo(() => {
+    const plugins = Object.values(entities)
 
-        return includeDisabled ? plugins : plugins.filter(({ enable }) => enable)
-    }, [entities, includeDisabled])
+    return includeDisabled ? plugins : plugins.filter((p) => enabledPlugins.includes(p.id))
+  }, [enabledPlugins, entities, includeDisabled])
 }
 
 export function usePluginMap(includeDisabled: boolean = false): Record<string, IPlugin> {
-    const plugins = usePlugins(includeDisabled)
+  const plugins = usePlugins(includeDisabled)
 
-    return useMemo(() => Object.fromEntries(plugins.map((plugin) => [plugin.id, plugin])), [plugins])
+  return useMemo(() => Object.fromEntries(plugins.map((plugin) => [plugin.id, plugin])), [plugins])
 }
-
