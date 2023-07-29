@@ -1,5 +1,5 @@
-import { App, Avatar, Button, Space, Upload, UploadProps } from "antd"
-import { useCallback } from "react"
+import { App, Avatar, Button, Form, Input, Space, Upload, UploadProps } from "antd"
+import React, { useCallback, useState } from "react"
 
 import { useAppDispatch } from "~/redux"
 import { loadPlugins } from "~/redux/pluginSlice"
@@ -8,7 +8,11 @@ import Html from "$components/utils/Html"
 import { IPlugin } from "$plugin/index"
 import { pluginScriptStore, pluginStore } from "$utils/database"
 
-export default function LocalPluginLoader() {
+/**
+ * 加载本地编译后的js文件
+ * @returns
+ */
+function LocalFilePluginLoader() {
   const { modal } = App.useApp()
   const dispatch = useAppDispatch()
   const beforeUpload = useCallback<Required<UploadProps>["beforeUpload"]>(
@@ -66,9 +70,7 @@ export default function LocalPluginLoader() {
             }),
             pluginScriptStore.set(id, code),
           ])
-            .then(() => {
-              void dispatch(loadPlugins())
-            })
+            .then(() => void dispatch(loadPlugins()))
             .catch(console.error)
         },
       })
@@ -80,9 +82,82 @@ export default function LocalPluginLoader() {
 
   return (
     <Upload accept="text/javascript" beforeUpload={beforeUpload} showUploadList={false}>
-      <Button type="text" size="small" key="load-dev-plugin">
+      <Button type="text" size="small" key="load-dev-plugin-file">
         加载本地插件
       </Button>
     </Upload>
   )
+}
+
+function LocalServePluginLoader() {
+  const { modal } = App.useApp()
+  const dispatch = useAppDispatch()
+  const [form] = Form.useForm()
+
+  const onClick = useCallback(() => {
+    modal.confirm({
+      title: "加载本地开发中的插件",
+      content: (
+        <Form
+          initialValues={{ url: `${window.location.protocol}//${window.location.host}/src/index.tsx` }}
+          form={form}
+          layout="vertical"
+        >
+          <Form.Item name="url" label="插件脚本链接" required rules={[{ required: true, message: "请输入脚本链接" }]}>
+            <Input type="url" maxLength={256} placeholder="请输入脚本地址" />
+          </Form.Item>
+        </Form>
+      ),
+      okText: "加载",
+      onOk: async () => {
+        const { url } = await form.validateFields().catch(console.error)
+        const pluginContext = (await import(/* @vite-ignore */ url)).default as IPlugin
+        const {
+          id,
+          name,
+          version,
+          logo,
+          description,
+          supports,
+          components,
+          abilities,
+          author,
+          hooks,
+          homepage,
+          repository,
+          license,
+        } = pluginContext
+
+        pluginStore
+          .set({
+            id,
+            name,
+            version,
+            logo,
+            description,
+            supports,
+            components,
+            abilities,
+            author,
+            hooks,
+            homepage,
+            repository,
+            license,
+            scriptUrl: url,
+          })
+          .then((res) => void dispatch(loadPlugins()))
+          .catch(console.error)
+      },
+    })
+  }, [dispatch, form, modal])
+
+  return (
+    <Button type="text" size="small" key="load-dev-plugin-url" onClick={onClick}>
+      加载本地插件
+    </Button>
+  )
+}
+
+export default function LocalPluginLoader() {
+  return <LocalServePluginLoader />
 }

@@ -97,7 +97,9 @@ function PluginItem({ item }: { item: IPluginInfo }) {
         title={
           <Space>
             <span>{item.name}</span>
-            <Tag>v{item.version}</Tag>
+            <Tag>
+              v{item.version} {item.scriptUrl ? "dev" : ""}
+            </Tag>
             {newPlugins[item.id]?.upgradable && (
               <Tag
                 color="orange"
