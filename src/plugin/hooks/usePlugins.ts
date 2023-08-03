@@ -22,9 +22,12 @@ export default function usePlugins(includeDisabled: boolean = false): IPlugin[] 
   }, [dispatch])
 
   return useMemo(() => {
-    const plugins = Object.values(entities)
+    const plugins = Object.values(entities).map((item) => ({
+      ...item,
+      enable: enabledPlugins.includes(item.id),
+    }))
 
-    return includeDisabled ? plugins : plugins.filter((p) => enabledPlugins.includes(p.id))
+    return includeDisabled ? plugins : plugins.filter((p) => p.enable)
   }, [enabledPlugins, entities, includeDisabled])
 }
 
