@@ -1,5 +1,5 @@
 import { App, Avatar, Button, Form, Input, Space, Upload, UploadProps } from "antd"
-import React, { useCallback, useState } from "react"
+import { useCallback } from "react"
 
 import { useAppDispatch } from "~/redux"
 import { loadPlugins } from "~/redux/pluginSlice"

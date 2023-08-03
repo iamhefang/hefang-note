@@ -40,7 +40,12 @@ export const loadPlugins = createAsyncThunk<PluginState, boolean | void>(
         const instance = plugin.scriptUrl
           ? (await import(/* @vite-ignore */ plugin.scriptUrl)).default
           : await requireJavascript(await pluginScriptStore.get(plugin.id))
-        entities[plugin.id] = { ...instance, ...plugin }
+
+        if (plugin.scriptUrl) {
+          entities[plugin.id] = instance
+        } else {
+          entities[plugin.id] = { ...instance, ...plugin }
+        }
         ids.push(plugin.id)
       } catch (error) {
         console.error(`加载插件 ${plugin.name}(${plugin.id}) 失败`, error)
