@@ -1,4 +1,3 @@
-import { fetch } from "@tauri-apps/api/http"
 import { Avatar, List, Space, Switch, Tag } from "antd"
 import { useCallback, useEffect, useState } from "react"
 import * as semver from "semver"
@@ -14,20 +13,21 @@ import { PluginDescription } from "$components/plugins"
 import useAntdConfirm from "$hooks/useAntdConfirm"
 import { useSettings } from "$hooks/useSelectors"
 import usePlugins from "$plugin/hooks/usePlugins"
+import usePluginSettings from "$plugin/hooks/usePluginSettings"
 
 function PluginItem({ item }: { item: IPluginInfo }) {
   const { editor, theme } = useSettings()
   const dispatch = useAppDispatch()
   const showConfirm = useAntdConfirm()
   const plugins = usePlugins(true)
+  const settings = usePluginSettings(item.id)
   const [newPlugins, setNewPlugins] = useState<Record<string, PluginStoreInfo & { upgradable: boolean }>>({})
   const [status, setStatus, downloader] = usePluginDownloader(newPlugins[item.id])
 
   useEffect(() => {
     plugins.length &&
-      fetch<{ code: number; data: PluginStoreInfo[]; msg: string }>(
-        `${serverHost}/api/v1/plugin/ids/${plugins.map((p) => p.id).join(",")}`,
-      )
+      fetch(`${serverHost}/api/v1/plugin/ids/${plugins.map((p) => p.id).join(",")}`)
+        .then(async (res) => res.json())
         .then((res) => {
           if (res.data.code !== 200) {
             return console.error("获取插件信息失败", res)
@@ -55,7 +55,7 @@ function PluginItem({ item }: { item: IPluginInfo }) {
   const createOnPluginEnable = useCallback(
     (plugin: IPlugin) => {
       return async (checked: boolean) => {
-        checked ? plugin.onEnable?.() : plugin.onDisable?.()
+        checked ? plugin.onEnable?.(settings) : plugin.onDisable?.()
         let sureClose = true
         if (!checked) {
           const items = []
@@ -78,7 +78,7 @@ function PluginItem({ item }: { item: IPluginInfo }) {
         }
       }
     },
-    [editor, theme, showConfirm, dispatch],
+    [settings, editor, theme, showConfirm, dispatch],
   )
 
   return (

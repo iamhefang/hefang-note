@@ -108,7 +108,7 @@ export interface IPluginLifecycle {
   /**
    * 插件启用时回调
    */
-  onEnable(): void
+  onEnable(settings: Record<string, unknown>): void
 
   /**
    * 插件禁用时回调
