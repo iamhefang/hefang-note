@@ -1,6 +1,6 @@
 import { FormItemProps } from "antd/es/form/FormItem"
 
-import { ThemeDefine } from "~/types"
+import { Settings, ThemeDefine } from "~/types"
 
 import { IPluginComponents, IPluginDataSlice } from "./components"
 import { ContentSaveEvent, ScreenLockEvent, ThemeChangeEvent } from "./events"
@@ -95,6 +95,10 @@ export interface IPluginHooks {
 }
 
 export interface IPluginLifecycle {
+  /**
+   * 插件加载时回调
+   */
+  onLoad(selfSettings: Record<string, unknown>, baseSettings: Settings): void
   /**
    * 插件安装时回调
    */

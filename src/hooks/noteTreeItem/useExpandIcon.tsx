@@ -18,6 +18,12 @@ export default function useExpandIcon(item: NoteItem) {
       return iconPlacehodler
     }
 
-    return <CaretRightOutlined rotate={expandItems[item.id] && !noteLocked ? 90 : 0} className={ss.expandIcon} />
+    return (
+      <CaretRightOutlined
+        rotate={expandItems[item.id] && !noteLocked ? 90 : 0}
+        className={ss.expandIcon}
+        key={item.id}
+      />
+    )
   }, [expandItems, item.id, item.isLeaf, noteLocked])
 }

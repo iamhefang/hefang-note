@@ -32,7 +32,7 @@ export default function PluginSettingForm({ plugin }: PluginSettingFormProps) {
     return Object.fromEntries(
       Object.entries(plugin.settings.items).map(([key, { label, ...itemProps }]) => [
         label,
-        <Form.Item key={`${plugin.id}-${key}`} noStyle {...itemProps} name={[plugin.id, key]} />,
+        <Form.Item key={`${plugin.id}-${key}`} noStyle {...itemProps} name={[`plugin-${plugin.id}`, key]} />,
       ]),
     )
   }, [plugin.id, plugin.settings?.items])

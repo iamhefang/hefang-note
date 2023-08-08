@@ -5,30 +5,20 @@
  * @Date: 2023-05-03 08:46:29
  * @Description:
  */
-import { useEffect, useMemo } from "react"
+import { useMemo } from "react"
 
 import { IPlugin } from "~/plugin"
-import { useAppDispatch } from "~/redux"
-import { loadPlugins } from "~/redux/pluginSlice"
 
-import { usePluginState, useSettings } from "$hooks/useSelectors"
+import { usePluginState } from "$hooks/useSelectors"
 
 export default function usePlugins(includeDisabled: boolean = false): IPlugin[] {
   const { entities } = usePluginState()
-  const { plugins: enabledPlugins } = useSettings()
-  const dispatch = useAppDispatch()
-  useEffect(() => {
-    void dispatch(loadPlugins())
-  }, [dispatch])
 
   return useMemo(() => {
-    const plugins = Object.values(entities).map((item) => ({
-      ...item,
-      enable: enabledPlugins.includes(item.id),
-    }))
+    const plugins = Object.values(entities)
 
     return includeDisabled ? plugins : plugins.filter((p) => p.enable)
-  }, [enabledPlugins, entities, includeDisabled])
+  }, [entities, includeDisabled])
 }
 
 export function usePluginMap(includeDisabled: boolean = false): Record<string, IPlugin> {

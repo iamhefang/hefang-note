@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction, SliceCaseReducers } from "@reduxjs/toolkit"
 
-import { StoreState } from "~/types"
+import { Settings, StoreState } from "~/types"
 
 import { IPluginInfo } from "$plugin/index"
 import { PluginState } from "$plugin/redux"
@@ -8,16 +8,6 @@ import { pluginScriptStore, pluginStore } from "$utils/database"
 import { createObjectURL } from "$utils/url"
 
 const sliceName = "plugins"
-
-const globalMap: Record<string, string> = {
-  "@ant-design/icons/lib/icons": "icons",
-  antd: "antd",
-  dayjs: "dayjs",
-  lodash: "lodash",
-  react: "React",
-  "react-dom": "ReactDOM",
-  "react-dom/client": "ReactDomClient",
-}
 
 async function requireJavascript(code: string) {
   return (await import(/* @vite-ignore */ createObjectURL(code, { type: "application/javascript; charset=utf-8" })))
@@ -31,10 +21,14 @@ export const loadPlugins = createAsyncThunk<PluginState, boolean | void>(
     if (!refresh && store.plugins.ids.length > 0) {
       return store.plugins
     }
-
+    const enabledPluginIds = store.settings.plugins
     const plugins = await pluginStore.getAll()
     const entities: PluginState["entities"] = {}
     const ids: PluginState["ids"] = []
+    const baseSettings = Object.fromEntries(
+      Object.entries(store.settings).filter(([key]) => !key.startsWith("plugin-")),
+    ) as Settings
+
     for (const plugin of plugins) {
       try {
         const instance = plugin.scriptUrl
@@ -42,18 +36,23 @@ export const loadPlugins = createAsyncThunk<PluginState, boolean | void>(
           : await requireJavascript(await pluginScriptStore.get(plugin.id))
 
         if (plugin.scriptUrl) {
-          entities[plugin.id] = instance
+          entities[plugin.id] = { ...instance, enable: enabledPluginIds.includes(plugin.id) }
         } else {
-          entities[plugin.id] = { ...instance, ...plugin }
+          entities[plugin.id] = { ...instance, ...plugin, enable: enabledPluginIds.includes(plugin.id) }
         }
+
+        entities[plugin.id].onLoad?.(
+          (store.settings?.[`plugin-${plugin.id}`] ?? {}) as Record<string, unknown>,
+          baseSettings,
+        )
+
         ids.push(plugin.id)
       } catch (error) {
         console.error(`加载插件 ${plugin.name}(${plugin.id}) 失败`, error)
       }
     }
-    console.log(entities, ids)
 
-    return { entities, ids }
+    return { entities, ids, loading: false }
   },
 )
 
@@ -62,6 +61,7 @@ export const pluginSlice = createSlice<PluginState, SliceCaseReducers<PluginStat
   initialState: {
     entities: {},
     ids: [],
+    loading: false,
   },
   reducers: {
     installPlugin(state, { payload: { plugin, script } }: PayloadAction<{ plugin: IPluginInfo; script: string }>) {
@@ -72,10 +72,19 @@ export const pluginSlice = createSlice<PluginState, SliceCaseReducers<PluginStat
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(loadPlugins.pending, (state) => {
+      state.loading = true
+    })
+
     builder.addCase(loadPlugins.fulfilled, (state, { payload }) => {
       // @ts-ignore
       state.entities = payload.entities
       state.ids = payload.ids
+      state.loading = false
+    })
+
+    builder.addCase(loadPlugins.rejected, (state) => {
+      state.loading = false
     })
   },
 })

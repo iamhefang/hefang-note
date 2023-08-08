@@ -1,6 +1,7 @@
 import { App } from "antd"
 import React, { Suspense, useEffect } from "react"
 
+import { loadPlugins } from "~/redux/pluginSlice"
 import { uiSlice } from "~/redux/uiSlice"
 import View from "~/views"
 
@@ -31,6 +32,7 @@ export default function Application() {
       await loadSettings()
       dispatch(uiSlice.actions.ready({}))
       void loadContents()
+      void dispatch(loadPlugins())
     })()
   }, [dispatch, loadContents, loadSettings])
 
