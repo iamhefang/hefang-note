@@ -1,5 +1,5 @@
 import { AppstoreAddOutlined, AppstoreOutlined } from "@ant-design/icons"
-import { Button, Input, Space, Tabs, Upload } from "antd"
+import { Input, Space, Tabs } from "antd"
 import { ChangeEvent, useCallback, useMemo, useState } from "react"
 
 import { isLocalhost } from "~/consts"

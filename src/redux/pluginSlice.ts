@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction, SliceCaseReducers } from "@reduxjs/toolkit"
+import { IPluginInfo, Settings } from "hefang-note-types"
 
-import { Settings, StoreState } from "~/types"
+import { StoreState } from "~/types"
 
-import { IPluginInfo } from "$plugin/index"
 import { PluginState } from "$plugin/redux"
 import { pluginScriptStore, pluginStore } from "$utils/database"
 import { createObjectURL } from "$utils/url"

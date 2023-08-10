@@ -1,7 +1,6 @@
 import { App } from "antd"
 import { useCallback } from "react"
 
-import { ContentIOType } from "~/plugin"
 import { useAppDispatch } from "~/redux"
 import { startRenaming } from "~/redux/noteSlice"
 
@@ -12,6 +11,7 @@ import useDeleteModal from "$hooks/modals/useDeleteModal"
 import useLockContentModal from "$hooks/modals/useLockContentModal"
 import { doExport } from "$hooks/noteTreeItem/uitils"
 import { useStates } from "$hooks/useSelectors"
+import { ContentIOType } from "hefang-note-types"
 
 export default function useOnNoteTreeMenuClick() {
   const dispatch = useAppDispatch()

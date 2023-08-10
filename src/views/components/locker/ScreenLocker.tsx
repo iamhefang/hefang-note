@@ -1,132 +1,138 @@
-import {LockOutlined, UnlockOutlined} from "@ant-design/icons"
-import {appWindow} from "@tauri-apps/api/window"
-import {App, Button, Form, Input, Modal, theme} from "antd"
-import {useCallback, useEffect} from "react"
+import { LockOutlined, UnlockOutlined } from "@ant-design/icons"
+import { appWindow } from "@tauri-apps/api/window"
+import { App, Button, Form, Input, Modal, theme } from "antd"
+import { LockSetting, PluginComponent, PluginHookOccasion, ScreenLockEvent } from "hefang-note-types"
+import { useCallback, useEffect } from "react"
 
-import {isInClient} from "~/consts"
-import {PluginComponent, PluginHookOccasion, ScreenLockEvent} from "~/plugin"
-import {useAppDispatch} from "~/redux"
-import {lockScreen} from "~/redux/settingSlice"
-import {LockSetting} from "~/types"
+import { isInClient } from "~/consts"
+import { useAppDispatch } from "~/redux"
+import { lockScreen } from "~/redux/settingSlice"
 
 import ss from "./ScreenLocker.module.scss"
 
-import {useSettings} from "$hooks/useSelectors"
-import {useTranslate} from "$hooks/useTranslate"
-import {callPluginsHook} from "$plugin/utils"
-import {shortcuts} from "$utils/shortcuts"
+import { useSettings } from "$hooks/useSelectors"
+import { useTranslate } from "$hooks/useTranslate"
+import { callPluginsHook } from "$plugin/utils"
+import { shortcuts } from "$utils/shortcuts"
 
 const ScreenLocker: PluginComponent = () => {
-    const {
-        lock,
-        shortcut,
-    } = useSettings()
-    const t = useTranslate()
-    const dispatch = useAppDispatch()
-    const {modal, message} = App.useApp()
-    const {
-        token: {colorBgContainer},
-    } = theme.useToken()
+  const { lock, shortcut } = useSettings()
+  const t = useTranslate()
+  const dispatch = useAppDispatch()
+  const { modal, message } = App.useApp()
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken()
 
-    const [lockForm] = Form.useForm()
-    const [unlockForm] = Form.useForm()
+  const [lockForm] = Form.useForm()
+  const [unlockForm] = Form.useForm()
 
-    const dispatchScreenLock = useCallback((payload: Partial<LockSetting>) => {
-        const event = callPluginsHook("onScreenLock", new ScreenLockEvent({
-            detail: {...lock, ...payload},
-            occasion: PluginHookOccasion.before,
-        }))
-        if (event.isDefaultPrevented()) {
-            return false
-        }
-        dispatch(lockScreen(event.detail))
+  const dispatchScreenLock = useCallback(
+    (payload: Partial<LockSetting>) => {
+      const event = callPluginsHook(
+        "onScreenLock",
+        new ScreenLockEvent({
+          detail: { ...lock, ...payload },
+          occasion: PluginHookOccasion.before,
+        }),
+      )
+      if (event.isDefaultPrevented()) {
+        return false
+      }
+      dispatch(lockScreen(event.detail))
 
-        return true
-    }, [dispatch, lock])
+      return true
+    },
+    [dispatch, lock],
+  )
 
-    const onLockClick = useCallback(() => {
-        if (lock.immediately && lock.password) {
-            dispatchScreenLock({locked: true})
+  const onLockClick = useCallback(() => {
+    if (lock.immediately && lock.password) {
+      dispatchScreenLock({ locked: true })
 
-            return
-        }
-        lockForm.setFieldsValue({password: lock.password})
-        modal.confirm({
-            title: t("锁定软件"),
-            icon: <UnlockOutlined/>,
-            style: {top: 40},
-            content: (
-                <Form form={lockForm} layout="vertical" initialValues={{password: lock.password}}>
-                    <Form.Item name="password" label={t("请输入解锁密码")} rules={[{required: true, message: t("请输入解锁密码")}]}>
-                        <Input.Password placeholder={t("请输入解锁密码")} maxLength={6}/>
-                    </Form.Item>
-                </Form>
-            ),
-            okText: t("锁定"),
-            onOk(closeModal: () => void) {
-                void lockForm.validateFields().then((values) => {
-                    dispatchScreenLock({locked: true, password: values.password}) && closeModal()
-                })
-            },
+      return
+    }
+    lockForm.setFieldsValue({ password: lock.password })
+    modal.confirm({
+      title: t("锁定软件"),
+      icon: <UnlockOutlined />,
+      style: { top: 40 },
+      content: (
+        <Form form={lockForm} layout="vertical" initialValues={{ password: lock.password }}>
+          <Form.Item
+            name="password"
+            label={t("请输入解锁密码")}
+            rules={[{ required: true, message: t("请输入解锁密码") }]}
+          >
+            <Input.Password placeholder={t("请输入解锁密码")} maxLength={6} />
+          </Form.Item>
+        </Form>
+      ),
+      okText: t("锁定"),
+      onOk(closeModal: () => void) {
+        void lockForm.validateFields().then((values) => {
+          dispatchScreenLock({ locked: true, password: values.password }) && closeModal()
         })
-    }, [lock.immediately, lock.password, lockForm, modal, t, dispatchScreenLock])
+      },
+    })
+  }, [lock.immediately, lock.password, lockForm, modal, t, dispatchScreenLock])
 
-    const onUnlockClick = useCallback(
-        ({password: pwd}: { password: string }) => {
-            if (!pwd) {
-                void message.error("请输入密码")
-            } else if (pwd !== lock.password) {
-                void message.error("密码错误")
-            } else {
-                dispatchScreenLock({locked: false}) && unlockForm.resetFields()
-            }
-        },
-        [lock.password, message, dispatchScreenLock, unlockForm],
-    )
+  const onUnlockClick = useCallback(
+    ({ password: pwd }: { password: string }) => {
+      if (!pwd) {
+        void message.error("请输入密码")
+      } else if (pwd !== lock.password) {
+        void message.error("密码错误")
+      } else {
+        dispatchScreenLock({ locked: false }) && unlockForm.resetFields()
+      }
+    },
+    [lock.password, message, dispatchScreenLock, unlockForm],
+  )
 
-    useEffect(() => {
-        if (lock.locked || !isInClient) {
-            return
-        }
-        const unlistener = appWindow.listen("toggleLock", onLockClick)
+  useEffect(() => {
+    if (lock.locked || !isInClient) {
+      return
+    }
+    const unlistener = appWindow.listen("toggleLock", onLockClick)
 
-        return () => void unlistener.then((unlisten) => unlisten())
-    }, [lock.locked, onLockClick])
+    return () => void unlistener.then((unlisten) => unlisten())
+  }, [lock.locked, onLockClick])
 
-    useEffect(() => {
-        if (shortcut?.lock) {
-            shortcuts.register({shortcut: shortcut.lock, handler: onLockClick})
-        }
+  useEffect(() => {
+    if (shortcut?.lock) {
+      shortcuts.register({ shortcut: shortcut.lock, handler: onLockClick })
+    }
 
-        return () => {
-            shortcuts.remove({shortcut: shortcut.lock, handler: onLockClick})
-        }
-    }, [onLockClick, shortcut.lock])
+    return () => {
+      shortcuts.remove({ shortcut: shortcut.lock, handler: onLockClick })
+    }
+  }, [onLockClick, shortcut.lock])
 
-    return (
-        <>
-            {lock.locked || <Button type="text" size="small" onClick={onLockClick} icon={<LockOutlined/>}/>}
-            <Modal
-                open={lock.locked}
-                closable={false}
-                destroyOnClose
-                centered
-                footer={null}
-                rootClassName={ss.locker}
-                maskStyle={{background: colorBgContainer}}
-                width={350}
-            >
-                <Form layout="inline" onFinish={onUnlockClick} form={unlockForm} initialValues={{password: ""}}>
-                    <Form.Item name="password" style={{width: 228}}>
-                        <Input.Password placeholder={t("请输入解锁密码")} size="large" maxLength={6}/>
-                    </Form.Item>
-                    <Form.Item>
-                        <Button htmlType="submit" icon={<UnlockOutlined/>} size="large"/>
-                    </Form.Item>
-                </Form>
-            </Modal>
-        </>
-    )
+  return (
+    <>
+      {lock.locked || <Button type="text" size="small" onClick={onLockClick} icon={<LockOutlined />} />}
+      <Modal
+        open={lock.locked}
+        closable={false}
+        destroyOnClose
+        centered
+        footer={null}
+        rootClassName={ss.locker}
+        maskStyle={{ background: colorBgContainer }}
+        width={350}
+      >
+        <Form layout="inline" onFinish={onUnlockClick} form={unlockForm} initialValues={{ password: "" }}>
+          <Form.Item name="password" style={{ width: 228 }}>
+            <Input.Password placeholder={t("请输入解锁密码")} size="large" maxLength={6} />
+          </Form.Item>
+          <Form.Item>
+            <Button htmlType="submit" icon={<UnlockOutlined />} size="large" />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
+  )
 }
 
 ScreenLocker.order = 5

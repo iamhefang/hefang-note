@@ -1,9 +1,9 @@
 import { Avatar, List, Space, Switch, Tag } from "antd"
+import { IPlugin, IPluginInfo } from "hefang-note-types"
 import { useCallback, useEffect, useState } from "react"
 import * as semver from "semver"
 
 import { serverHost } from "~/consts"
-import { IPlugin, IPluginInfo } from "~/plugin"
 import { useAppDispatch } from "~/redux"
 import { switchPlugin } from "~/redux/settingSlice"
 

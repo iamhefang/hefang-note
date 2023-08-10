@@ -1,10 +1,9 @@
 import { Form } from "antd"
+import { IPlugin, Settings } from "hefang-note-types"
 import { useCallback, useMemo } from "react"
 
-import { IPlugin } from "~/plugin"
 import { useAppDispatch } from "~/redux"
 import { setSettings } from "~/redux/settingSlice"
-import { Settings } from "~/types"
 
 import SettingRenderer from "$components/settings/SettingRenderer"
 import { useSettings } from "$hooks/useSelectors"

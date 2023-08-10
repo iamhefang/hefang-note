@@ -6,16 +6,15 @@
  * @Description:
  */
 
+import { IPluginComponents, PluginComponent } from "hefang-note-types"
 import { ReactElement, useMemo } from "react"
-
-import { IPluginComponents, IPluginDataSlice, PluginComponent } from "~/plugin"
 
 import usePluginFooterTopComponentProps from "./usePluginFooterTopComponentProps"
 import usePlugins from "./usePlugins"
 
 export default function usePluginComponents<K extends keyof Omit<IPluginComponents, "Editor">>(
   type: K,
-): (ReactElement<IPluginDataSlice, PluginComponent> | null)[] {
+): (ReactElement<unknown, PluginComponent> | null)[] {
   const plugins = usePlugins()
   const props = usePluginFooterTopComponentProps()
 

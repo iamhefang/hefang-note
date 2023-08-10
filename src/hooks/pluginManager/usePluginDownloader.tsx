@@ -1,11 +1,11 @@
 import { CloudUploadOutlined, DownloadOutlined } from "@ant-design/icons"
 import { App } from "antd"
+import { IPluginInfo } from "hefang-note-types"
 import { ReactNode, useCallback, useMemo, useState } from "react"
 
 import { useAppDispatch } from "~/redux"
 import { installPlugin } from "~/redux/pluginSlice"
 
-import { IPluginInfo } from "$plugin/index"
 import { digestHash } from "$utils/hash"
 
 export type PluginStoreInfo = IPluginInfo & {

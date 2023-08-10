@@ -6,9 +6,9 @@
  * @Description:
  */
 import { Button, Dropdown, Tooltip } from "antd"
+import { PluginComponent, PluginHookOccasion, ThemeChangeEvent } from "hefang-note-types"
 import { useMemo } from "react"
 
-import { PluginComponent, PluginHookOccasion, ThemeChangeEvent } from "~/plugin"
 import { useAppDispatch } from "~/redux"
 import { changeTheme } from "~/redux/settingSlice"
 

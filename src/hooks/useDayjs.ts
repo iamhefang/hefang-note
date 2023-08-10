@@ -1,14 +1,14 @@
 import dayjs from "dayjs"
-import {useMemo} from "react"
+import { useMemo } from "react"
 
-import {useLocaleDefine} from "$hooks/useTranslate"
+import { useLocaleDefine } from "$hooks/useTranslate"
 
 export default function useDayjs(): typeof dayjs {
-    const locale = useLocaleDefine()
+  const locale = useLocaleDefine()
 
-    return useMemo(() => {
-        dayjs.locale(locale.dayjs)
+  return useMemo(() => {
+    dayjs.locale(locale.dayjs)
 
-        return dayjs
-    }, [locale.dayjs])
+    return dayjs
+  }, [locale.dayjs])
 }

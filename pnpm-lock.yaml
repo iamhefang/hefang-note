@@ -107,6 +107,9 @@ dependencies:
   dayjs:
     specifier: ^1.11.7
     version: 1.11.7
+  hefang-note-types:
+    specifier: link:/Users/hefang/DevDir/hefang-note-pro/packages/hefang-note-types
+    version: link:../hefang-note-pro/packages/hefang-note-types
   idb:
     specifier: ^7.1.1
     version: 7.1.1

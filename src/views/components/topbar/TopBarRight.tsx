@@ -31,7 +31,9 @@ export default function TopBarRight() {
       <Suspense>
         <LazyThemeSelector {...props} />
       </Suspense>
-      <ShowInPlatform platforms={["Linux", "Darwin", "Windows_NT"]}>{() => <LazyAlwaysOnTop {...props} />}</ShowInPlatform>
+      <ShowInPlatform platforms={["Linux", "Darwin", "Windows_NT"]}>
+        {() => <LazyAlwaysOnTop {...props} />}
+      </ShowInPlatform>
       <Suspense>
         <LazyScreenLocker {...props} />
       </Suspense>

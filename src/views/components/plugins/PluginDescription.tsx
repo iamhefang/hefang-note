@@ -6,9 +6,8 @@
  * @Description:
  */
 import { Col, Row, Space, Tag } from "antd"
+import { IPluginInfo, PluginAbility, PluginComponents } from "hefang-note-types"
 import { useMemo } from "react"
-
-import { IPluginInfo, PluginAbility, PluginComponents } from "~/plugin"
 
 import ss from "./PluginDescription.module.scss"
 
@@ -44,7 +43,6 @@ function pluginComponents(value: PluginComponents) {
     </Tag>
   )
 }
-
 
 export function PluginDescription({ plugin }: { plugin: IPluginInfo }) {
   return useMemo(

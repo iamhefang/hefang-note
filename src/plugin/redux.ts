@@ -1,4 +1,4 @@
-import { IPlugin } from "./defines"
+import { IPlugin } from "hefang-note-types"
 
 export type PluginState = {
   entities: { [id: string]: IPlugin }

@@ -1,10 +1,10 @@
 import { theme as antTheme, Empty } from "antd"
+import { EditorComponent } from "hefang-note-types"
 import { debounce } from "lodash"
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react"
 
 import { CONTENT_SAVE_DELAY } from "~/config"
 import useNoteLocked from "~/hooks/useNoteLocked"
-import { EditorComponent } from "~/plugin"
 import { useAppDispatch } from "~/redux"
 import { updateContent } from "~/redux/noteSlice"
 

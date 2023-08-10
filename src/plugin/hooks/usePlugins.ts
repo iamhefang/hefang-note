@@ -5,9 +5,8 @@
  * @Date: 2023-05-03 08:46:29
  * @Description:
  */
+import { IPlugin } from "hefang-note-types"
 import { useMemo } from "react"
-
-import { IPlugin } from "~/plugin"
 
 import { usePluginState } from "$hooks/useSelectors"
 

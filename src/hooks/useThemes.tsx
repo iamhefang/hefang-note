@@ -1,8 +1,7 @@
 import { ClockCircleOutlined, EyeOutlined } from "@ant-design/icons"
 import { theme } from "antd"
+import { Themes } from "hefang-note-types"
 import { useMemo } from "react"
-
-import type { Themes } from "~/types"
 
 import useIsDarkScheme from "./useIsDarkScheme"
 

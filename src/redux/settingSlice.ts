@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction, SliceCaseReducers } from "@reduxjs/toolkit"
+import { Settings } from "hefang-note-types"
 import _ from "lodash"
-
-import { Settings } from "~/types"
 
 import { settingsStore } from "$utils/database"
 

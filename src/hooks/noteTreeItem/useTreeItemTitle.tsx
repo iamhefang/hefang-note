@@ -1,8 +1,8 @@
 import { Input } from "antd"
+import { NoteItem } from "hefang-note-types"
 import { useCallback, useMemo } from "react"
 
 import { NAME_MAX_LENGTH } from "~/config"
-import { NoteItem } from "~/types"
 
 import useOnRenameKeyDown from "./useOnRenameKeyDown"
 import useOnRenamingBlur from "./useOnRenamingBlur"

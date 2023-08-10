@@ -1,9 +1,8 @@
 import { PushpinFilled, PushpinOutlined } from "@ant-design/icons"
 import { appWindow } from "@tauri-apps/api/window"
 import { Button } from "antd"
+import { PluginComponent } from "hefang-note-types"
 import { useCallback, useEffect, useMemo, useState } from "react"
-
-import { PluginComponent } from "~/plugin"
 
 import { useTranslate } from "$hooks/useTranslate"
 
@@ -19,7 +18,15 @@ const AlwaysOnTop: PluginComponent = () => {
   }, [enable])
   const title = useMemo(() => t(enable ? "取消置顶" : "置顶"), [enable, t])
 
-  return <Button type="text" icon={enable ? <PushpinFilled /> : <PushpinOutlined />} size="small" onClick={onClick} title={title} />
+  return (
+    <Button
+      type="text"
+      icon={enable ? <PushpinFilled /> : <PushpinOutlined />}
+      size="small"
+      onClick={onClick}
+      title={title}
+    />
+  )
 }
 
 AlwaysOnTop.order = 8

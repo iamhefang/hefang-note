@@ -1,9 +1,9 @@
 import { App } from "antd"
+import { NoteItem } from "hefang-note-types"
 import React, { useCallback } from "react"
 
 import { useAppDispatch } from "~/redux"
 import { startRenaming, stopRenaming } from "~/redux/noteSlice"
-import { NoteItem } from "~/types"
 
 import { useTranslate } from "$hooks/useTranslate"
 

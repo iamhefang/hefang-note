@@ -1,7 +1,6 @@
 import { CaretRightOutlined } from "@ant-design/icons"
+import { NoteItem } from "hefang-note-types"
 import { useMemo } from "react"
-
-import { NoteItem } from "~/types"
 
 import ss from "./noteTreeItem.module.scss"
 

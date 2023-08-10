@@ -1,12 +1,12 @@
 import { LockOutlined } from "@ant-design/icons"
 import { Input, Result, theme } from "antd"
+import { NoteItem } from "hefang-note-types"
 import React, { useCallback } from "react"
 
 import { useSettings } from "~/hooks/useSelectors"
 import { useAppDispatch } from "~/redux"
 import { setItemsExpanded } from "~/redux/settingSlice"
 import { unlockContent } from "~/redux/uiSlice"
-import { NoteItem } from "~/types"
 
 import { useTranslate } from "$hooks/useTranslate"
 

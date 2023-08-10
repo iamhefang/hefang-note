@@ -1,4 +1,4 @@
-import { Avatar, Col, Divider, Row, Space } from "antd"
+import { Avatar, Col, Divider, Row } from "antd"
 
 import { isInClient, productDescription, productName, versionName } from "~/consts"
 

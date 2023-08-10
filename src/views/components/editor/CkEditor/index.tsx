@@ -5,6 +5,7 @@ import "@ckeditor/ckeditor5-build-classic/build/translations/zh-cn"
 import { ClassicEditor } from "@ckeditor/ckeditor5-editor-classic"
 import { CKEditor } from "@ckeditor/ckeditor5-react"
 import { Switch } from "antd"
+import { EditorComponent } from "hefang-note-types"
 import { useCallback, useEffect, useMemo } from "react"
 
 import { ckEditorPlugins } from "./configs/ckEditorPlugins"
@@ -14,7 +15,6 @@ import useCkEditorTheme from "./useCkEditorTheme"
 
 import { useEditorOptions } from "$hooks/useSelectors"
 import { useLocaleDefine } from "$hooks/useTranslate"
-import { EditorComponent } from "$plugin/index"
 
 const CkEditor: EditorComponent = ({ value, onChange, onFocus, onBlur, placeholder, loading, noteId }) => {
   const onValueChange = useCallback(

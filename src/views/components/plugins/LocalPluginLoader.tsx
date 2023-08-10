@@ -1,11 +1,11 @@
 import { App, Avatar, Button, Form, Input, Space, Upload, UploadProps } from "antd"
+import { IPlugin } from "hefang-note-types"
 import { useCallback } from "react"
 
 import { useAppDispatch } from "~/redux"
 import { loadPlugins } from "~/redux/pluginSlice"
 
 import Html from "$components/utils/Html"
-import { IPlugin } from "$plugin/index"
 import { pluginScriptStore, pluginStore } from "$utils/database"
 
 /**

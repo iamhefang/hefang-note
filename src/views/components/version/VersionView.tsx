@@ -1,4 +1,4 @@
-import { App, Space, Spin } from "antd"
+import { Space, Spin } from "antd"
 import { useEffect, useMemo } from "react"
 
 import useCheckUpdate, { UpdateStatus } from "$hooks/useCheckUpdate"

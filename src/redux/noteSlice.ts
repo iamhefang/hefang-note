@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction, Slice, SliceCaseReducers } from "@reduxjs/toolkit"
+import { ContentSaveEvent, NoteItem, PluginHookOccasion } from "hefang-note-types"
 import _ from "lodash"
 
 import { CONTENT_SAVE_DELAY } from "~/config"
-import { ContentSaveEvent, PluginHookOccasion } from "~/plugin"
-import { DeleteNotePayload, NoteItem, NoteState } from "~/types"
+import { DeleteNotePayload, NoteState } from "~/types"
 
 import { callPluginsHook } from "$plugin/utils"
 import { contentStore, database, notesStore } from "$utils/database"

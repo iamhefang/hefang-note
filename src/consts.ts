@@ -1,5 +1,3 @@
-import { Arch, OsType } from "@tauri-apps/api/os"
-
 import pkg from "^/package.json"
 
 export const serverHost = import.meta.env.DEV ? "http://localhost:3333" : "https://note.hefang.app"
