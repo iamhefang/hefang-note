@@ -1,23 +1,18 @@
-/*
- * @Author: iamhefang he@hefang.link
- * @LastEditors: iamhefang he@hefang.link
- * @LastEditTime: 2023-05-03 10:28:00
- * @Date: 2023-05-03 08:46:29
- * @Description:
- */
 import { IPlugin } from "hefang-note-types"
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 
-import { usePluginState } from "$hooks/useSelectors"
+import { usePluginState, useSettings } from "$hooks/useSelectors"
 
 export default function usePlugins(includeDisabled: boolean = false): IPlugin[] {
+  const { plugins: pIds } = useSettings()
   const { entities } = usePluginState()
+  const [plugins, setPlugins] = useState(Object.values(entities))
 
-  return useMemo(() => {
-    const plugins = Object.values(entities)
+  useEffect(() => {
+    setPlugins(Object.values(entities).map((item) => ({ ...item, enable: pIds.includes(item.id) })))
+  }, [entities, pIds])
 
-    return includeDisabled ? plugins : plugins.filter((p) => p.enable)
-  }, [entities, includeDisabled])
+  return useMemo(() => (includeDisabled ? plugins : plugins.filter((p) => p.enable)), [includeDisabled, plugins])
 }
 
 export function usePluginMap(includeDisabled: boolean = false): Record<string, IPlugin> {

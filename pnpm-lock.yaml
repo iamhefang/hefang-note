@@ -76,7 +76,7 @@ dependencies:
     version: 38.1.0
   '@ckeditor/ckeditor5-react':
     specifier: ^6.1.0
-    version: 6.1.0(@ckeditor/ckeditor5-core@38.1.0)(@ckeditor/ckeditor5-engine@39.0.0)(@ckeditor/ckeditor5-utils@39.0.0)(@ckeditor/ckeditor5-watchdog@39.0.0)(react@18.2.0)
+    version: 6.1.0(@ckeditor/ckeditor5-core@38.1.0)(@ckeditor/ckeditor5-engine@39.0.1)(@ckeditor/ckeditor5-utils@39.0.1)(@ckeditor/ckeditor5-watchdog@39.0.1)(react@18.2.0)
   '@ckeditor/ckeditor5-source-editing':
     specifier: ^38.1.0
     version: 38.1.0
@@ -108,8 +108,8 @@ dependencies:
     specifier: ^1.11.7
     version: 1.11.7
   hefang-note-types:
-    specifier: link:/Users/hefang/DevDir/hefang-note-pro/packages/hefang-note-types
-    version: link:../hefang-note-pro/packages/hefang-note-types
+    specifier: ^1.0.1
+    version: registry.npmjs.org/hefang-note-types@1.0.1(@types/react@18.0.28)(antd@5.8.2)
   idb:
     specifier: ^7.1.1
     version: 7.1.1
@@ -862,11 +862,11 @@ packages:
       lodash-es: 4.17.21
     dev: false
 
-  /@ckeditor/ckeditor5-engine@39.0.0:
-    resolution: {integrity: sha512-eXWkMU7TJH6CziO+maIO/lRdCFgsiy2ZB2nw07JeTCQAYZuMpc0JOn4HOYwiouxf2Sbl9k+GfMiin8fr60WHRw==}
+  /@ckeditor/ckeditor5-engine@39.0.1:
+    resolution: {integrity: sha512-QWyx1vO7+UO3rVIx9o1M7q05ghu1T+E4ugnzlcjLx+TiRLBH280M5RmxZ5gE8HjTSIabGDK1M0kmskL+wl2nDw==}
     engines: {node: '>=16.0.0', npm: '>=5.7.1'}
     dependencies:
-      '@ckeditor/ckeditor5-utils': 39.0.0
+      '@ckeditor/ckeditor5-utils': 39.0.1
       lodash-es: 4.17.21
     dev: false
 
@@ -972,7 +972,7 @@ packages:
       ckeditor5: 38.1.0
     dev: false
 
-  /@ckeditor/ckeditor5-react@6.1.0(@ckeditor/ckeditor5-core@38.1.0)(@ckeditor/ckeditor5-engine@39.0.0)(@ckeditor/ckeditor5-utils@39.0.0)(@ckeditor/ckeditor5-watchdog@39.0.0)(react@18.2.0):
+  /@ckeditor/ckeditor5-react@6.1.0(@ckeditor/ckeditor5-core@38.1.0)(@ckeditor/ckeditor5-engine@39.0.1)(@ckeditor/ckeditor5-utils@39.0.1)(@ckeditor/ckeditor5-watchdog@39.0.1)(react@18.2.0):
     resolution: {integrity: sha512-uwJ89pOJnjlMgfluGJhxatt6zV5ZavuV7AaRvJpxzAU7SjoC3sNumohDRmI0KGDGoyCVPMJO9fgE3ijIb3gHlQ==}
     engines: {node: '>=16.0.0', npm: '>=5.7.1'}
     peerDependencies:
@@ -983,9 +983,9 @@ packages:
       react: ^16.13.1 || ^17.0.0 || ^18.0.0
     dependencies:
       '@ckeditor/ckeditor5-core': 38.1.0
-      '@ckeditor/ckeditor5-engine': 39.0.0
-      '@ckeditor/ckeditor5-utils': 39.0.0
-      '@ckeditor/ckeditor5-watchdog': 39.0.0
+      '@ckeditor/ckeditor5-engine': 39.0.1
+      '@ckeditor/ckeditor5-utils': 39.0.1
+      '@ckeditor/ckeditor5-watchdog': 39.0.1
       prop-types: 15.8.1
       react: 18.2.0
     dev: false
@@ -1076,8 +1076,8 @@ packages:
       lodash-es: 4.17.21
     dev: false
 
-  /@ckeditor/ckeditor5-utils@39.0.0:
-    resolution: {integrity: sha512-UweuJZh3N0LpTpWbF0mYNqTYr8kMOHJQs2aWFV6QkXkNtkRQccqv9IPpogdXkvjJ1sWfNjRTT0iWlE2zWyhqkg==}
+  /@ckeditor/ckeditor5-utils@39.0.1:
+    resolution: {integrity: sha512-lQ+1h4FgUScEdk547uCzfdvajFigVt4u0mRw1m9TtJ3B2GiatwRvst8TZEuWl8aFrIHjQ/gho66QIElJi/6+CA==}
     engines: {node: '>=16.0.0', npm: '>=5.7.1'}
     dependencies:
       lodash-es: 4.17.21
@@ -1090,8 +1090,8 @@ packages:
       lodash-es: 4.17.21
     dev: false
 
-  /@ckeditor/ckeditor5-watchdog@39.0.0:
-    resolution: {integrity: sha512-u+2YTzHWxXoD6IWV/3pkMlq655OOvuevMnIwpFa4CGf53YnHsbwxNrlH2PgQ0kdF6CoD0xePbQgjyMvEHDcRHg==}
+  /@ckeditor/ckeditor5-watchdog@39.0.1:
+    resolution: {integrity: sha512-f5Uo0RdcbeKGs0gmBm8Y8c+Z9YgcjqX7ai4vdcw8HIEc0vCeEanPt816V53nLZ3LbPgez8LeWluR7VlzoxKO+g==}
     engines: {node: '>=16.0.0', npm: '>=5.7.1'}
     dependencies:
       lodash-es: 4.17.21
@@ -6947,3 +6947,16 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  registry.npmjs.org/hefang-note-types@1.0.1(@types/react@18.0.28)(antd@5.8.2):
+    resolution: {integrity: sha512-lu0Oj0JPMvtrXBfsN6DoQPGxmf7lVG2PSUIX4gtABioTMYxlb2dxukzRQrUm4eaDljrpmHuoEtx+BnqC7vhLng==, registry: https://registry.npmmirror.com/, tarball: https://registry.npmjs.org/hefang-note-types/-/hefang-note-types-1.0.1.tgz}
+    id: registry.npmjs.org/hefang-note-types/1.0.1
+    name: hefang-note-types
+    version: 1.0.1
+    peerDependencies:
+      '@types/react': ^18.0.15
+      antd: ^5.8.2
+    dependencies:
+      '@types/react': 18.0.28
+      antd: 5.8.2(react-dom@18.2.0)(react@18.2.0)
+    dev: false
