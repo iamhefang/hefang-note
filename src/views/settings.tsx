@@ -72,7 +72,7 @@ export default function SettingsModal() {
           children: <PluginSettingForm plugin={plugin} key={`settings-${plugin.id}`} />,
         }
       })
-      .filter((item) => !!item) as TabsProps["items"]
+      .filter(Boolean) as TabsProps["items"]
   }, [plugins])
   const onChange = useCallback(
     (key: string) => {

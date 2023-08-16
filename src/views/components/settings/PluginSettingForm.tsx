@@ -36,6 +36,8 @@ export default function PluginSettingForm({ plugin }: PluginSettingFormProps) {
     )
   }, [plugin.id, plugin.settings?.items])
 
+  const SelfSetting = plugin.settings?.component
+
   return (
     <Form
       form={form}
@@ -44,6 +46,7 @@ export default function PluginSettingForm({ plugin }: PluginSettingFormProps) {
       style={{ width: "100%" }}
       initialValues={settings}
     >
+      {SelfSetting && <SelfSetting />}
       <SettingRenderer formItems={formItems} />
     </Form>
   )

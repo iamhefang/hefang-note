@@ -108,8 +108,8 @@ dependencies:
     specifier: ^1.11.7
     version: 1.11.7
   hefang-note-types:
-    specifier: ^1.0.1
-    version: registry.npmjs.org/hefang-note-types@1.0.1(@types/react@18.0.28)(antd@5.8.2)
+    specifier: ^1.0.3
+    version: 1.0.3(@types/react@18.0.28)(antd@5.8.2)
   idb:
     specifier: ^7.1.1
     version: 7.1.1
@@ -3815,6 +3815,16 @@ packages:
       space-separated-tokens: 2.0.2
     dev: false
 
+  /hefang-note-types@1.0.3(@types/react@18.0.28)(antd@5.8.2):
+    resolution: {integrity: sha512-IET7++p5UcMPA28sMVExDRv8NPvMGHRJNQfUp3ojx835fLs8ClWEyYotcC2JR006DTOBG6vm7+pk83tVXnBObA==}
+    peerDependencies:
+      '@types/react': ^18.0.15
+      antd: ^5.8.2
+    dependencies:
+      '@types/react': 18.0.28
+      antd: 5.8.2(react-dom@18.2.0)(react@18.2.0)
+    dev: false
+
   /hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
     dependencies:
@@ -6947,16 +6957,3 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
-
-  registry.npmjs.org/hefang-note-types@1.0.1(@types/react@18.0.28)(antd@5.8.2):
-    resolution: {integrity: sha512-lu0Oj0JPMvtrXBfsN6DoQPGxmf7lVG2PSUIX4gtABioTMYxlb2dxukzRQrUm4eaDljrpmHuoEtx+BnqC7vhLng==, registry: https://registry.npmmirror.com/, tarball: https://registry.npmjs.org/hefang-note-types/-/hefang-note-types-1.0.1.tgz}
-    id: registry.npmjs.org/hefang-note-types/1.0.1
-    name: hefang-note-types
-    version: 1.0.1
-    peerDependencies:
-      '@types/react': ^18.0.15
-      antd: ^5.8.2
-    dependencies:
-      '@types/react': 18.0.28
-      antd: 5.8.2(react-dom@18.2.0)(react@18.2.0)
-    dev: false

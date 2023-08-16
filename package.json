@@ -55,7 +55,7 @@
         "ajv": "^8.12.0",
         "antd": "^5.8.2",
         "dayjs": "^1.11.7",
-        "hefang-note-types": "^1.0.1",
+        "hefang-note-types": "^1.0.3",
         "idb": "^7.1.1",
         "jssm4": "^1.0.3",
         "katex": "^0.16.4",
