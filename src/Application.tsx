@@ -1,68 +1,47 @@
-import { App } from "antd"
 import React, { Suspense, useEffect } from "react"
 
-import { loadPlugins } from "~/redux/pluginSlice"
-import { uiSlice } from "~/redux/uiSlice"
 import View from "~/views"
 
-import { versionName } from "./consts"
 import { useAppDispatch } from "./redux"
 
-import Loading from "$components/loading/Loading"
-import Html from "$components/utils/Html"
+import useVersionInfoModal from "$hooks/modals/useVersionInfoModal"
 import useContentLoader from "$hooks/useContentLoader"
+import usePluginsLoader from "$hooks/usePluginsLoader"
 import { useStates } from "$hooks/useSelectors"
 import useSettingsLoader from "$hooks/useSettingsLoader"
-import { useTranslate } from "$hooks/useTranslate"
 import usePluginComponents from "$plugin/hooks/usePluginComponents"
 import usePluginEffect from "$plugin/hooks/usePluginEffect"
-import { html } from "^/CHANGELOG.md"
+import { setLaunchingStatus, uiSlice } from "./redux/uiSlice"
 
 const LazySettings = React.lazy(async () => import("~/views/settings"))
 
 export default function Application() {
-  const { launching } = useStates()
   const loadContents = useContentLoader()
   const loadSettings = useSettingsLoader()
+  const loadPlugins = usePluginsLoader()
   const dispatch = useAppDispatch()
-  const { modal } = App.useApp()
-  const t = useTranslate()
   useEffect(() => {
     void (async () => {
+      dispatch(setLaunchingStatus("正在加载配置项"))
       await loadSettings()
-      dispatch(uiSlice.actions.ready({}))
-      void loadContents()
-      void dispatch(loadPlugins())
+
+      dispatch(setLaunchingStatus("正在加载笔记"))
+      await loadContents()
+
+      dispatch(setLaunchingStatus("正在加载插件"))
+      await loadPlugins()
+      setTimeout(() => {
+        dispatch(uiSlice.actions.ready({}))
+      }, 5000)
     })()
-  }, [dispatch, loadContents, loadSettings])
+  }, [dispatch, loadContents, loadPlugins, loadSettings])
 
   usePluginEffect()
-
-  useEffect(() => {
-    if (localStorage.getItem("firstRun") !== versionName) {
-      modal.info({
-        title: t("更新日志"),
-        content: (
-          <Html className="changelog-container" data-selectable>
-            {html}
-          </Html>
-        ),
-        okText: t("知道了"),
-        width: "90%",
-        centered: true,
-        style: { maxWidth: 600 },
-        onOk() {
-          localStorage.setItem("firstRun", versionName)
-        },
-      })
-    }
-  }, [modal, t])
+  useVersionInfoModal()
 
   const components = usePluginComponents("Float")
 
-  return launching ? (
-    <Loading />
-  ) : (
+  return (
     <>
       <View />
       <Suspense>

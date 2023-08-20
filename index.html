@@ -209,13 +209,30 @@
 </head>
 
 <body>
+    <noscript>
+        <div id="root">
+            <div class="ant-app" data-tauri-drag-region>
+                <div class="loading-container">
+                    <p lang="zh-hans">何方笔记需要Javascript才能运行，您的浏览器不支持Javascript</p>
+                    <p lang="zh-hant">何方筆記需要Javascript才能運行，您的瀏覽器不支持Javascript</p>
+                    <p lang="en">He Fang Note requires Javascript to run, your browser does not support Javascript</p>
+                    <p lang="de">Für die Ausführung von He Fang Note ist Javascript erforderlich. Ihr Browser
+                        unterstützt kein Javascript</p>
+                </div>
+            </div>
+        </div>
+    </noscript>
     <div id="root">
         <div class="ant-app" data-tauri-drag-region>
             <div class="loading-container">
-                <div class="ant-spin ant-spin-lg ant-spin-spinning" aria-live="polite" aria-busy="true"><span
-                        class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i
-                            class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i
-                            class="ant-spin-dot-item"></i></span></div>
+                <div class="ant-spin ant-spin-lg ant-spin-spinning" aria-live="polite" aria-busy="true">
+                    <span class="ant-spin-dot ant-spin-dot-spin">
+                        <i class="ant-spin-dot-item"></i>
+                        <i class="ant-spin-dot-item"></i>
+                        <i class="ant-spin-dot-item"></i>
+                        <i class="ant-spin-dot-item"></i>
+                    </span>
+                </div>
             </div>
         </div>
     </div>

@@ -7,6 +7,8 @@ import React from "react"
 import ReactDOM from "react-dom"
 import ReactDomClient from "react-dom/client"
 
+import { findNoteParents } from "./notes"
+
 import Html from "$components/utils/Html"
 import ShowInPlatform from "$components/utils/ShowInPlatform"
 
@@ -24,6 +26,9 @@ const globals = {
   components: {
     ShowInPlatform,
     Html,
+  },
+  utils: {
+    findNoteParents,
   },
 }
 

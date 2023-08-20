@@ -136,7 +136,7 @@ if (isLocalhost) {
       void pluginStore.getAll().then(console.log)
     },
     async clearData() {
-      (await database).close()
+      ;(await database).close()
       await deleteDB("hefang-note")
       localStorage.clear()
       sessionStorage.clear()

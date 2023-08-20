@@ -48,7 +48,7 @@ export type UIState = {
   /**
    * 是否正在启动
    */
-  launching: boolean
+  launching: false | string
   /**
    * 是否正在导出
    */

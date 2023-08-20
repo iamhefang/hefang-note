@@ -8,6 +8,7 @@ import { DeleteNotePayload, NoteState } from "~/types"
 import { callPluginsHook } from "$plugin/utils"
 import { contentStore, database, notesStore } from "$utils/database"
 import { findNoteParents } from "$utils/notes"
+import { NoteChangeEvent, NoteChangeType, NoteContentChangeEventDetail } from "hefang-note-types/events/NoteChangeEvent"
 
 const sliceName = "notes"
 
@@ -74,18 +75,18 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
       const noteParents = notes.slice(0, -1)
       const event = callPluginsHook(
         "onContentSave",
-        new ContentSaveEvent({
+        new NoteChangeEvent({
           detail: {
+            type: NoteChangeType.CONTENT_CHANGE,
             note: item,
-            nextContent: content,
-            noteParents,
+            newContent: content,
           },
           occasion: PluginHookOccasion.before,
         }),
       )
       if (!event.isDefaultPrevented()) {
         void notesStore.set(...notes)
-        void contentStore.set(item.id, event.detail.nextContent)
+        void contentStore.set(item.id, event.detail.newContent)
         for (const note of notes) {
           state.entities[note.id] = note
         }
@@ -192,4 +193,4 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
 
 export const noteSlice: Slice<NoteState, SliceCaseReducers<NoteState>> = slice
 
-export const { updateContent, startRenaming, stopRenaming, newNote, deleteNote, moveNote } = slice.actions
+export const { updateContent, startRenaming, stopRenaming, newNote, deleteNote, moveNote, setNotes } = slice.actions

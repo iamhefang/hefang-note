@@ -5,12 +5,13 @@ import { ChangeEvent, useCallback } from "react"
 
 import NoteTree from "$components/tree/NoteTree"
 import useSearchValue from "$hooks/useSearchValue"
-import { useNotes } from "$hooks/useSelectors"
+import { useNotes, useStates } from "$hooks/useSelectors"
 import useSiderBarTopMenuItems from "$hooks/useSiderBarTopMenuItems"
 import { useTranslate } from "$hooks/useTranslate"
 
 export default function SiderBar() {
   const { initializing } = useNotes()
+  const { launching } = useStates()
   const [search, setSearch] = useSearchValue()
 
   const t = useTranslate()
@@ -33,11 +34,11 @@ export default function SiderBar() {
             placeholder={t("搜索目录和标题")}
             onChange={onSearchChange}
             allowClear={true}
-            disabled={initializing}
+            disabled={!!launching}
           />
         </Col>
         <Col>
-          <Dropdown trigger={["click"]} menu={{ items: menuItems }} disabled={initializing}>
+          <Dropdown trigger={["click"]} menu={{ items: menuItems }} disabled={!!launching}>
             <Button icon={<MoreOutlined />} />
           </Dropdown>
         </Col>

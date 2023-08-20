@@ -11,6 +11,7 @@ import pkg from "^/package.json"
 
 export const database = openDB(pkg.name, versionCode, {
   async upgrade(db, oldVersion, newVersion, transaction, event) {
+    console.info("正在升级数据库", { oldVersion, newVersion })
     let storeContent
     let storeSettings
     const nv = newVersion || 0

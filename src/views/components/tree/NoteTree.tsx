@@ -1,4 +1,4 @@
-import { Empty } from "antd"
+import { Empty, Skeleton } from "antd"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ListRange, Virtuoso, VirtuosoHandle } from "react-virtuoso"
 
@@ -12,7 +12,7 @@ import { MemoNoteTreeItem } from "./NoteTreeItem"
 import NoteTreeItemMenu from "$components/menus/NoteTreeItemMenu"
 import useOnNoteTreeMenuClick from "$hooks/noteTreeItem/useOnNoteTreeMenuClick"
 import useItemsTree from "$hooks/useItemsTree"
-import { useSettings } from "$hooks/useSelectors"
+import { useSettings, useStates } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
 
 export type NoteTreeProps = {
@@ -22,6 +22,7 @@ export type NoteTreeProps = {
 export default function NoteTree({ search }: NoteTreeProps) {
   const { current, expandItems } = useSettings()
   const t = useTranslate()
+  const { launching } = useStates()
   const data = useItemsTree(search)
   const dispatch = useAppDispatch()
   const [range, setRange] = useState<ListRange>({ startIndex: 0, endIndex: data.length })
@@ -112,29 +113,31 @@ export default function NoteTree({ search }: NoteTreeProps) {
 
   return useMemo(
     () => (
-      <NoteTreeItemMenu onClick={onMenuClick} onOpenChange={setMenuOpened}>
-        {data.length ? (
-          <Virtuoso
-            style={{ overflowY: menuOpened ? "hidden" : "auto" }}
-            ref={refVirtuoso}
-            data={data}
-            totalCount={data.length}
-            fixedItemHeight={30}
-            increaseViewportBy={300}
-            onContextMenu={onListRightClick}
-            components={{
-              Item: MemoNoteTreeItem,
-            }}
-            data-type="note-tree"
-            rangeChanged={setRange}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-          />
-        ) : (
-          <Empty description={t("没有笔记")} />
-        )}
-      </NoteTreeItemMenu>
+      <Skeleton active loading={Boolean(launching)} paragraph={{ rows: 5, width: ["90%", "90%", "90%", "90%", "90%"] }}>
+        <NoteTreeItemMenu onClick={onMenuClick} onOpenChange={setMenuOpened}>
+          {data.length ? (
+            <Virtuoso
+              style={{ overflowY: menuOpened ? "hidden" : "auto" }}
+              ref={refVirtuoso}
+              data={data}
+              totalCount={data.length}
+              fixedItemHeight={30}
+              increaseViewportBy={300}
+              onContextMenu={onListRightClick}
+              components={{
+                Item: MemoNoteTreeItem,
+              }}
+              data-type="note-tree"
+              rangeChanged={setRange}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+            />
+          ) : (
+            <Empty description={t("没有笔记")} />
+          )}
+        </NoteTreeItemMenu>
+      </Skeleton>
     ),
-    [data, menuOpened, onDragOver, onDrop, onListRightClick, onMenuClick, t],
+    [data, launching, menuOpened, onDragOver, onDrop, onListRightClick, onMenuClick, t],
   )
 }

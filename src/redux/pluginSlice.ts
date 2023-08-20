@@ -1,10 +1,14 @@
 import { createAsyncThunk, createSlice, PayloadAction, SliceCaseReducers } from "@reduxjs/toolkit"
-import { IPluginInfo, Settings } from "hefang-note-types"
+import { IPluginInfo, IPluginLoadParams, NoteItem, Settings } from "hefang-note-types"
+import { isEmpty, isPlainObject } from "lodash"
 
 import { StoreState } from "~/types"
 
+import { setNotes } from "./noteSlice"
+import { setSettings } from "./settingSlice"
+
 import { PluginState } from "$plugin/redux"
-import { pluginScriptStore, pluginStore } from "$utils/database"
+import { contentStore, notesStore, pluginScriptStore, pluginStore } from "$utils/database"
 import { createObjectURL } from "$utils/url"
 
 const sliceName = "plugins"
@@ -25,11 +29,13 @@ export const loadPlugins = createAsyncThunk<PluginState, boolean | void>(
     const plugins = await pluginStore.getAll()
     const entities: PluginState["entities"] = {}
     const ids: PluginState["ids"] = []
-    const baseSettings = Object.fromEntries(
+    const coreSettings = Object.fromEntries(
       Object.entries(store.settings).filter(([key]) => !key.startsWith("plugin-")),
     ) as Settings
 
     for (const plugin of plugins) {
+      console.group(`正在加载插件: ${plugin.name}`)
+      console.info(plugin)
       try {
         const instance = plugin.scriptUrl
           ? (await import(/* @vite-ignore */ plugin.scriptUrl)).default
@@ -41,15 +47,45 @@ export const loadPlugins = createAsyncThunk<PluginState, boolean | void>(
           entities[plugin.id] = { ...instance, ...plugin, enable: enabledPluginIds.includes(plugin.id) }
         }
 
-        entities[plugin.id].onLoad?.(
-          (store.settings?.[`plugin-${plugin.id}`] ?? {}) as Record<string, unknown>,
-          baseSettings,
-        )
+        if (entities[plugin.id].enable) {
+          const params: IPluginLoadParams = {
+            selfSettings: (store.settings?.[`plugin-${plugin.id}`] ?? {}) as Record<string, unknown>,
+            coreSettings,
+            setSettings(self, core) {
+              let newSettings = {
+                [`plugin-${plugin.id}`]: self,
+              }
+
+              if (plugin.abilities?.includes("synchronization")) {
+                if (!isEmpty(core) && isPlainObject(core)) {
+                  newSettings = {
+                    ...newSettings,
+                    ...Object.fromEntries(Object.entries(core).filter(([key]) => !key.startsWith("plugin-"))),
+                  }
+                }
+              }
+              api.dispatch(setSettings(newSettings))
+            },
+          }
+
+          if (plugin.abilities?.includes("synchronization")) {
+            params.notes = store.notes.entities
+            params.setNotes = (notes: NoteItem[]) => {
+              api.dispatch(setNotes(notes))
+              void notesStore.set(...notes.map((item) => ({ ...item, syncTime: Date.now() })))
+              void contentStore.setObject(Object.fromEntries(notes.map((item) => [item.id, item.content ?? ""])))
+            }
+          }
+
+          console.log("正在执行插件onLoad钩子")
+          entities[plugin.id].onLoad?.(params)
+        }
 
         ids.push(plugin.id)
       } catch (error) {
         console.error(`加载插件 ${plugin.name}(${plugin.id}) 失败`, error)
       }
+      console.groupEnd()
     }
 
     return { entities, ids, loading: false }

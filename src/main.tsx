@@ -14,16 +14,18 @@ import store from "./redux"
 import Container from "$components/container/Container"
 import VersionError from "$components/version/VersionError"
 import { database } from "$utils/database"
+import { logger } from "$utils/logger"
 import pkg from "^/package.json"
 import "./style.scss"
 
 dayjs.extend(relativeTime)
 
-console.info("当前版本号", versionName, versionCode)
+logger.info("已启动，正在准备渲染", versionName, versionCode)
 
 const root = ReactDOMClient.createRoot(document.getElementById("root") as HTMLElement)
 
 function renderApplication() {
+  logger.info("正在渲染应用")
   root.render(
     <Provider store={store}>
       <Container>
@@ -34,6 +36,7 @@ function renderApplication() {
 }
 
 function renderLockError() {
+  logger.info("正在渲染单例提示")
   root.render(
     <Provider store={store}>
       <Container>
@@ -50,6 +53,7 @@ function renderLockError() {
 }
 
 function renderVersionError() {
+  logger.info("正在渲染版本错误提示")
   root.render(
     <Provider store={store}>
       <Container>
