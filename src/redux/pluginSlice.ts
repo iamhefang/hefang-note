@@ -71,6 +71,7 @@ export const loadPlugins = createAsyncThunk<PluginState, boolean | void>(
           if (plugin.abilities?.includes("synchronization")) {
             params.notes = store.notes.entities
             params.setNotes = (notes: NoteItem[]) => {
+              console.info(`插件"${plugin.name}"(${plugin.id})正在写入笔记`, notes)
               api.dispatch(setNotes(notes))
               void notesStore.set(...notes.map((item) => ({ ...item, syncTime: Date.now() })))
               void contentStore.setObject(Object.fromEntries(notes.map((item) => [item.id, item.content ?? ""])))

@@ -1,5 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction, Slice, SliceCaseReducers } from "@reduxjs/toolkit"
-import { ContentSaveEvent, NoteItem, PluginHookOccasion } from "hefang-note-types"
+import {
+  NoteChangeEvent,
+  NoteChangeType,
+  NoteContentChangeDetail,
+  NoteItem,
+  NoteMoveDetail,
+  NoteRenameDetail,
+  PluginHookOccasion,
+} from "hefang-note-types"
 import _ from "lodash"
 
 import { CONTENT_SAVE_DELAY } from "~/config"
@@ -8,7 +16,6 @@ import { DeleteNotePayload, NoteState } from "~/types"
 import { callPluginsHook } from "$plugin/utils"
 import { contentStore, database, notesStore } from "$utils/database"
 import { findNoteParents } from "$utils/notes"
-import { NoteChangeEvent, NoteChangeType, NoteContentChangeEventDetail } from "hefang-note-types/events/NoteChangeEvent"
 
 const sliceName = "notes"
 
@@ -72,9 +79,8 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
         .map((me) => ({ ...me, modifyTime: now }))
         .concat({ ...state.entities[id], modifyTime: now })
       const item = _.last(notes)!
-      const noteParents = notes.slice(0, -1)
       const event = callPluginsHook(
-        "onContentSave",
+        "onNoteChange",
         new NoteChangeEvent({
           detail: {
             type: NoteChangeType.CONTENT_CHANGE,
@@ -84,16 +90,22 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
           occasion: PluginHookOccasion.before,
         }),
       )
+
       if (!event.isDefaultPrevented()) {
+        const newContent = (event.detail as NoteContentChangeDetail).newContent
         void notesStore.set(...notes)
-        void contentStore.set(item.id, event.detail.newContent)
+        void contentStore.set(item.id, newContent)
         for (const note of notes) {
           state.entities[note.id] = note
         }
         callPluginsHook(
-          "onContentSave",
-          new ContentSaveEvent({
-            detail: { note: item, nextContent: content, noteParents },
+          "onNoteChange",
+          new NoteChangeEvent({
+            detail: {
+              type: NoteChangeType.CONTENT_CHANGE,
+              note: item,
+              newContent,
+            },
             occasion: PluginHookOccasion.after,
           }),
         )
@@ -107,20 +119,37 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
     deleteNote(state, action: PayloadAction<DeleteNotePayload>) {
       const { noteId, deleteChildren } = action.payload
       const note = state.entities[noteId]
-      delete state.entities[noteId]
-      state.ids.splice(state.ids.indexOf(noteId), 1)
       const children = Object.values(state.entities).filter((item) => item.parentId === noteId)
-      if (deleteChildren) {
-        void notesStore.delete(...children.map((item) => item.id))
-      } else {
-        for (const entity of Object.values(state.entities)) {
-          if (entity.parentId === noteId) {
-            entity.parentId = note.parentId
+      const e = callPluginsHook(
+        "onNoteChange",
+        new NoteChangeEvent({
+          detail: { type: NoteChangeType.DELETE, note, children: deleteChildren ? children : undefined },
+          occasion: PluginHookOccasion.before,
+        }),
+      )
+      if (!e.isDefaultPrevented()) {
+        delete state.entities[noteId]
+        state.ids.splice(state.ids.indexOf(noteId), 1)
+        if (deleteChildren) {
+          void notesStore.delete(...children.map((item) => item.id))
+        } else {
+          for (const entity of Object.values(state.entities)) {
+            if (entity.parentId === noteId) {
+              entity.parentId = note.parentId
+            }
           }
+          note.isLeaf || void notesStore.set(...children.map((c) => ({ ...c, parentId: note.parentId })))
         }
-        note.isLeaf || void notesStore.set(...children.map((c) => ({ ...c, parentId: note.parentId })))
+        void notesStore.delete(noteId)
+
+        callPluginsHook(
+          "onNoteChange",
+          new NoteChangeEvent({
+            detail: { type: NoteChangeType.DELETE, note, children },
+            occasion: PluginHookOccasion.after,
+          }),
+        )
       }
-      void notesStore.delete(noteId)
     },
     /**
      * 开始重命名
@@ -138,9 +167,28 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
     stopRenaming(state: NoteState, action: PayloadAction<{ id: string; newName: string }>) {
       const { id, newName } = action.payload
       state.renamingId = undefined
-      state.entities[id].title = newName
-      state.entities[id].modifyTime = Date.now()
-      void notesStore.set({ ...state.entities[id] })
+      const event = callPluginsHook(
+        "onNoteChange",
+        new NoteChangeEvent({
+          detail: { type: NoteChangeType.RENAME, note: state.entities[id], newTitle: newName },
+          occasion: PluginHookOccasion.before,
+        }),
+      )
+
+      if (!event.isDefaultPrevented()) {
+        const newTitle = (event.detail as NoteRenameDetail).newTitle
+        state.entities[id].title = newTitle
+        state.entities[id].modifyTime = Date.now()
+        void notesStore.set({ ...state.entities[id] })
+
+        callPluginsHook(
+          "onNoteChange",
+          new NoteChangeEvent({
+            detail: { type: NoteChangeType.RENAME, note: event.detail.note, newTitle },
+            occasion: PluginHookOccasion.after,
+          }),
+        )
+      }
     },
     /**
      * 新笔记入库
@@ -148,9 +196,34 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
      * @param action
      */
     newNote(state, action: PayloadAction<NoteItem>) {
-      state.ids.push(action.payload.id)
-      state.entities[action.payload.id] = action.payload
-      void notesStore.set(action.payload)
+      const parents = findNoteParents(state.entities, action.payload.id)
+      const e = callPluginsHook(
+        "onNoteChange",
+        new NoteChangeEvent({
+          detail: {
+            type: NoteChangeType.NEW,
+            note: action.payload,
+            parents,
+          },
+          occasion: PluginHookOccasion.before,
+        }),
+      )
+      if (!e.isDefaultPrevented()) {
+        state.ids.push(e.detail.note.id)
+        state.entities[e.detail.note.id] = e.detail.note
+        void notesStore.set(e.detail.note)
+        callPluginsHook(
+          "onNoteChange",
+          new NoteChangeEvent({
+            detail: {
+              type: NoteChangeType.NEW,
+              note: e.detail.note,
+              parents,
+            },
+            occasion: PluginHookOccasion.after,
+          }),
+        )
+      }
     },
     /**
      * 同步数据库笔记到内存
@@ -171,10 +244,28 @@ slice = createSlice<NoteState, SliceCaseReducers<NoteState>>({
     moveNote(state, action: PayloadAction<{ sourceId: string; targetId: string }>) {
       const { sourceId, targetId } = action.payload
       const note = state.entities[sourceId]
-      note.parentId = targetId
-      note.modifyTime = Date.now()
-      console.info(`移动笔记${note.title}到${targetId}`)
-      void notesStore.set({ ...note })
+      const e = callPluginsHook(
+        "onNoteChange",
+        new NoteChangeEvent({
+          detail: { type: NoteChangeType.MOVE, note, newParentId: targetId },
+          occasion: PluginHookOccasion.before,
+        }),
+      )
+      const newParentId = (e.detail as NoteMoveDetail).newParentId
+      if (!e.isDefaultPrevented()) {
+        note.parentId = newParentId
+        note.modifyTime = Date.now()
+        console.info(`移动笔记${note.title}到${targetId}`)
+        void notesStore.set({ ...note })
+
+        callPluginsHook(
+          "onNoteChange",
+          new NoteChangeEvent({
+            detail: { type: NoteChangeType.MOVE, note, newParentId },
+            occasion: PluginHookOccasion.after,
+          }),
+        )
+      }
     },
   },
   extraReducers(builder) {

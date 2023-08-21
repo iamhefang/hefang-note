@@ -1,4 +1,4 @@
-import { Empty, Skeleton } from "antd"
+import { Empty, Skeleton, Spin } from "antd"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ListRange, Virtuoso, VirtuosoHandle } from "react-virtuoso"
 
@@ -113,31 +113,29 @@ export default function NoteTree({ search }: NoteTreeProps) {
 
   return useMemo(
     () => (
-      <Skeleton active loading={Boolean(launching)} paragraph={{ rows: 5, width: ["90%", "90%", "90%", "90%", "90%"] }}>
-        <NoteTreeItemMenu onClick={onMenuClick} onOpenChange={setMenuOpened}>
-          {data.length ? (
-            <Virtuoso
-              style={{ overflowY: menuOpened ? "hidden" : "auto" }}
-              ref={refVirtuoso}
-              data={data}
-              totalCount={data.length}
-              fixedItemHeight={30}
-              increaseViewportBy={300}
-              onContextMenu={onListRightClick}
-              components={{
-                Item: MemoNoteTreeItem,
-              }}
-              data-type="note-tree"
-              rangeChanged={setRange}
-              onDrop={onDrop}
-              onDragOver={onDragOver}
-            />
-          ) : (
-            <Empty description={t("没有笔记")} />
-          )}
-        </NoteTreeItemMenu>
-      </Skeleton>
+      <NoteTreeItemMenu onClick={onMenuClick} onOpenChange={setMenuOpened}>
+        {data.length ? (
+          <Virtuoso
+            style={{ overflowY: menuOpened ? "hidden" : "auto" }}
+            ref={refVirtuoso}
+            data={data}
+            totalCount={data.length}
+            fixedItemHeight={30}
+            increaseViewportBy={300}
+            onContextMenu={onListRightClick}
+            components={{
+              Item: MemoNoteTreeItem,
+            }}
+            data-type="note-tree"
+            rangeChanged={setRange}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+          />
+        ) : (
+          <Empty description={t("没有笔记")} />
+        )}
+      </NoteTreeItemMenu>
     ),
-    [data, launching, menuOpened, onDragOver, onDrop, onListRightClick, onMenuClick, t],
+    [data, menuOpened, onDragOver, onDrop, onListRightClick, onMenuClick, t],
   )
 }
