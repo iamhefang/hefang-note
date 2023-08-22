@@ -1,6 +1,12 @@
 import { CheckOutlined } from "@ant-design/icons"
 import { App, MenuProps } from "antd"
-import { NoteSort } from "hefang-note-types"
+import {
+  NoteBackupRestoreDetail,
+  NoteBackupRestoreEvent,
+  NoteBackupRestoreType,
+  NoteSort,
+  PluginHookOccasion,
+} from "hefang-note-types"
 import { useCallback, useMemo } from "react"
 
 import { useAppDispatch } from "~/redux"
@@ -8,11 +14,15 @@ import { setSort } from "~/redux/settingSlice"
 
 import { iconPlacehodler } from "$components/icons/IconPlaceholder"
 import { NoteTreeMenuKeys } from "$components/menus/NoteTreeItemMenu"
+import useExportModal from "$hooks/modals/useExportModal"
+import useImportModal from "$hooks/modals/useImportModal"
 import useNewNoteDispatcher from "$hooks/noteTreeItem/useNewNoteDispatcher"
 import useCurrent from "$hooks/useCurrent"
 import useNoteParents from "$hooks/useNoteParents"
 import { useSettings } from "$hooks/useSelectors"
 import { useTranslate } from "$hooks/useTranslate"
+import { callPluginsHooks } from "$plugin/utils"
+import { contentStore, notesStore } from "$utils/database"
 import { sortItems } from "$utils/sort"
 
 export default function useSiderBarTopMenuItems() {
@@ -24,6 +34,9 @@ export default function useSiderBarTopMenuItems() {
   const createOnSortChange = useCallback((newSort: Partial<NoteSort>) => () => dispatch(setSort(newSort)), [dispatch])
   const newNoteDispatch = useNewNoteDispatcher(current?.isLeaf ? current?.parentId : current?.id)
   const parents = useNoteParents(current?.id)
+
+  const showImportModal = useImportModal()
+  const showExportModal = useExportModal()
 
   return useMemo<MenuProps["items"]>(() => {
     const items: MenuProps["items"] = [
@@ -62,20 +75,50 @@ export default function useSiderBarTopMenuItems() {
       {
         key: "export",
         label: t("备份笔记"),
-        onClick: async () =>
-          import("$utils/plugin").then((res) => {
-            void res.hefang.contens.export()
-          }),
+        onClick: async () => {
+          const notes = await notesStore.getAll()
+          const contents = await contentStore.getObject()
+          callPluginsHooks(
+            "onContentExport",
+            new NoteBackupRestoreEvent({
+              detail: {
+                type: NoteBackupRestoreType.backup,
+                notes,
+                contents,
+              },
+              occasion: PluginHookOccasion.before,
+            }),
+            (detail: NoteBackupRestoreDetail) => {
+              void showExportModal(detail.notes, detail.contents)
+            },
+          )
+        },
       },
       {
         key: "import",
         label: t("还原备份"),
-        onClick: async () =>
-          import("$utils/plugin").then((res) => {
-            void res.hefang.contens.import().then((count) => {
-              modal.info({ title: t("共导入{count}条数据", { count }) })
+        onClick: () => {
+          showImportModal()
+            .then(({ notes, contents }) => {
+              callPluginsHooks(
+                "onContentImport",
+                new NoteBackupRestoreEvent({
+                  detail: {
+                    type: NoteBackupRestoreType.restore,
+                    notes,
+                    contents,
+                  },
+                  occasion: PluginHookOccasion.before,
+                }),
+                async (detail: NoteBackupRestoreDetail) => {
+                  await notesStore.set(...detail.notes)
+                  await contentStore.setObject(detail.contents)
+                  modal.info({ title: t("共导入{count}条数据", { count: notes.length }) })
+                },
+              )
             })
-          }),
+            .catch(console.error)
+        },
       },
     ]
 
@@ -88,5 +131,16 @@ export default function useSiderBarTopMenuItems() {
     }
 
     return items
-  }, [createOnSortChange, current, modal, newNoteDispatch, parents.length, sort.field, sort.type, t])
+  }, [
+    createOnSortChange,
+    current,
+    modal,
+    newNoteDispatch,
+    parents.length,
+    showExportModal,
+    showImportModal,
+    sort.field,
+    sort.type,
+    t,
+  ])
 }

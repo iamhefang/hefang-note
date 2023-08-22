@@ -25,18 +25,14 @@ export function findNoteParents<T extends NoteItem = NoteItem>(items: Record<str
   return parents
 }
 
-export async function buildExportJson(): Promise<string> {
-  const notes = await notesStore.getAll()
-  const contents = await contentStore.getObject()
-  const json = JSON.stringify({
+export async function buildExportJson(notes?: NoteItem[], contents?: { [id: string]: string }): Promise<string> {
+  return JSON.stringify({
     name: pkg.productName,
     version: pkg.version,
-    notes,
-    contents,
+    notes: notes ?? (await notesStore.getAll()),
+    contents: contents ?? (await contentStore.getObject()),
     saveTime: Date.now(),
   })
-
-  return json
 }
 
 export function isNoteLocked(

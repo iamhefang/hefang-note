@@ -1,4 +1,4 @@
-import { PluginHookEvent, PluginHookKeys } from "hefang-note-types"
+import { PluginHookEvent, PluginHookKeys, PluginHookOccasion } from "hefang-note-types"
 
 import { logger } from "$utils/logger"
 
@@ -13,4 +13,20 @@ export function callPluginsHook<D, E extends PluginHookEvent<D>>(hook: PluginHoo
   }
 
   return event
+}
+
+export function callPluginsHooks<D, E extends PluginHookEvent<D>>(
+  hook: PluginHookKeys,
+  event: E,
+  callback?: (detail: D) => Promise<void> | void,
+) {
+  const e = callPluginsHook(hook, event.clone({ occasion: PluginHookOccasion.before }))
+  if (!e.isDefaultPrevented()) {
+    const res = callback?.(e.detail)
+    if (res?.then) {
+      res.then(() => callPluginsHook(hook, e.clone({ occasion: PluginHookOccasion.after }))).catch(console.error)
+    } else {
+      callPluginsHook(hook, e.clone({ occasion: PluginHookOccasion.after }))
+    }
+  }
 }

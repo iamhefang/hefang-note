@@ -1,5 +1,6 @@
 import React, { Suspense, useEffect } from "react"
 
+import { setLaunchingStatus, uiSlice } from "~/redux/uiSlice"
 import View from "~/views"
 
 import { useAppDispatch } from "./redux"
@@ -7,11 +8,9 @@ import { useAppDispatch } from "./redux"
 import useVersionInfoModal from "$hooks/modals/useVersionInfoModal"
 import useContentLoader from "$hooks/useContentLoader"
 import usePluginsLoader from "$hooks/usePluginsLoader"
-import { useStates } from "$hooks/useSelectors"
 import useSettingsLoader from "$hooks/useSettingsLoader"
 import usePluginComponents from "$plugin/hooks/usePluginComponents"
 import usePluginEffect from "$plugin/hooks/usePluginEffect"
-import { setLaunchingStatus, uiSlice } from "./redux/uiSlice"
 
 const LazySettings = React.lazy(async () => import("~/views/settings"))
 
@@ -30,9 +29,7 @@ export default function Application() {
 
       dispatch(setLaunchingStatus("正在加载插件"))
       await loadPlugins()
-      setTimeout(() => {
-        dispatch(uiSlice.actions.ready({}))
-      }, 5000)
+      dispatch(uiSlice.actions.ready({}))
     })()
   }, [dispatch, loadContents, loadPlugins, loadSettings])
 

@@ -136,7 +136,7 @@ export default function useImporter() {
                       onClick: () => {},
                     },
                     {
-                      key: "保留置导入的",
+                      key: "保留导入的",
                       label: "保留导入的",
                       onClick: () => {},
                     },
