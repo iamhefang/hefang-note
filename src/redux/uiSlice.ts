@@ -74,6 +74,14 @@ export const uiSlice = createSlice<UIState, SliceCaseReducers<UIState>>({
       logger.info(action.payload)
       state.launching = action.payload
     },
+    /**
+     * 设置插件状态
+     * @param state
+     * @param action
+     */
+    setPluginState(state, action: PayloadAction<{ pluginId: string; state: unknown }>) {
+      state[action.payload.pluginId] = action.payload.state
+    },
   },
 })
 
@@ -86,4 +94,5 @@ export const {
   setSearchValue,
   showSettingModal,
   setLaunchingStatus,
+  setPluginState,
 } = uiSlice.actions

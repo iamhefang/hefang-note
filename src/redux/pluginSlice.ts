@@ -7,6 +7,7 @@ import { StoreState } from "~/types"
 import { setNotes } from "./noteSlice"
 import { setSettings } from "./settingSlice"
 
+import hooksBuilder from "$plugin/hooks/hooksBuilder"
 import { PluginState } from "$plugin/redux"
 import { contentStore, notesStore, pluginScriptStore, pluginStore } from "$utils/database"
 import { createObjectURL } from "$utils/url"
@@ -66,6 +67,7 @@ export const loadPlugins = createAsyncThunk<PluginState, boolean | void>(
               }
               api.dispatch(setSettings(newSettings))
             },
+            reactHooks: hooksBuilder(plugin.id),
           }
 
           if (plugin.abilities?.includes("synchronization")) {

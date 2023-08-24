@@ -66,6 +66,7 @@ export type UIState = {
    * 当前正在搜索的内容
    */
   search: string
+  [pluginId: string]: unknown
 }
 
 export type StoreState = {
