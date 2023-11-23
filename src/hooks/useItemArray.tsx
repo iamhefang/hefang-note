@@ -5,8 +5,6 @@ import {useNotes, useSettings} from "./useSelectors"
 import {findNoteParents} from "$utils/notes"
 import {treeSorter} from "$utils/sort"
 
-
-
 export type UseItemArrayOptions = { needSort?: boolean; search?: string }
 
 export default function useItemArray({needSort = false, search}: UseItemArrayOptions = {}) {

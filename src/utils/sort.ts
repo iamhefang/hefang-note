@@ -18,16 +18,13 @@ export function treeSorter({field, type}: NoteSort) {
     }
 
     return (sortCache[cacheKey] = (a: NoteItem, b: NoteItem) => {
-        if (_.isNumber(a[field]) && _.isNumber(b[field])) {
-            const item1 = a[field] as number
-            const item2 = b[field] as number
-
-            return type === "asc" ? item1 - item2 : item2 - item1
+        if (isNaN(Number(a[field])) || isNaN(Number(b[field]))) {
+            return String(a[field]).localeCompare(String(b[field]))
         }
 
-        const item1 = String(a[field])
-        const item2 = String(a[field])
+        const item1 = _.isNumber(a[field]) ? a[field] as number : parseFloat(String(a[field]))
+        const item2 = _.isNumber(b[field]) ? b[field] as number : parseFloat(String(b[field]))
 
-        return type === "asc" ? item1.localeCompare(item2) : item2.localeCompare(item1)
+        return type === "asc" ? item1 - item2 : item2 - item1
     })
 }

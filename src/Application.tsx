@@ -38,7 +38,7 @@ export default function Application() {
 
   useEffect(() => {
     if (localStorage.getItem("firstRun") !== versionName) {
-      modal.info({
+      void modal.info({
         title: t("更新日志"),
         content: (
           <Html className="changelog-container" data-selectable>
