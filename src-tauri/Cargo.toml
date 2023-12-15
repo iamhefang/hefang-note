@@ -27,7 +27,7 @@ edition = "2021"
 license = "GPL3"
 name = "hefang-note"
 repository = "https://github.com/iamhefang/hefang-note"
-version = "0.6.6"
+version = "0.6.7"
 
 [profile.release]
 codegen-units = 1
