@@ -1,24 +1,66 @@
-import {createRequire} from "node:module"
-import {resolve} from "node:path"
-import path from "path"
-
 import ckeditor5 from "@ckeditor/vite-plugin-ckeditor5"
 import react from "@vitejs/plugin-react"
 import autoprefixer from "autoprefixer"
-import {internalIpV4} from "internal-ip"
-import {defineConfig, UserConfig} from "vite"
+import {bytecodePlugin, defineConfig} from "electron-vite"
+import {createRequire} from "node:module"
+import path from "path"
 import htmlMinifier from "vite-plugin-html-minifier"
-import {plugin as markdown, Mode} from "vite-plugin-markdown"
+import {Mode, plugin as markdown} from "vite-plugin-markdown"
 import {viteStaticCopy} from "vite-plugin-static-copy"
 
 const require = createRequire(import.meta.url)
-
-// https://vitejs.dev/config/
-export default defineConfig(async (): Promise<UserConfig> => {
-    const host = await internalIpV4()
-
-    return {
-        base: "./",
+export default defineConfig({
+    main: {
+        root: "./",
+        plugins: [bytecodePlugin()],
+        resolve: {
+            alias: {
+                "~": path.resolve(__dirname, "src"),
+                "^": __dirname,
+                $hooks: path.resolve(__dirname, "src/hooks"),
+                $components: path.resolve(__dirname, "src/views/components"),
+                $utils: path.resolve(__dirname, "src/utils"),
+                $locales: path.resolve(__dirname, "src/locales"),
+                $plugin: path.resolve(__dirname, "src/plugin"),
+            },
+        },
+        build: {
+            rollupOptions: {
+                input: "src-electron/main.ts",
+                output: {
+                    entryFileNames: "main.js",
+                    dir: "out",
+                },
+            },
+        },
+    },
+    preload: {
+        root: "./",
+        plugins: [bytecodePlugin()],
+        resolve: {
+            alias: {
+                "~": path.resolve(__dirname, "src"),
+                "^": __dirname,
+                $hooks: path.resolve(__dirname, "src/hooks"),
+                $components: path.resolve(__dirname, "src/views/components"),
+                $utils: path.resolve(__dirname, "src/utils"),
+                $locales: path.resolve(__dirname, "src/locales"),
+                $plugin: path.resolve(__dirname, "src/plugin"),
+            },
+        },
+        build: {
+            emptyOutDir: false,
+            rollupOptions: {
+                input: "src-electron/preload.ts",
+                output: {
+                    entryFileNames: "preload.cjs",
+                    dir: "out",
+                },
+            },
+        },
+    },
+    renderer: {
+        root: "./",
         plugins: [
             react(),
             ckeditor5({
@@ -55,8 +97,8 @@ export default defineConfig(async (): Promise<UserConfig> => {
             strictPort: true,
             hmr: {
                 protocol: "ws",
-                host,
-                port: 4444,
+                host: "0.0.0.0",
+                port: 4445,
             },
         },
         // to make use of `TAURI_DEBUG` and other env variables
@@ -65,16 +107,18 @@ export default defineConfig(async (): Promise<UserConfig> => {
         build: {
             // Tauri supports es2021
             // target: process.env.TAURI_PLATFORM === "windows" ? "chrome105" : "safari13",
-            target: "chrome",
+            target: "chrome105",
             // don't minify for debug builds
             minify: !process.env.TAURI_DEBUG,
             // produce sourcemaps for debug builds
             sourcemap: !!process.env.TAURI_DEBUG,
             modulePreload: true,
-
+            emptyOutDir: false,
             rollupOptions: {
-                input: resolve(__dirname, "index.html"),
+                input: "index.html",
                 output: {
+                    // entryFileNames: "index.js",
+                    dir: "out",
                     manualChunks: {
                         react: ["react", "react-dom", "react-dom/client"],
                         antd: ["antd"],
@@ -121,5 +165,5 @@ export default defineConfig(async (): Promise<UserConfig> => {
                 plugins: [autoprefixer({})],
             },
         },
-    }
+    },
 })
