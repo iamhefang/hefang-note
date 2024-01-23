@@ -55,6 +55,7 @@ export default defineConfig({
                 output: {
                     entryFileNames: "preload.cjs",
                     dir: "out",
+                    format: "cjs",
                 },
             },
         },

@@ -1,6 +1,7 @@
 export const enum IpcEvents {
-    CHECK_UPDATE = "check-update",
-    OPEN_SETTINGS = "open-settings",
-    OPEN_ABOUT = "open-about",
-    OPEN_PLUGIN_MANAGER = "open-plugin-manager"
+    CHECK_UPDATE = "CHECK_UPDATE",
+    OPEN_SETTINGS = "OPEN_SETTINGS",
+    OPEN_ABOUT = "OPEN_ABOUT",
+    OPEN_PLUGIN_MANAGER = "OPEN_PLUGIN_MANAGER",
+    SET_THEME_COLOR = "SET_THEME_COLOR",
 }
