@@ -1,5 +1,5 @@
 import { PushpinFilled, PushpinOutlined } from "@ant-design/icons"
-import { appWindow } from "@tauri-apps/api/window"
+// import { appWindow } from "@tauri-apps/api/window"
 import { Button } from "antd"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
@@ -15,7 +15,7 @@ const AlwaysOnTop: PluginComponent = () => {
   }, [enable])
 
   useEffect(() => {
-    void appWindow.setAlwaysOnTop(enable)
+    // void appWindow.setAlwaysOnTop(enable)
   }, [enable])
   const title = useMemo(() => t(enable ? "取消置顶" : "置顶"), [enable, t])
 
