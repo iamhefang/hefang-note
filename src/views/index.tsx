@@ -61,7 +61,7 @@ export default function View() {
 
     useEffect(() => {
         localStorage.setItem("bgColor", colorBgBase)
-        window.shell.api.setThemeColor(colorBgContainer)
+        window.shell?.api.setThemeColor(colorBgContainer)
     }, [colorBgBase, theme, colorBgContainer])
     const language = useLocaleDefine()
     useEffect(() => {

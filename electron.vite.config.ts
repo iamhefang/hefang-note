@@ -96,11 +96,11 @@ export default defineConfig({
             host: "0.0.0.0",
             port: 8888,
             strictPort: true,
-            hmr: {
-                protocol: "ws",
-                host: "0.0.0.0",
-                port: 4445,
-            },
+            // hmr: {
+                // protocol: "ws",
+                // host: "0.0.0.0",
+                // port: 4444,
+            // },
         },
         // to make use of `TAURI_DEBUG` and other env variables
         // https://tauri.studio/v1/api/config#buildconfig.beforedevcommand

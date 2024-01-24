@@ -26,16 +26,16 @@ export default function TopBarRight() {
   const props = usePluginFooterTopComponentProps()
 
   return (
-    <Space className={ss.root} style={{ right: osType === "Darwin" ? 8 : 0 }}>
+    <Space className={ss.root} style={{ right: osType === "darwin" ? 8 : 0 }}>
       {...components}
       <Suspense>
         <LazyThemeSelector {...props} />
       </Suspense>
-      <ShowInPlatform platforms={["Linux", "Darwin", "Windows_NT"]}>{() => <LazyAlwaysOnTop {...props} />}</ShowInPlatform>
+      <ShowInPlatform platforms={["linux", "darwin", "win32"]}>{() => <LazyAlwaysOnTop {...props} />}</ShowInPlatform>
       <Suspense>
         <LazyScreenLocker {...props} />
       </Suspense>
-      <ShowInPlatform platforms={["Linux", "Windows_NT"]}>{() => <WindowControls />}</ShowInPlatform>
+      <ShowInPlatform platforms={["linux", "win32"]}>{() => <WindowControls />}</ShowInPlatform>
     </Space>
   )
 }
