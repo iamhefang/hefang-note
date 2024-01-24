@@ -1,5 +1,4 @@
 import { contextBridge, ipcRenderer } from "electron"
-import { decl } from "postcss"
 import { IpcEvents } from "../src/common/ipcEvents"
 
 const shell = {
@@ -7,8 +6,15 @@ const shell = {
   platform: process.platform,
   arch: process.arch,
   api: {
-    setThemeColor(color: string) {
-      ipcRenderer.emit(IpcEvents.SET_THEME_COLOR, color)
+    setThemeColor(colors: { bgColor: string; fgColor?: string }) {
+      console.log("preload.ts: setThemeColor", colors)
+      ipcRenderer.send(IpcEvents.SET_THEME_COLOR, colors)
+    },
+    setAlwaysOnTop(value: boolean) {
+      ipcRenderer.send(IpcEvents.SET_ALWAYS_ON_TOP, value)
+    },
+    async isAlwaysOnTop(): Promise<boolean> {
+      return await ipcRenderer.invoke(IpcEvents.GET_ALWAYS_ON_TOP)
     },
   },
 }

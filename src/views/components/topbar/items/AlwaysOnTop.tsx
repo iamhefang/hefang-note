@@ -15,11 +15,25 @@ const AlwaysOnTop: PluginComponent = () => {
   }, [enable])
 
   useEffect(() => {
-    // void appWindow.setAlwaysOnTop(enable)
+    window.shell?.api.isAlwaysOnTop().then((value) => {
+      setEnable(value)
+    })
+  }, [])
+
+  useEffect(() => {
+    window.shell?.api.setAlwaysOnTop(enable)
   }, [enable])
   const title = useMemo(() => t(enable ? "取消置顶" : "置顶"), [enable, t])
 
-  return <Button type="text" icon={enable ? <PushpinFilled /> : <PushpinOutlined />} size="small" onClick={onClick} title={title} />
+  return (
+    <Button
+      type="text"
+      icon={enable ? <PushpinFilled /> : <PushpinOutlined />}
+      size="small"
+      onClick={onClick}
+      title={title}
+    />
+  )
 }
 
 AlwaysOnTop.order = 8
