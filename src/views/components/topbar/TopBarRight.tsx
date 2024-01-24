@@ -5,7 +5,6 @@
  * @Date: 2023-05-03 08:46:29
  * @Description:
  */
-import AlwaysOnTop from "$components/topbar/items/AlwaysOnTop"
 import { Space } from "antd"
 import React, { Suspense } from "react"
 
@@ -15,6 +14,7 @@ import ShowInPlatform from "$components/utils/ShowInPlatform"
 import { usePlatformType } from "$hooks/usePlatform"
 import usePluginComponents from "$plugin/hooks/usePluginComponents"
 import usePluginFooterTopComponentProps from "$plugin/hooks/usePluginFooterTopComponentProps"
+import WindowControls from "./items/WindowControls"
 
 const LazyScreenLocker = React.lazy(async () => import("$components/locker/ScreenLocker"))
 const LazyThemeSelector = React.lazy(async () => import("$components/topbar/items/ThemeSelector"))
@@ -26,15 +26,22 @@ export default function TopBarRight() {
   const props = usePluginFooterTopComponentProps()
 
   return (
-    <Space className={ss.root} style={{ right: osType === "darwin" ? 8 : 100 }}>
+    <Space className={ss.root} style={{ right: osType === "linux" ? 0 : 100 }}>
       {...components}
       <Suspense>
         <LazyThemeSelector {...props} />
       </Suspense>
-      <ShowInPlatform platforms={["linux", "darwin", "win32"]}>{() => <AlwaysOnTop {...props} />}</ShowInPlatform>
+      <ShowInPlatform platforms={["linux", "darwin", "win32"]}>
+        {() => (
+          <Suspense>
+            <LazyAlwaysOnTop {...props} />
+          </Suspense>
+        )}
+      </ShowInPlatform>
       <Suspense>
         <LazyScreenLocker {...props} />
       </Suspense>
+      <ShowInPlatform platforms={["linux"]}>{() => <WindowControls />}</ShowInPlatform>
     </Space>
   )
 }

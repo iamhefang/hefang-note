@@ -1,4 +1,3 @@
-import { appWindow } from "@tauri-apps/api/window"
 import { theme } from "antd"
 import { useCallback, useMemo } from "react"
 
@@ -13,8 +12,8 @@ export default function WindowControls() {
     token: { colorTextBase },
   } = theme.useToken()
   const maximized = useMaximized()
-  const minimize = useCallback(async () => appWindow.minimize(), [])
-  const toggleMaximize = useCallback(async () => appWindow.toggleMaximize(), [])
+  const minimize = useCallback(async () => window.shell?.api.window.minimize(), [])
+  const toggleMaximize = useCallback(async () => window.shell?.api.window.toggle(), [])
 
   return useMemo(() => {
     return (

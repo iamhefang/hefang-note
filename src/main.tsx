@@ -8,7 +8,7 @@ import ReactDOMClient from "react-dom/client"
 import { Provider } from "react-redux"
 
 import Application from "./Application"
-import { versionCode, versionName } from "./consts"
+import { isInClient, isInElectron, isInTauri, versionCode, versionName } from "./consts"
 import store from "./redux"
 
 import Container from "$components/container/Container"

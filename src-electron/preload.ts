@@ -5,6 +5,7 @@ const shell = {
   version: "1.0.0",
   platform: process.platform,
   arch: process.arch,
+  type: "electron",
   api: {
     setThemeColor(colors: { bgColor: string; fgColor?: string }) {
       console.log("preload.ts: setThemeColor", colors)
@@ -16,12 +17,32 @@ const shell = {
     async isAlwaysOnTop(): Promise<boolean> {
       return await ipcRenderer.invoke(IpcEvents.GET_ALWAYS_ON_TOP)
     },
+    exit() {
+      ipcRenderer.send(IpcEvents.EXIT_APP)
+    },
+    window: {
+      minimize() {
+        ipcRenderer.send(IpcEvents.WINDOW_MINIMIZE)
+      },
+      maximize() {
+        ipcRenderer.send(IpcEvents.WINDOW_MAXIMIZE)
+      },
+      restore() {
+        ipcRenderer.send(IpcEvents.WINDOW_RESTORE)
+      },
+      toggle() {
+        ipcRenderer.send(IpcEvents.TOGGLE_MAXIMIZE)
+      },
+      async isMaximized() {
+        return await ipcRenderer.invoke(IpcEvents.GET_WINDOW_MAXIMIZE)
+      },
+    },
   },
 }
 contextBridge.exposeInMainWorld("shell", shell)
 
 declare global {
   interface Window {
-    shell: typeof shell
+    shell?: typeof shell
   }
 }

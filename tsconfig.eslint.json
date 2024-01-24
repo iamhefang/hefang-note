@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src", ".eslintrc.cjs", ".prettierrc.cjs", "vite.*.ts", "jest.*.ts"]
+  "include": ["src", ".eslintrc.cjs", ".prettierrc.cjs", "vite.*.ts", "jest.*.ts", "src-electron"]
 }
