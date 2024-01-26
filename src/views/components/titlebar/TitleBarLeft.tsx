@@ -8,18 +8,18 @@
 import { Space } from "antd"
 import React, { Suspense } from "react"
 
-import ss from "./TopBarLeft.module.scss"
+import ss from "./TitleBarLeft.module.scss"
 
 import AppLogo from "$components/icons/AppLogo"
-import SiderBarToggle from "$components/topbar/items/SiderBarToggle"
+import SiderBarToggle from "$components/titlebar/items/SiderBarToggle"
 import ShowInPlatform from "$components/utils/ShowInPlatform"
 import { usePlatformType } from "$hooks/usePlatform"
 import { useSettings, useStates } from "$hooks/useSelectors"
 import usePluginComponents from "$plugin/hooks/usePluginComponents"
 
-const LazyClientDownload = React.lazy(async () => import("$components/topbar/items/ClientDownload"))
+const LazyClientDownload = React.lazy(async () => import("$components/titlebar/items/ClientDownload"))
 
-export default function TopBarLeft() {
+export default function TitleBarLeft() {
   const osType = usePlatformType()
   const {
     lock: { locked },

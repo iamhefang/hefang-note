@@ -1,7 +1,8 @@
 .root {
     position: fixed;
     top: 0;
-    height: var(--top-bar-height);
+    right: 8px;
+    height: env(titlebar-area-height, var(--titlebar-height));
     // z-index: calc(var(--top-bar-z-index) + 1);
     z-index: 1002
 }

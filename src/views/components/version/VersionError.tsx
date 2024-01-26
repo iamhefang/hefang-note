@@ -6,7 +6,7 @@ import { isInClient } from "~/consts"
 
 import ss from "./VersionError.module.scss"
 
-import WindowControls from "$components/topbar/items/WindowControls"
+import WindowControls from "$components/titlebar/items/WindowControls"
 import ShowInPlatform from "$components/utils/ShowInPlatform"
 import useCheckUpdate from "$hooks/useCheckUpdate"
 
@@ -38,7 +38,7 @@ export default function VersionError() {
 
   return (
     <div className={ss.root} data-tauri-drag-region style={{ color: token.colorText, background: token.colorBgLayout }}>
-      <ShowInPlatform platforms={["Linux", "Windows_NT"]}>
+      <ShowInPlatform platforms={["linux"]}>
         {() => (
           <div className={ss.controls}>
             <WindowControls />

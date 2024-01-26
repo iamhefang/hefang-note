@@ -8,8 +8,8 @@ import { productName, versionName } from "~/consts"
 import EditorArea from "$components/editor/EditorArea"
 import SiderBar from "$components/sidebar/SiderBar"
 import StatusBar from "$components/statusbar/StatusBar"
-import TopBarLeft from "$components/topbar/TopBarLeft"
-import TopBarRight from "$components/topbar/TopBarRight"
+import TitleBarLeft from "$components/titlebar/TitleBarLeft"
+import TitleBarRight from "$components/titlebar/TitleBarRight"
 import useCurrent from "$hooks/useCurrent"
 import { useSettings } from "$hooks/useSelectors"
 import { useLocaleDefine, useTranslate } from "$hooks/useTranslate"
@@ -81,9 +81,9 @@ export default function View() {
   return (
     <Layout>
       <Header data-tauri-drag-region={true} style={{ backgroundColor: colorBgContainer }}>
-        <TopBarLeft />
+        <TitleBarLeft />
         <span style={{ pointerEvents: "none" }}>{title}</span>
-        <TopBarRight />
+        <TitleBarRight />
       </Header>
       <Layout>
         <Resizable

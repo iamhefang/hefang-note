@@ -8,19 +8,19 @@
 import { Space } from "antd"
 import React, { Suspense } from "react"
 
-import ss from "./TopBarRight.module.scss"
+import WindowControls from "./items/WindowControls"
+import ss from "./TitleBarRight.module.scss"
 
 import ShowInPlatform from "$components/utils/ShowInPlatform"
 import { usePlatformType } from "$hooks/usePlatform"
 import usePluginComponents from "$plugin/hooks/usePluginComponents"
 import usePluginFooterTopComponentProps from "$plugin/hooks/usePluginFooterTopComponentProps"
-import WindowControls from "./items/WindowControls"
 
 const LazyScreenLocker = React.lazy(async () => import("$components/locker/ScreenLocker"))
-const LazyThemeSelector = React.lazy(async () => import("$components/topbar/items/ThemeSelector"))
-const LazyAlwaysOnTop = React.lazy(async () => import("$components/topbar/items/AlwaysOnTop"))
+const LazyThemeSelector = React.lazy(async () => import("$components/titlebar/items/ThemeSelector"))
+const LazyAlwaysOnTop = React.lazy(async () => import("$components/titlebar/items/AlwaysOnTop"))
 
-export default function TopBarRight() {
+export default function TitleBarRight() {
   const osType = usePlatformType()
   const components = usePluginComponents("TopRight")
   const props = usePluginFooterTopComponentProps()
