@@ -89,7 +89,10 @@ async function importWithHtml(): Promise<NoteData> {
                     const json: NoteData = JSON.parse(target.result as string)
                     if (!validate(json)) {
                         console.error("导入文件不正确", validate.errors)
-                        void Modal.error({title: "数据无法解析", content: `您选择的文件不是${pkg.productName}导出的文件`})
+                        void Modal.error({
+                            title: "数据无法解析",
+                            content: `您选择的文件不是${pkg.productName}导出的文件`,
+                        })
 
                         return reject()
                     }

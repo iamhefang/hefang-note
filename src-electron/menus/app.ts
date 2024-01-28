@@ -21,6 +21,7 @@ export default Menu.buildFromTemplate([
             {type: "separator"},
             {
                 label: "设置...",
+                accelerator: "Command+,",
                 click() {
                     ipcMain.emit(IpcEvents.OPEN_SETTINGS)
                 },

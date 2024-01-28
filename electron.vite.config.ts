@@ -97,9 +97,9 @@ export default defineConfig({
             port: 8888,
             strictPort: true,
             // hmr: {
-                // protocol: "ws",
-                // host: "0.0.0.0",
-                // port: 4444,
+            // protocol: "ws",
+            // host: "0.0.0.0",
+            // port: 4444,
             // },
         },
         // to make use of `TAURI_DEBUG` and other env variables
@@ -118,7 +118,6 @@ export default defineConfig({
             rollupOptions: {
                 input: "index.html",
                 output: {
-                    // entryFileNames: "index.js",
                     dir: "out",
                     manualChunks: {
                         react: ["react", "react-dom", "react-dom/client"],
@@ -139,20 +138,14 @@ export default defineConfig({
                             "@ckeditor/ckeditor5-link",
                             "@ckeditor/ckeditor5-list",
                             "@ckeditor/ckeditor5-paragraph",
-                            // "@ckeditor/ckeditor5-adapter-ckfinder",
                             "@ckeditor/ckeditor5-autoformat",
                             "@ckeditor/ckeditor5-block-quote",
-                            // "@ckeditor/ckeditor5-build-classic",
-                            // "@ckeditor/ckeditor5-ckbox",
-                            // "@ckeditor/ckeditor5-ckfinder",
                             "@ckeditor/ckeditor5-code-block",
                             "@ckeditor/ckeditor5-easy-image",
                             "@ckeditor/ckeditor5-media-embed",
                             "@ckeditor/ckeditor5-paste-from-office",
                             "@ckeditor/ckeditor5-source-editing",
-                            // "@ckeditor/ckeditor5-special-characters",
                             "@ckeditor/ckeditor5-table",
-                            // "@ckeditor/ckeditor5-theme-lark",
                         ],
                     },
                 },

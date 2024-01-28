@@ -64,8 +64,7 @@ export default defineConfig(async (): Promise<UserConfig> => {
         envPrefix: ["VITE_", "TAURI_"],
         build: {
             // Tauri supports es2021
-            // target: process.env.TAURI_PLATFORM === "windows" ? "chrome105" : "safari13",
-            target: "chrome",
+            target: process.env.TAURI_PLATFORM === "windows" ? "chrome105" : "safari13",
             // don't minify for debug builds
             minify: !process.env.TAURI_DEBUG,
             // produce sourcemaps for debug builds
@@ -110,6 +109,7 @@ export default defineConfig(async (): Promise<UserConfig> => {
                             // "@ckeditor/ckeditor5-theme-lark",
                         ],
                     },
+                    dir: "out",
                 },
             },
         },

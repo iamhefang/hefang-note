@@ -1,6 +1,6 @@
 #![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
+all(not(debug_assertions), target_os = "windows"),
+windows_subsystem = "windows"
 )]
 
 pub mod commands;
@@ -40,11 +40,11 @@ fn build_window_menu() -> Menu {
         let app_menu = Submenu::new(
             "app",
             Menu::new()
-                .add_item(CustomMenuItem::new("about", "关于"))
+                .add_item(CustomMenuItem::new("OPEN_ABOUT", "关于"))
                 .add_item(CustomMenuItem::new("check-update", "检查更新"))
                 .add_native_item(MenuItem::Separator)
-                .add_item(CustomMenuItem::new("plugin", "插件管理..."))
-                .add_item(CustomMenuItem::new("settings", "设置...").accelerator("Command+,"))
+                .add_item(CustomMenuItem::new("OPEN_PLUGIN_MANAGER", "插件管理..."))
+                .add_item(CustomMenuItem::new("OPEN_SETTINGS", "设置...").accelerator("Command+,"))
                 .add_native_item(MenuItem::Separator)
                 .add_native_item(MenuItem::Services)
                 .add_native_item(MenuItem::Separator)
@@ -77,13 +77,13 @@ fn on_menu_event(event: WindowMenuEvent) {
     window.unminimize().unwrap();
     window.show().unwrap();
     match event.menu_item_id() {
-        "settings" => {
+        "OPEN_SETTINGS" => {
             window.emit(EVENT_SHOW_SETTINGS, Payload {}).unwrap();
         }
-        "about" => {
+        "OPEN_ABOUT" => {
             window.emit(EVENT_SHOW_ABOUT, Payload {}).unwrap();
         }
-        "plugin" => {
+        "OPEN_PLUGIN_MANAGER" => {
             window.emit(EVENT_SHOW_PLUGIN, Payload {}).unwrap();
         }
         _ => {}

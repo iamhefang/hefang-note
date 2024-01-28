@@ -7,7 +7,6 @@ export type ShowInPlatformProps = {
     children: () => ReactElement
 }
 export default function ShowInPlatform({platforms, children}: ShowInPlatformProps) {
-    // const osType = usePlatformType()
     const includes = platforms.includes(window.shell?.platform ?? "Browser")
 
     return useMemo(() => (includes ? children() : null), [includes, children])
